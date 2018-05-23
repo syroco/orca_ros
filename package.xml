@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>orca_ros</name>
+  <version>1.0.0</version>
+  <description>The orca_ros package</description>
+
+  <author email="info@fuzzylogicrobotics.com">Fuzzy Logic Robotics</author>
+  <maintainer email="info@fuzzylogicrobotics.com">Antoine Hoarau</maintainer>
+
+  <license>CeCILL-C</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>orca</depend>
+
+</package>
