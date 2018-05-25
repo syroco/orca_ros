@@ -51,15 +51,6 @@ namespace common
                     std::shared_ptr<orca::common::TaskBase> base);
         virtual ~RosTaskBase();
 
-    public: // public interface functions to be wrapped by services
-        bool isActivated() const;
-        const std::string& getName() const;
-        bool activate();
-        bool deactivate();
-        void print() const;
-        orca::common::TaskBase::State getState() const;
-        void setRampDuration(double ramp_time);
-        double getRampDuration() const;
 
     private:
         bool isActivatedService(    orca_ros::GetBool::Request& req,

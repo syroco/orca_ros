@@ -26,38 +26,6 @@ RosTaskBase::RosTaskBase(   const std::string& robot_name,
 RosTaskBase::~RosTaskBase()
 {
 }
-bool RosTaskBase::isActivated() const
-{
-    return base_->isActivated();
-}
-const std::string& RosTaskBase::getName() const
-{
-    return base_->getName();
-}
-bool RosTaskBase::activate()
-{
-    base_->activate();
-}
-bool RosTaskBase::deactivate()
-{
-    base_->deactivate();
-}
-void RosTaskBase::print() const
-{
-    base_->print();
-}
-orca::common::TaskBase::State RosTaskBase::getState() const
-{
-    return base_->getState();
-}
-void RosTaskBase::setRampDuration(double ramp_time)
-{
-    base_->setRampDuration(ramp_time);
-}
-double RosTaskBase::getRampDuration() const
-{
-    return base_->getRampDuration();
-}
 
 std::shared_ptr<ros::NodeHandle> RosTaskBase::getNodeHandle()
 {
@@ -79,53 +47,53 @@ std::string RosTaskBase::getGenericPrefix()
 
 bool RosTaskBase::isActivatedService(orca_ros::GetBool::Request& req, orca_ros::GetBool::Response& res)
 {
-    res.value = isActivated();
+    res.value = base_->isActivated();
     return true;
 }
 
 bool RosTaskBase::getNameService(orca_ros::GetString::Request& req, orca_ros::GetString::Response& res)
 {
-    res.data = getName();
+    res.data = base_->getName();
     return true;
 }
 
 bool RosTaskBase::activateService(orca_ros::GetBool::Request& req, orca_ros::GetBool::Response& res)
 {
-    res.value = activate();
+    res.value = base_->activate();
     return true;
 }
 
 bool RosTaskBase::deactivateService(orca_ros::GetBool::Request& req, orca_ros::GetBool::Response& res)
 {
-    res.value = deactivate();
+    res.value = base_->deactivate();
     return true;
 }
 
 bool RosTaskBase::printService(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res)
 {
-    print();
+    base_->print();
     return true;
 }
 
 bool RosTaskBase::getStateService(orca_ros::GetEnum::Request& req, orca_ros::GetEnum::Response& res)
 {
-    res.value = (uint8_t)getState();
+    res.value = (uint8_t)base_->getState();
     return true;
 }
 
 bool RosTaskBase::setRampDurationService(orca_ros::SetDouble::Request& req, orca_ros::SetDouble::Response& res)
 {
-    setRampDuration(req.value);
+    base_->setRampDuration(req.value);
     return true;
 }
 
 bool RosTaskBase::getRampDurationService(orca_ros::GetDouble::Request& req, orca_ros::GetDouble::Response& res)
 {
-    res.value = getRampDuration();
+    res.value = base_->getRampDuration();
     return true;
 }
 
 std::string RosTaskBase::getNamespacePrefix()
 {
-    return "/orca/"+getRobotName()+"/"+getControllerName()+"/"+getGenericPrefix()+"/"+getName()+"/";
+    return "/orca/"+getRobotName()+"/"+getControllerName()+"/"+getGenericPrefix()+"/"+base_->getName()+"/";
 }
