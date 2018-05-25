@@ -4,8 +4,9 @@ using namespace orca_ros::constraint;
 
 RosGenericConstraint::RosGenericConstraint(const std::string& robot_name,
                             const std::string& controller_name,
-                            std::shared_ptr<orca::common::TaskBase> base)
-: RosTaskBase(robot_name, controller_name, base, std::make_shared<ros::NodeHandle>(getNamespacePrefix()) )
+                            std::shared_ptr<orca::constraint::GenericConstraint> gen_con)
+: gc_(gen_con)
+, RosTaskBase(robot_name, controller_name, "constraints", gc_)
 {
 
 }
@@ -13,9 +14,4 @@ RosGenericConstraint::RosGenericConstraint(const std::string& robot_name,
 RosGenericConstraint::~RosGenericConstraint()
 {
 
-}
-
-std::string RosGenericConstraint::getNamespacePrefix()
-{
-    return "/orca/"+getRobotName()+"/"+getControllerName()+"/constraints/"+getName()+"/";
 }

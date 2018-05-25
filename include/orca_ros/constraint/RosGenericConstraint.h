@@ -34,6 +34,7 @@
 #pragma once
 
 #include <ros/ros.h>
+#include <orca/constraint/GenericConstraint.h>
 #include <orca_ros/common/RosTaskBase.h>
 
 namespace orca_ros
@@ -45,18 +46,15 @@ namespace constraint
     {
     public:
         RosGenericConstraint(const std::string& robot_name,
-                    const std::string& controller_name,
-                    std::shared_ptr<orca::common::TaskBase> base);
+                            const std::string& controller_name,
+                            std::shared_ptr<orca::constraint::GenericConstraint> gen_con);
         virtual ~RosGenericConstraint();
 
 
 
-        /*! Get a string with the appropriate namspace prefix for topics and services
-         *  \return String with the namespace prefix and a trailing '/' for convenience.
-         */
-        virtual std::string getNamespacePrefix();
-
     private:
+        std::shared_ptr<orca::constraint::GenericConstraint> gc_;
+
 
     };
 

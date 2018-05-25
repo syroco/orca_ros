@@ -34,6 +34,7 @@
 #pragma once
 
 #include <ros/ros.h>
+#include <orca/task/GenericTask.h>
 #include <orca_ros/common/RosTaskBase.h>
 namespace orca_ros
 {
@@ -45,18 +46,31 @@ namespace task
     public:
         RosGenericTask(const std::string& robot_name,
                     const std::string& controller_name,
-                    std::shared_ptr<orca::common::TaskBase> base);
+                    std::shared_ptr<orca::task::GenericTask> gen_task);
         virtual ~RosGenericTask();
 
+    public:
+        // double getWeight() const;
+        // void setWeight(double weight);
+        //
+        // math::Size getSize() const;
+        // int cols() const;
+        // int rows() const;
+        //
+        //
+        // const Eigen::MatrixXd& getE() const;
+        // const Eigen::VectorXd& getf() const;
+        //
+        // virtual void print() const;
+        //
+        // Eigen::MatrixXd& E();
+        // Eigen::VectorXd& f();
 
 
-        /*! Get a string with the appropriate namspace prefix for topics and services
-         *  \return String with the namespace prefix and a trailing '/' for convenience.
-         */
-        virtual std::string getNamespacePrefix();
+
 
     private:
-
+        std::shared_ptr<orca::task::GenericTask> gt_;
     };
 
 } // namespace task

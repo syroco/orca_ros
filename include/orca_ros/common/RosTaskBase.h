@@ -47,8 +47,8 @@ namespace common
     public:
         RosTaskBase(const std::string& robot_name,
                     const std::string& controller_name,
-                    std::shared_ptr<orca::common::TaskBase> base,
-                    std::shared_ptr<ros::NodeHandle> nh);
+                    const std::string& generic_prefix,
+                    std::shared_ptr<orca::common::TaskBase> base);
         virtual ~RosTaskBase();
 
     public: // public interface functions to be wrapped by services
@@ -99,6 +99,11 @@ namespace common
          */
         std::string getControllerName();
 
+        /*! Gets the name of the generic prefix which is either 'tasks' or 'constraints'
+         *  \return String generic prefix
+         */
+        std::string getGenericPrefix();
+
         /*! Gets a shared pointer to the public NodeHandle
          *  \return shared pointer to the public NodeHandle
          */
@@ -108,11 +113,12 @@ namespace common
         /*! Get a string with the appropriate namspace prefix for topics and services
          *  \return String with the namespace prefix and a trailing '/' for convenience.
          */
-        virtual std::string getNamespacePrefix() = 0;
+        std::string getNamespacePrefix();
 
     private:
         std::string rn_; /*!< robot name */
         std::string cn_; /*!< controller name */
+        std::string gp_; /*!< generic prefix (either task or constraint) */
         std::shared_ptr<ros::NodeHandle> nh_; /*!< public NodeHandle */
         std::shared_ptr<orca::common::TaskBase> base_; /*!< Pointer to the base task */
 
