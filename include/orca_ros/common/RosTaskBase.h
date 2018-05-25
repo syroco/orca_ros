@@ -47,7 +47,8 @@ namespace common
     public:
         RosTaskBase(const std::string& robot_name,
                     const std::string& controller_name,
-                    std::shared_ptr<orca::common::TaskBase> base);
+                    std::shared_ptr<orca::common::TaskBase> base,
+                    std::shared_ptr<ros::NodeHandle> nh);
         virtual ~RosTaskBase();
 
     public: // public interface functions to be wrapped by services
@@ -103,24 +104,19 @@ namespace common
          */
         std::shared_ptr<ros::NodeHandle> getNodeHandle();
 
-        /*! Gets a shared pointer to the private NodeHandle
-         *  \return shared pointer to the private NodeHandle
-         */
-        std::shared_ptr<ros::NodeHandle> getPrivateNodeHandle();
 
         /*! Get a string with the appropriate namspace prefix for topics and services
          *  \return String with the namespace prefix and a trailing '/' for convenience.
          */
-        std::string getNamespacePrefix();
+        virtual std::string getNamespacePrefix() = 0;
 
     private:
         std::string rn_; /*!< robot name */
         std::string cn_; /*!< controller name */
         std::shared_ptr<ros::NodeHandle> nh_; /*!< public NodeHandle */
-        std::shared_ptr<ros::NodeHandle> nh_priv_; /*!< private NodeHandle */
         std::shared_ptr<orca::common::TaskBase> base_; /*!< Pointer to the base task */
 
     };
 
 } // namespace common
-} // namespace orca
+} // namespace orca_ros

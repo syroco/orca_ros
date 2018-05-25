@@ -4,35 +4,22 @@ using namespace orca_ros::common;
 
 RosTaskBase::RosTaskBase(   const std::string& robot_name,
                             const std::string& controller_name,
-                            std::shared_ptr<orca::common::TaskBase> base
+                            std::shared_ptr<orca::common::TaskBase> base,
+                            std::shared_ptr<ros::NodeHandle> nh
                         )
 : base_(base)
 , rn_(robot_name)
 , cn_(controller_name)
+, nh_(nh)
 {
-    nh_ = std::make_shared<ros::NodeHandle>();
-    nh_priv_ = std::make_shared<ros::NodeHandle>("~");
-
-    std::string srv_prefix = getNamespacePrefix();
-    nh_->advertiseService(srv_prefix + "isActivated", &RosTaskBase::isActivatedService, this );
-    nh_->advertiseService(srv_prefix + "getName", &RosTaskBase::getNameService, this );
-    nh_->advertiseService(srv_prefix + "activate", &RosTaskBase::activateService, this );
-    nh_->advertiseService(srv_prefix + "deactivate", &RosTaskBase::deactivateService, this );
-    nh_->advertiseService(srv_prefix + "print", &RosTaskBase::printService, this );
-    nh_->advertiseService(srv_prefix + "getState", &RosTaskBase::getStateService, this );
-    nh_->advertiseService(srv_prefix + "setRampDuration", &RosTaskBase::setRampDurationService, this );
-    nh_->advertiseService(srv_prefix + "getRampDuration", &RosTaskBase::getRampDurationService, this );
-
-
-
-
-
-
-
-
-
-
-
+    nh_->advertiseService("isActivated", &RosTaskBase::isActivatedService, this );
+    nh_->advertiseService("getName", &RosTaskBase::getNameService, this );
+    nh_->advertiseService("activate", &RosTaskBase::activateService, this );
+    nh_->advertiseService("deactivate", &RosTaskBase::deactivateService, this );
+    nh_->advertiseService("print", &RosTaskBase::printService, this );
+    nh_->advertiseService("getState", &RosTaskBase::getStateService, this );
+    nh_->advertiseService("setRampDuration", &RosTaskBase::setRampDurationService, this );
+    nh_->advertiseService("getRampDuration", &RosTaskBase::getRampDurationService, this );
 }
 
 RosTaskBase::~RosTaskBase()
@@ -75,10 +62,6 @@ std::shared_ptr<ros::NodeHandle> RosTaskBase::getNodeHandle()
 {
     return nh_;
 }
-std::shared_ptr<ros::NodeHandle> RosTaskBase::getPrivateNodeHandle()
-{
-    return nh_priv_;
-}
 std::string RosTaskBase::getRobotName()
 {
     return rn_;
@@ -86,10 +69,6 @@ std::string RosTaskBase::getRobotName()
 std::string RosTaskBase::getControllerName()
 {
     return cn_;
-}
-std::string RosTaskBase::getNamespacePrefix()
-{
-    return "/"+getRobotName()+"/"+getControllerName()+"/tasks/"+getName()+"/";
 }
 
 
