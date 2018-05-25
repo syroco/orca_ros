@@ -17,18 +17,19 @@ add_message_files(
 )
 
 add_service_files(
-  FILES
-  GetBool.srv
-  SetBool.srv
-  GetString.srv
-  SetString.srv
-  GetInt.srv
-  SetInt.srv
-  GetDouble.srv
-  SetDouble.srv
-  GetMatrix.srv
-  SetMatrix.srv
-
+    FILES
+    GetBool.srv
+    SetBool.srv
+    GetString.srv
+    SetString.srv
+    GetInt.srv
+    SetInt.srv
+    GetDouble.srv
+    SetDouble.srv
+    GetMatrix.srv
+    SetMatrix.srv
+    GetEnum.srv
+    SetEnum.srv
 )
 
 # Generate added messages and services with any dependencies listed here

@@ -95,32 +95,48 @@ std::string RosTaskBase::getNamespacePrefix()
 
 bool RosTaskBase::isActivatedService(orca_ros::GetBool::Request& req, orca_ros::GetBool::Response& res)
 {
+    res.value = isActivated();
+    return true;
 }
 
 bool RosTaskBase::getNameService(orca_ros::GetString::Request& req, orca_ros::GetString::Response& res)
 {
+    res.data = getName();
+    return true;
 }
 
 bool RosTaskBase::activateService(orca_ros::GetBool::Request& req, orca_ros::GetBool::Response& res)
 {
+    res.value = activate();
+    return true;
 }
 
 bool RosTaskBase::deactivateService(orca_ros::GetBool::Request& req, orca_ros::GetBool::Response& res)
 {
+    res.value = deactivate();
+    return true;
 }
 
-bool RosTaskBase::printService(orca_ros::GetBool::Request& req, orca_ros::GetBool::Response& res)
+bool RosTaskBase::printService(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res)
 {
+    print();
+    return true;
 }
 
-bool RosTaskBase::getStateService(orca_ros::GetBool::Request& req, orca_ros::GetBool::Response& res)
+bool RosTaskBase::getStateService(orca_ros::GetEnum::Request& req, orca_ros::GetEnum::Response& res)
 {
+    res.value = (uint8_t)getState();
+    return true;
 }
 
-bool RosTaskBase::setRampDurationService(orca_ros::GetBool::Request& req, orca_ros::GetBool::Response& res)
+bool RosTaskBase::setRampDurationService(orca_ros::SetDouble::Request& req, orca_ros::SetDouble::Response& res)
 {
+    setRampDuration(req.value);
+    return true;
 }
 
-bool RosTaskBase::getRampDurationService(orca_ros::GetBool::Request& req, orca_ros::GetBool::Response& res)
+bool RosTaskBase::getRampDurationService(orca_ros::GetDouble::Request& req, orca_ros::GetDouble::Response& res)
 {
+    res.value = getRampDuration();
+    return true;
 }

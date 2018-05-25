@@ -73,17 +73,17 @@ namespace common
         bool deactivateService(     orca_ros::GetBool::Request& req,
                                     orca_ros::GetBool::Response& res
                                 );
-        bool printService(          orca_ros::GetBool::Request& req,
-                                    orca_ros::GetBool::Response& res
+        bool printService(          std_srvs::Empty::Request& req,
+                                    std_srvs::Empty::Response& res
                                 );
-        bool getStateService(       orca_ros::GetBool::Request& req,
-                                    orca_ros::GetBool::Response& res
+        bool getStateService(       orca_ros::GetEnum::Request& req,
+                                    orca_ros::GetEnum::Response& res
                                 );
-        bool setRampDurationService(orca_ros::GetBool::Request& req,
-                                    orca_ros::GetBool::Response& res
+        bool setRampDurationService(orca_ros::SetDouble::Request& req,
+                                    orca_ros::SetDouble::Response& res
                                 );
-        bool getRampDurationService(orca_ros::GetBool::Request& req,
-                                    orca_ros::GetBool::Response& res
+        bool getRampDurationService(orca_ros::GetDouble::Request& req,
+                                    orca_ros::GetDouble::Response& res
                                 );
 
 
