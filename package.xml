@@ -10,7 +10,7 @@
   <license>CeCILL-C</license>
 
   <buildtool_depend>catkin</buildtool_depend>
-  <!-- <depend>orca</depend> -->
+  <depend>orca</depend>
   <depend>std_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>eigen_conversions</depend>
