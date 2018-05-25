@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
     geometry_msgs
     eigen_conversions
     message_generation
+    orca
 )
 
 add_message_files(
