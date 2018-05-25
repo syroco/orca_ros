@@ -35,7 +35,8 @@
 
 #include <ros/ros.h>
 #include <orca/common/TaskBase.h>
-
+#include <orca_ros/services.h>
+#include <orca_ros/messages.h>
 namespace orca_ros
 {
 
@@ -44,43 +45,80 @@ namespace common
     class RosTaskBase
     {
     public:
-        RosTaskBase(std::shared_ptr<orca::common::TaskBase> base);
+        RosTaskBase(const std::string& robot_name,
+                    const std::string& controller_name,
+                    std::shared_ptr<orca::common::TaskBase> base);
         virtual ~RosTaskBase();
 
+    public: // public interface functions to be wrapped by services
         bool isActivated() const;
         const std::string& getName() const;
-        virtual bool activate();
-        virtual bool deactivate();
-        virtual void print() const;
-        State getState() const;
+        bool activate();
+        bool deactivate();
+        void print() const;
+        orca::common::TaskBase::State getState() const;
         void setRampDuration(double ramp_time);
         double getRampDuration() const;
 
+    private:
+        bool isActivatedService(    orca_ros::GetBool::Request& req,
+                                    orca_ros::GetBool::Response& res
+                                );
+        bool getNameService(        orca_ros::GetString::Request& req,
+                                    orca_ros::GetString::Response& res
+                                );
+        bool activateService(       orca_ros::GetBool::Request& req,
+                                    orca_ros::GetBool::Response& res
+                                );
+        bool deactivateService(     orca_ros::GetBool::Request& req,
+                                    orca_ros::GetBool::Response& res
+                                );
+        bool printService(          orca_ros::GetBool::Request& req,
+                                    orca_ros::GetBool::Response& res
+                                );
+        bool getStateService(       orca_ros::GetBool::Request& req,
+                                    orca_ros::GetBool::Response& res
+                                );
+        bool setRampDurationService(orca_ros::GetBool::Request& req,
+                                    orca_ros::GetBool::Response& res
+                                );
+        bool getRampDurationService(orca_ros::GetBool::Request& req,
+                                    orca_ros::GetBool::Response& res
+                                );
+
+
     public:
+        /*! Gets the name of the robot
+         *  \return String robot name
+         */
+        std::string getRobotName();
+
+        /*! Gets the name of the controller in which the task is being used
+         *  \return String controller in which the task is being used name
+         */
+        std::string getControllerName();
+
+        /*! Gets a shared pointer to the public NodeHandle
+         *  \return shared pointer to the public NodeHandle
+         */
         std::shared_ptr<ros::NodeHandle> getNodeHandle();
+
+        /*! Gets a shared pointer to the private NodeHandle
+         *  \return shared pointer to the private NodeHandle
+         */
         std::shared_ptr<ros::NodeHandle> getPrivateNodeHandle();
-        std::string getTopicPrefix();
-        std::string getServicePrefix();
 
-
-    protected:
-        // template<class T>
-        // ros::Publisher advertiseTaskTopic(const std::string& topic_name, T msg_type, int queue_size=1, bool latching=true)
-        // {
-        //     return nh_.advertise<T>(getTopicPrefix()+topic_name, queue_size, latching);
-        // }
-        //
-        // template<class M, class T>
-        // ros::Subscriber subscribeToTaskTopic(const std::string& topic_name, 	void(T::*cb)(const boost::shared_ptr<M const>&), T* obj, int queue_size=1)
-        // {
-        //     return nh_.subscribe(getTopicPrefix()+topic_name, queue_size, cb, obj);
-        // }
-
+        /*! Get a string with the appropriate namspace prefix for topics and services
+         *  \return String with the namespace prefix and a trailing '/' for convenience.
+         */
+        std::string getNamespacePrefix();
 
     private:
-        std::shared_ptr<ros::NodeHandle> nh_;
-        std::shared_ptr<ros::NodeHandle> nh_priv_;
-        std::shared_ptr<orca::common::TaskBase> base_task_;
+        std::string rn_; /*!< robot name */
+        std::string cn_; /*!< controller name */
+        std::shared_ptr<ros::NodeHandle> nh_; /*!< public NodeHandle */
+        std::shared_ptr<ros::NodeHandle> nh_priv_; /*!< private NodeHandle */
+        std::shared_ptr<orca::common::TaskBase> base_; /*!< Pointer to the base task */
 
     };
 

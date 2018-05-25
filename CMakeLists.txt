@@ -4,6 +4,7 @@ project(orca_ros)
 find_package(orca REQUIRED)
 
 find_package(catkin REQUIRED COMPONENTS
+    roscpp
     std_msgs
     geometry_msgs
     eigen_conversions
@@ -15,22 +16,30 @@ add_message_files(
   DesiredJoints.msg
 )
 
-# add_service_files(
-#   FILES
-#   _________.srv
-# )
+add_service_files(
+  FILES
+  GetBool.srv
+  SetBool.srv
+  GetString.srv
+  SetString.srv
+  GetInt.srv
+  SetInt.srv
+  GetDouble.srv
+  SetDouble.srv
+  GetMatrix.srv
+  SetMatrix.srv
+
+)
 
 # Generate added messages and services with any dependencies listed here
 generate_messages(
   DEPENDENCIES
   std_msgs
   geometry_msgs
-  eigen_conversions
 )
 
 catkin_package(
                INCLUDE_DIRS include ${EIGEN3_INCLUDE_DIRS}
-               DEPENDS orca::orca
                LIBRARIES ${PROJECT_NAME}
                CATKIN_DEPENDS
                std_msgs
@@ -45,9 +54,9 @@ include_directories(include
                     ${EIGEN3_INCLUDE_DIRS}
                     )
 
-add_library(    ${PROJECT_NAME}
-                src/*/*.cc
-            )
+file(GLOB_RECURSE source_files src/*)
+
+add_library(${PROJECT_NAME} ${source_files})
 
 target_link_libraries(  ${PROJECT_NAME}
                         ${catkin_LIBRARIES}
@@ -56,7 +65,7 @@ target_link_libraries(  ${PROJECT_NAME}
 
 
 
-add_dependencies(${PROJECT_NAME} orca_msgs_generate_messages_cpp)
+add_dependencies(${PROJECT_NAME} orca_ros_generate_messages_cpp)
 
 
 
