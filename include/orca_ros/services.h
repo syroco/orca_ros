@@ -16,3 +16,6 @@
 #include <orca_ros/SetEnum.h>
 #include <orca_ros/GetSize.h>
 #include <orca_ros/SetSize.h>
+#include <orca_ros/AddTask.h>
+#include <orca_ros/AddConstraint.h>
+#include <orca_ros/UpdateController.h>

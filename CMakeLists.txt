@@ -15,6 +15,8 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   DesiredJoints.msg
+  TaskDescription.msg
+  ConstraintDescription.msg
 )
 
 add_service_files(
@@ -34,6 +36,9 @@ add_service_files(
     SetEnum.srv
     GetSize.srv
     SetSize.srv
+    AddTask.srv
+    AddConstraint.srv
+    UpdateController.srv
 )
 
 # Generate added messages and services with any dependencies listed here
