@@ -34,12 +34,7 @@
 #pragma once
 
 #include "orca/common/PIDController.h"
-
-#include <ros/ros.h>
-#include <orca_ros/utils/MsgUtils.h>
-#include <orca_ros/services.h>
-#include <orca_ros/messages.h>
-
+#include <orca_ros/common/RosWrapperBase.h>
 
 namespace orca_ros
 {
@@ -51,7 +46,7 @@ namespace orca_ros
             RosPIDController(   const std::string& robot_name,
                                 const std::string& controller_name,
                                 const std::string& task_name,
-                                std::shared_ptr<orca::common::PIDController> pid);
+                                std::shared_ptr<orca::common::PIDController<Eigen::Dynamic>> pid);
             virtual ~RosPIDController();
 
         private:
@@ -84,9 +79,7 @@ namespace orca_ros
                                         );
 
         private:
-            std::shared_ptr<ros::NodeHandle> nh_; /*!< public NodeHandle */
-            std::shared_ptr<orca::common::PIDController> pid_; /*!< public NodeHandle */
-
+            std::shared_ptr<orca::common::PIDController<Eigen::Dynamic>> pid_; 
         };
     } // namespace common
 } // namespace orca_ros

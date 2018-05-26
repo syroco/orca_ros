@@ -33,18 +33,13 @@
 
 #pragma once
 
-
-#include <ros/ros.h>
-#include <orca_ros/utils/MsgUtils.h>
-#include <orca_ros/services.h>
-#include <orca_ros/messages.h>
-
+#include <orca_ros/common/RosWrapperBase.h>
 
 namespace orca_ros
 {
     namespace common
     {
-        class RosPIDControllerProxy
+        class RosPIDControllerProxy : public RosWrapperBase
         {
         public:
             RosPIDControllerProxy(  const std::string& robot_name,
@@ -64,16 +59,6 @@ namespace orca_ros
             Eigen::VectorXd getDerivativeGain();
 
         private:
-            std::string getNamespacePrefix();
-
-        private:
-            std::string rn_; /*!< robot name */
-            std::string cn_; /*!< controller name */
-            std::string tn_; /*!< task name */
-            std::shared_ptr<ros::NodeHandle> nh_; /*!< public NodeHandle */
-
-
-
             ros::ServiceClient sc_getSize_;
             ros::ServiceClient sc_setProportionalGain_;
             ros::ServiceClient sc_getProportionalGain_;

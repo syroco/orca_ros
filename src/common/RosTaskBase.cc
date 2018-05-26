@@ -11,7 +11,7 @@ RosTaskBase::RosTaskBase(   const std::string& robot_name,
 // , rn_(robot_name)
 // , cn_(controller_name)
 // , gp_(generic_prefix)
-, RosWrapperBase(robot_name, controller, base_->getName(), generic_prefix)
+, RosWrapperBase(robot_name, controller_name, base_->getName(), generic_prefix)
 {
     // nh_ = std::make_shared<ros::NodeHandle>(getNamespacePrefix());
     // nh_->advertiseService("isActivated", &RosTaskBase::isActivatedService, this );

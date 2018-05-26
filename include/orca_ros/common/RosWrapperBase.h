@@ -1,8 +1,11 @@
 #pragma once
 
 #include <ros/ros.h>
+#include <orca_ros/utils/MsgUtils.h>
+#include <orca_ros/services.h>
+#include <orca_ros/messages.h>
 
-namspace orca_ros
+namespace orca_ros
 {
 namespace common
 {
@@ -31,6 +34,11 @@ namespace common
          *  \return String generic prefix
          */
         std::string getGenericPrefix();
+
+        /*! Gets the name of the wrapped object
+         *  \return String wrapped object name
+         */
+        std::string getObjectName();
 
         /*! Gets a shared pointer to the public NodeHandle
          *  \return shared pointer to the public NodeHandle

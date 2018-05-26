@@ -11,7 +11,7 @@ RosTaskBaseProxy::RosTaskBaseProxy(     const std::string& robot_name,
 // , cn_(controller_name)
 // , tn_(task_name)
 // , gp_(generic_prefix)
-: RosWrapperBase(robot_name, controller, task_name, generic_prefix)
+: RosWrapperBase(robot_name, controller_name, task_name, generic_prefix)
 {
     // nh_ = std::make_shared<ros::NodeHandle>(getNamespacePrefix());
     // sc_isActivated_ = nh_->serviceClient<orca_ros::GetBool>("isActivated");

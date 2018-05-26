@@ -5,10 +5,9 @@ using namespace orca_ros::common;
 RosPIDController::RosPIDController( const std::string& robot_name,
                                     const std::string& controller_name,
                                     const std::string& task_name,
-                                    std::shared_ptr<orca::common::PIDController> pid)
-: pid_(pid)
-, RosWrapperBase(robot_name, controller, task_name+"/pid", "tasks")
-// , nh_(pid_nh)
+                                    std::shared_ptr<orca::common::PIDController<Eigen::Dynamic>> pid)
+: RosWrapperBase(robot_name, controller_name, task_name+"/pid", "tasks")
+, pid_(pid)
 {
     getNodeHandle()->advertiseService("getSize", &RosPIDController::getSizeService, this);
     getNodeHandle()->advertiseService("setProportionalGain", &RosPIDController::setProportionalGainService, this);
@@ -40,7 +39,7 @@ bool RosPIDController::setProportionalGainService(orca_ros::SetMatrix::Request& 
 }
 bool RosPIDController::getProportionalGainService(orca_ros::GetMatrix::Request& req, orca_ros::GetMatrix::Response& res)
 {
-    tf::eigenMatrixToMsg(pid_->P(), res.data);
+    tf::matrixEigenToMsg(pid_->P(), res.data);
     return true;
 }
 bool RosPIDController::setIntegralGainService(orca_ros::SetMatrix::Request& req, orca_ros::SetMatrix::Response& res)
@@ -52,7 +51,7 @@ bool RosPIDController::setIntegralGainService(orca_ros::SetMatrix::Request& req,
 }
 bool RosPIDController::getIntegralGainService(orca_ros::GetMatrix::Request& req, orca_ros::GetMatrix::Response& res)
 {
-    tf::eigenMatrixToMsg(pid_->I(), res.data);
+    tf::matrixEigenToMsg(pid_->I(), res.data);
     return true;
 }
 bool RosPIDController::setWindupLimitService(orca_ros::SetMatrix::Request& req, orca_ros::SetMatrix::Response& res)
@@ -64,7 +63,7 @@ bool RosPIDController::setWindupLimitService(orca_ros::SetMatrix::Request& req, 
 }
 bool RosPIDController::getWindupLimitService(orca_ros::GetMatrix::Request& req, orca_ros::GetMatrix::Response& res)
 {
-    tf::eigenMatrixToMsg(pid_->windupLimit(), res.data);
+    tf::matrixEigenToMsg(pid_->windupLimit(), res.data);
     return true;
 }
 bool RosPIDController::setDerivativeGainService(orca_ros::SetMatrix::Request& req, orca_ros::SetMatrix::Response& res)
@@ -76,6 +75,6 @@ bool RosPIDController::setDerivativeGainService(orca_ros::SetMatrix::Request& re
 }
 bool RosPIDController::getDerivativeGainService(orca_ros::GetMatrix::Request& req, orca_ros::GetMatrix::Response& res)
 {
-    tf::eigenMatrixToMsg(pid_->D(), res.data);
+    tf::matrixEigenToMsg(pid_->D(), res.data);
     return true;
 }
