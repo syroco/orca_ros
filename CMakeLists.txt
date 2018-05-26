@@ -31,6 +31,8 @@ add_service_files(
     SetMatrix.srv
     GetEnum.srv
     SetEnum.srv
+    GetSize.srv
+    SetSize.srv
 )
 
 # Generate added messages and services with any dependencies listed here
@@ -74,11 +76,11 @@ target_link_libraries(minimal_controller ${PROJECT_NAME})
 # install(DIRECTORY include/${PROJECT_NAME}/
 #     DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 # )
-# 
+#
 # install(DIRECTORY launch
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
-# 
+#
 # install(TARGETS
 #         ${PROJECT_NAME}
 #         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

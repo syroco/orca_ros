@@ -50,21 +50,36 @@ namespace task
         virtual ~RosGenericTask();
 
     public:
-        // double getWeight() const;
-        // void setWeight(double weight);
-        //
-        // math::Size getSize() const;
-        // int cols() const;
-        // int rows() const;
-        //
-        //
-        // const Eigen::MatrixXd& getE() const;
-        // const Eigen::VectorXd& getf() const;
-        //
-        // virtual void print() const;
-        //
-        // Eigen::MatrixXd& E();
-        // Eigen::VectorXd& f();
+        bool getWeightService(  orca_ros::GetDouble::Request& req,
+                                orca_ros::GetDouble::Response& res
+                            );
+        bool setWeightService(  orca_ros::SetDouble::Request& req,
+                                orca_ros::SetDouble::Response& res
+                            );
+        bool getSizeService(    orca_ros::GetSize::Request& req,
+                                orca_ros::GetSize::Response& res
+                            );
+        bool colsService(       orca_ros::GetInt::Request& req,
+                                orca_ros::GetInt::Response& res
+                            );
+        bool rowsService(       orca_ros::GetInt::Request& req,
+                                orca_ros::GetInt::Response& res
+                            );
+        bool getEService(       orca_ros::GetMatrix::Request& req,
+                                orca_ros::GetMatrix::Response& res
+                            );
+        bool getfService(       orca_ros::GetMatrix::Request& req,
+                                orca_ros::GetMatrix::Response& res
+                            );
+        bool printService(      std_srvs::Empty::Request& req,
+                                std_srvs::Empty::Response& res
+                            );
+        bool setEService(          orca_ros::SetMatrix::Request& req,
+                                orca_ros::SetMatrix::Response& res
+                            );
+        bool setfService(       orca_ros::SetMatrix::Request& req,
+                                orca_ros::SetMatrix::Response& res
+                            );
 
 
 

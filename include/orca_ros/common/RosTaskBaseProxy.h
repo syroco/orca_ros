@@ -1,6 +1,3 @@
-
-
-
 // This file is a part of the orca framework.
 // Copyright 2017, ISIR / Universite Pierre et Marie Curie (UPMC)
 // Main contributor(s): Antoine Hoarau, hoarau@isir.upmc.fr
@@ -40,6 +37,8 @@
 #include <orca_ros/services.h>
 #include <orca_ros/messages.h>
 #include <orca/common/TaskBase.h>
+#include <orca_ros/utils/MsgUtils.h>
+
 
 namespace orca_ros
 {

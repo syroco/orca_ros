@@ -14,3 +14,5 @@
 #include <orca_ros/SetMatrix.h>
 #include <orca_ros/GetEnum.h>
 #include <orca_ros/SetEnum.h>
+#include <orca_ros/GetSize.h>
+#include <orca_ros/SetSize.h>

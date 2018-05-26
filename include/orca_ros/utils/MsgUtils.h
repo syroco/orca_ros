@@ -34,45 +34,27 @@
 #pragma once
 
 #include <orca/math/Utils.h>
-#include <orca_ros/common/RosTaskBaseProxy.h>
+#include <eigen_conversions/eigen_msg.h>
+
 namespace orca_ros
 {
-
-namespace task
+namespace utils
 {
-    class RosGenericTaskProxy : public orca_ros::common::RosTaskBaseProxy
+
+    template <class Derived>
+    void floatMultiArrayToEigen(std_msgs::Float64MultiArray &m, Eigen::MatrixBase<Derived> &e)
     {
-    public:
-        RosGenericTaskProxy( const std::string& robot_name,
-                        const std::string& controller_name,
-                        const std::string& task_name);
-        virtual ~RosGenericTaskProxy();
+        if (m.layout.dim.size() != 2)
+        {
+            ROS_ERROR_STREAM("Float64MultiArray must have 2 dimensions to be converted to an Eigen Vector or Matrix. This message has "<< m.layout.dim.size() <<" dimensions.");
+            return;
+        }
 
-    public:
-        double getWeight();
-        void setWeight(double weight);
-        orca::math::Size getSize();
-        int cols();
-        int rows();
-        Eigen::MatrixXd getE();
-        Eigen::VectorXd getf();
-        virtual void print();
-        // Slightly different because we cannot return non-const references
-        void setE(const Eigen::MatrixXd& E);
-        void setf(const Eigen::VectorXd& f);
+        int rows = m.layout.dim[0].size;
+        int cols = m.layout.dim[1].size;
 
-    private:
-        ros::ServiceClient sc_getWeight_;
-        ros::ServiceClient sc_setWeight_;
-        ros::ServiceClient sc_getSize_;
-        ros::ServiceClient sc_cols_;
-        ros::ServiceClient sc_rows_;
-        ros::ServiceClient sc_getE_;
-        ros::ServiceClient sc_getf_;
-        ros::ServiceClient sc_print_;
-        ros::ServiceClient sc_setE_;
-        ros::ServiceClient sc_setf_;
-    };
+        e = Eigen::Map<Derived>(m.data.data(), rows, cols);
+    }
 
-} // namespace task
-} // namespace orca_ros
+}//namespace orca_ros
+}//namespace utils
