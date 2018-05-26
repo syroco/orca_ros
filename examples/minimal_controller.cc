@@ -18,7 +18,7 @@ struct ControllerRosServer
         std::cout << "Creating ros wrapper for " << c->getName() << '\n';
         ss_getName = nh_.advertiseService("/" + c->getName() + "/get_name",&ControllerRosServer::getName,this);
     }
-    
+
     bool getName(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res)
     {
         ROS_INFO_STREAM("You have called getName() --> " << c_->getName());
@@ -33,7 +33,7 @@ struct ControllerRosClient
 {
     ControllerRosClient(const std::string& robot_name,const std::string& controller_name)
     {
-            
+
     }
     const std::string& getName()
     {
@@ -49,19 +49,12 @@ struct ControllerRosClient
 
 int main(int argc, char *argv[])
 {
-    ros::init(argc, argv, "orca_controller");
-
-    if(argc < 2)
-    {
-        std::cerr << "Usage : ./orca-demosimple /path/to/robot-urdf.urdf" << "\n";
-        return -1;
-    }
-
-    std::string urdf_url(argv[1]);
+    ros::init(argc, argv, "orca_cart_demo0");
+    std::string robot_description("");
+    ros::param::get("~robot_description",robot_description);
 
     auto robot = std::make_shared<RobotDynTree>();
-    if(!robot->loadModelFromFile(urdf_url))
-        throw std::runtime_error(Formatter() << "Could not load model from urdf file \'" << urdf_url << "\'");
+    robot->loadModelFromString(robot_description);
 
     robot->setBaseFrame("base_link"); // All the transformations will be expressed wrt this base frame
     robot->setGravity(Eigen::Vector3d(0,0,-9.81)); // Sets the world gravity
@@ -90,15 +83,22 @@ int main(int argc, char *argv[])
 
     auto controller_ros_server = ControllerRosServer(controller);
     auto controller_ros_client = ControllerRosClient("","ctrl1");
-     
+
     auto cart_task = std::make_shared<CartesianTask>("CartTask-EE");
 
-    ros::Rate loop_rate(10);
+    ros::Rate r(250);
+
+    auto t_now = ros::Time::now();
     while (ros::ok())
     {
-      controller_ros_client.getName();
-      ros::spinOnce();
-      loop_rate.sleep();
+        auto t_dt = ros::Time().now() - t_now;
+
+        controller->update(t_now.toSec(),t_dt.toSec());
+
+        t_now = ros::Time::now();
+
+        ros::spinOnce();
+        r.sleep();
     }
     return 0;
 }
