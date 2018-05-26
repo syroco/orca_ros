@@ -50,7 +50,27 @@ namespace constraint
                             std::shared_ptr<orca::constraint::GenericConstraint> gen_con);
         virtual ~RosGenericConstraint();
 
-
+        bool printService(              std_srvs::Empty::Request& req,
+                                        std_srvs::Empty::Response& res
+                                    );
+        bool getSizeService(            orca_ros::GetSize::Request& req,
+                                        orca_ros::GetSize::Response& res
+                                    );
+        bool rowsService(               orca_ros::GetInt::Request& req,
+                                        orca_ros::GetInt::Response& res
+                                    );
+        bool colsService(               orca_ros::GetInt::Request& req,
+                                        orca_ros::GetInt::Response& res
+                                    );
+        bool getLowerBoundService(      orca_ros::GetMatrix::Request& req,
+                                        orca_ros::GetMatrix::Response& res
+                                    );
+        bool getUpperBoundService(      orca_ros::GetMatrix::Request& req,
+                                        orca_ros::GetMatrix::Response& res
+                                    );
+        bool getConstraintMatrixService(orca_ros::GetMatrix::Request& req,
+                                        orca_ros::GetMatrix::Response& res
+                                    );
 
     private:
         std::shared_ptr<orca::constraint::GenericConstraint> gc_;
