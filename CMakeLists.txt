@@ -24,6 +24,7 @@ add_service_files(
     GetString.srv
     SetString.srv
     GetInt.srv
+    GetStringList.srv
     SetInt.srv
     GetDouble.srv
     SetDouble.srv
