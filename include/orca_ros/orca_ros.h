@@ -1,5 +1,8 @@
 #pragma once
 
+#include "orca_ros/services.h"
+#include "orca_ros/messages.h"
+
 #include "orca_ros/optim/RosController.h"
 
 namespace orca_ros
