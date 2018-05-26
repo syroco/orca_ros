@@ -13,6 +13,10 @@ RosWrapperBase::RosWrapperBase( const std::string& robot_name,
 {
     nh_ = std::make_shared<ros::NodeHandle>(getNamespacePrefix());
 }
+RosWrapperBase::~RosWrapperBase()
+{
+
+}
 std::shared_ptr<ros::NodeHandle> RosWrapperBase::getNodeHandle()
 {
     return nh_;
@@ -35,5 +39,16 @@ std::string RosWrapperBase::getObjectName()
 }
 std::string RosWrapperBase::getNamespacePrefix()
 {
-    return "/orca/"+getRobotName()+"/"+getControllerName()+"/"+getGenericPrefix()+"/"+getObjectName()+"/";
+
+    std::string prefix = "/orca/"+getRobotName()+"/"+getControllerName()+"/";
+    if(!getGenericPrefix().empty())
+    {
+        prefix += getGenericPrefix()+"/";
+    }
+    if(!getObjectName().empty())
+    {
+        prefix += getObjectName()+"/";
+    }
+    return prefix;
+     // "/orca/"+getRobotName()+"/"+getControllerName()+"/"+getGenericPrefix()+"/"+getObjectName()+"/";
 }

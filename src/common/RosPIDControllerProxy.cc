@@ -18,7 +18,10 @@ RosPIDControllerProxy::RosPIDControllerProxy(const std::string& robot_name,
     sc_setDerivativeGain_ = getNodeHandle()->serviceClient<orca_ros::SetMatrix>("setDerivativeGain");
     sc_getDerivativeGain_ = getNodeHandle()->serviceClient<orca_ros::GetMatrix>("getDerivativeGain");
 }
+RosPIDControllerProxy::~RosPIDControllerProxy()
+{
 
+}
 int RosPIDControllerProxy::getSize()
 {
     orca_ros::GetInt srv;
