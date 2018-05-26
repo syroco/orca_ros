@@ -40,9 +40,6 @@ int main(int argc, char *argv[])
     );
 
     auto controller_ros_server = RosController("lwr",controller);
-    // auto controller_ros_client = RosControllerProxy("lwr","ctrl1");
-
-    auto cart_task = std::make_shared<CartesianTask>("CartTask-EE");
 
     ros::Rate r(250);
 
