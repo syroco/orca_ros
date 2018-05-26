@@ -32,10 +32,10 @@ int main(int argc, char *argv[])
     robot->isInitialized(); // --> returns true
 
     // Instanciate and ORCA Controller
-    auto controller = std::make_shared<orca::optim::Controller>(
+    auto controller = std::make_shared<Controller>(
         "ctrl1"
         ,robot
-        ,orca::optim::ResolutionStrategy::OneLevelWeighted // MultiLevelWeighted, Generalized
+        ,ResolutionStrategy::OneLevelWeighted // MultiLevelWeighted, Generalized
         ,QPSolver::qpOASES
     );
 
