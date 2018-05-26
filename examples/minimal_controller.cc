@@ -1,51 +1,9 @@
 #include <ros/ros.h>
 #include <orca/orca.h>
-#include <std_srvs/Empty.h>
-using namespace orca;
-using namespace orca::common;
-using namespace orca::optim;
-using namespace orca::task;
-using namespace orca::constraint;
-using namespace orca::robot;
-using namespace orca::math;
-using namespace orca::utils;
+#include <orca_ros/orca_ros.h>
 
-struct ControllerRosServer
-{
-    ControllerRosServer(std::shared_ptr<orca::optim::Controller> c)
-    : c_(c)
-    {
-        std::cout << "Creating ros wrapper for " << c->getName() << '\n';
-        ss_getName = nh_.advertiseService("/" + c->getName() + "/get_name",&ControllerRosServer::getName,this);
-    }
-
-    bool getName(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res)
-    {
-        ROS_INFO_STREAM("You have called getName() --> " << c_->getName());
-        return true;
-    }
-    std::shared_ptr<orca::optim::Controller> c_;
-    ros::NodeHandle nh_;
-    ros::ServiceServer ss_getName;
-};
-
-struct ControllerRosClient
-{
-    ControllerRosClient(const std::string& robot_name,const std::string& controller_name)
-    {
-
-    }
-    const std::string& getName()
-    {
-        std_srvs::Empty r;
-        try{
-            ros::service::call("/" + controller_name_ + "/" + "get_name",r);
-        }catch(...){}
-    }
-    std::string robot_name_;
-    std::string controller_name_;
-};
-
+using namespace orca::all;
+using namespace orca_ros::all;
 
 int main(int argc, char *argv[])
 {
@@ -81,8 +39,8 @@ int main(int argc, char *argv[])
         ,QPSolver::qpOASES
     );
 
-    auto controller_ros_server = ControllerRosServer(controller);
-    auto controller_ros_client = ControllerRosClient("","ctrl1");
+    auto controller_ros_server = RosController("lwr",controller);
+    // auto controller_ros_client = RosControllerProxy("lwr","ctrl1");
 
     auto cart_task = std::make_shared<CartesianTask>("CartTask-EE");
 
