@@ -8,11 +8,23 @@ using namespace orca_ros::all;
 int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "orca_cart_demo0");
-    std::string robot_description("");
-    ros::param::get("~robot_description",robot_description);
+    std::string robot_name("");
+
+    if(!ros::param::get("~robot_name",robot_name))
+    {
+        ROS_ERROR_STREAM("Could not find robot_name in namespace " << ros::this_node::getNamespace());
+        return 0;
+    }
+
+    std::string urdf_str("");
+    if(!ros::param::get("robot_description",urdf_str))
+    {
+        ROS_ERROR_STREAM("Could not find urdf_str in namespace " << ros::this_node::getNamespace());
+        return 0;
+    }
 
     auto robot = std::make_shared<RobotDynTree>();
-    robot->loadModelFromString(robot_description);
+    robot->loadModelFromString(urdf_str);
 
     robot->setBaseFrame("base_link"); // All the transformations will be expressed wrt this base frame
     robot->setGravity(Eigen::Vector3d(0,0,-9.81)); // Sets the world gravity
