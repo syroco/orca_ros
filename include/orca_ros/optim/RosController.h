@@ -65,6 +65,7 @@ public:
     bool allDeactivated(orca_ros::GetBool::Request &req, orca_ros::GetBool::Response &res);
 private:
     std::shared_ptr<orca::optim::Controller> ctrl_;
+    ros::ServiceServer ss_getName_;
 };
 
 } // namespace optim

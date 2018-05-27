@@ -4,10 +4,10 @@ using namespace orca_ros::optim;
 
 RosController::RosController(   const std::string& robot_name,
                                 std::shared_ptr<orca::optim::Controller> c)
-: ctrl_(c)
-, orca_ros::common::RosWrapperBase(robot_name, ctrl_->getName(), "", "")
+: orca_ros::common::RosWrapperBase(robot_name, c->getName(), "", "")
+, ctrl_(c)
 {
-    getNodeHandle()->advertiseService("getName", &RosController::getName, this);
+    ss_getName_ = getNodeHandle()->advertiseService("getName", &RosController::getName, this);
 }
 
 RosController::~RosController()
