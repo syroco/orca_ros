@@ -10,6 +10,8 @@ RosCartesianTask::RosCartesianTask( const std::string& robot_name,
 {
     cart_servo_wrapper_ = std::make_shared<orca_ros::common::RosCartesianAccelerationPID>(robot_name, controller_name, cart_task->getName(), cart_task_->servoController());
 
+    // current_state_pub_ = getNodeHandle()->publish<orca_ros::CartesianTaskState>("current_state", 1, true);
+
     getNodeHandle()->advertiseService("setDesired", &RosCartesianTask::setDesiredService, this);
     getNodeHandle()->advertiseService("setBaseFrame", &RosCartesianTask::setBaseFrameService, this);
     getNodeHandle()->advertiseService("setControlFrame", &RosCartesianTask::setControlFrameService, this);
