@@ -25,9 +25,7 @@ int main(int argc, char *argv[])
 
     auto robot = std::make_shared<RobotDynTree>();
     robot->loadModelFromString(urdf_str);
-
     robot->setBaseFrame("base_link"); // All the transformations will be expressed wrt this base frame
-    robot->setGravity(Eigen::Vector3d(0,0,-9.81)); // Sets the world gravity
 
     // This is an helper function to store the whole state of the robot as eigen vectors/matrices
     // This class is totally optional, it is just meant to keep consistency for the sizes of all the vectors/matrices
@@ -51,7 +49,7 @@ int main(int argc, char *argv[])
         ,QPSolver::qpOASES
     );
 
-    auto controller_ros_server = RosController("lwr",controller);
+    auto controller_ros_server = RosController(robot->getName(),controller);
 
     ros::Rate r(250);
 
