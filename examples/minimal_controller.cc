@@ -5,29 +5,38 @@
 using namespace orca::all;
 using namespace orca_ros::all;
 
+// To start this example :
+// rosrun orca_ros minimal_controller _robot_name:="lwr" _base_frame:="link_0" _urdf_url:="$(rospack find orca)/examples/lwr.urdf"
+
+
 int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "orca_cart_demo0");
-    std::string robot_name("");
 
+    std::string robot_name("");
     if(!ros::param::get("~robot_name",robot_name))
     {
         ROS_ERROR_STREAM("Could not find robot_name in namespace " << ros::this_node::getNamespace());
         return 0;
     }
 
-    std::string urdf_str("");
-    if(!ros::param::get("robot_description",urdf_str))
+    std::string base_frame("");
+    if(!ros::param::get("~base_frame",base_frame))
     {
-        ROS_ERROR_STREAM("Could not find urdf_str in namespace " << ros::this_node::getNamespace());
+        ROS_ERROR_STREAM("Could not find base_frame in namespace " << ros::this_node::getNamespace());
         return 0;
     }
 
-    auto robot = std::make_shared<RobotDynTree>();
-    robot->loadModelFromString(urdf_str);
+    std::string urdf_url("");
+    if(!ros::param::get("~urdf_url",urdf_url))
+    {
+        ROS_ERROR_STREAM("Could not find urdf_url in namespace " << ros::this_node::getNamespace());
+        return 0;
+    }
 
-    robot->setBaseFrame("base_link"); // All the transformations will be expressed wrt this base frame
-    robot->setGravity(Eigen::Vector3d(0,0,-9.81)); // Sets the world gravity
+    auto robot = std::make_shared<RobotDynTree>(robot_name);
+    robot->loadModelFromFile(urdf_url);
+    robot->setBaseFrame(base_frame); // All the transformations will be expressed wrt this base frame
 
     // This is an helper function to store the whole state of the robot as eigen vectors/matrices
     // This class is totally optional, it is just meant to keep consistency for the sizes of all the vectors/matrices
@@ -45,13 +54,13 @@ int main(int argc, char *argv[])
 
     // Instanciate and ORCA Controller
     auto controller = std::make_shared<Controller>(
-        "ctrl1"
+        robot_name + "_orca_controller"
         ,robot
         ,ResolutionStrategy::OneLevelWeighted // MultiLevelWeighted, Generalized
         ,QPSolver::qpOASES
     );
 
-    auto controller_ros_server = RosController("lwr",controller);
+    auto controller_ros_server = RosController(robot_name,controller);
 
     ros::Rate r(250);
 
