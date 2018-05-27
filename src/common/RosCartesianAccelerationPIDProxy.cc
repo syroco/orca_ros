@@ -32,30 +32,69 @@ void RosCartesianAccelerationPIDProxy::setDesired(  const Eigen::Matrix4d& carte
                                                     const orca::math::Vector6d& cartesian_velocity_traj,
                                                     const orca::math::Vector6d& cartesian_acceleration_traj)
 {
-
+    orca_ros::SetDesired srv;
+    tf::matrixEigenToMsg(cartesian_position_traj, srv.request.position);
+    tf::matrixEigenToMsg(cartesian_velocity_traj, srv.request.velocity);
+    tf::matrixEigenToMsg(cartesian_acceleration_traj, srv.request.acceleration);
+    if(!sc_setDesired_.call(srv))
+    {
+        ROS_ERROR("Service call [setDesired] failed.");
+    }
 }
 
 orca::math::Vector6d RosCartesianAccelerationPIDProxy::getCommand()
 {
-
+    orca_ros::GetMatrix srv;
+    if(!sc_getCommand_.call(srv))
+    {
+        ROS_ERROR("Service call [getCommand] failed.");
+    }
+    orca::math::Vector6d v;
+    orca_ros::utils::floatMultiArrayToEigen(srv.response.data, v);
+    return v;
 }
 
 Eigen::Matrix4d RosCartesianAccelerationPIDProxy::getCartesianPositionRef()
 {
-
+    orca_ros::GetMatrix srv;
+    if(!sc_getCartesianPositionRef_.call(srv))
+    {
+        ROS_ERROR("Service call [getCartesianPositionRef] failed.");
+    }
+    Eigen::Matrix4d v;
+    orca_ros::utils::floatMultiArrayToEigen(srv.response.data, v);
+    return v;
 }
 
 orca::math::Vector6d RosCartesianAccelerationPIDProxy::getCartesianVelocityRef()
 {
-
+    orca_ros::GetMatrix srv;
+    if(!sc_getCartesianVelocityRef_.call(srv))
+    {
+        ROS_ERROR("Service call [getCartesianVelocityRef] failed.");
+    }
+    orca::math::Vector6d v;
+    orca_ros::utils::floatMultiArrayToEigen(srv.response.data, v);
+    return v;
 }
 
 orca::math::Vector6d RosCartesianAccelerationPIDProxy::getCartesianAccelerationRef()
 {
-
+    orca_ros::GetMatrix srv;
+    if(!sc_getCartesianAccelerationRef_.call(srv))
+    {
+        ROS_ERROR("Service call [getCartesianAccelerationRef] failed.");
+    }
+    orca::math::Vector6d v;
+    orca_ros::utils::floatMultiArrayToEigen(srv.response.data, v);
+    return v;
 }
 
 void RosCartesianAccelerationPIDProxy::print()
 {
-
+    std_srvs::Empty srv;
+    if(!sc_print_.call(srv))
+    {
+        ROS_ERROR("Service call [print] failed.");
+    }
 }
