@@ -9,11 +9,8 @@ RosCartesianAccelerationPID::RosCartesianAccelerationPID(   const std::string& r
 : RosWrapperBase(robot_name, controller_name, task_name+"/pid", "tasks")
 , cart_acc_pid_(cart_acc_pid)
 {
-    auto pid_internal = cart_acc_pid_->pid();
+    internal_pid_wrapper_ = std::make_shared<RosPIDController>(robot_name, controller_name, task_name, cart_acc_pid_->pid());
 
-    internal_pid_wrapper_ = std::make_shared<RosPIDController>(robot_name, controller_name, task_name, pid_internal);
-
-    // getNodeHandle()->advertiseService("getSize", &RosCartesianAccelerationPID::getSizeService, this);
     getNodeHandle()->advertiseService("setDesired", &RosCartesianAccelerationPID::setDesiredService, this);
     getNodeHandle()->advertiseService("getCommand", &RosCartesianAccelerationPID::getCommandService, this);
     getNodeHandle()->advertiseService("getCartesianPositionRef", &RosCartesianAccelerationPID::getCartesianPositionRefService, this);
@@ -29,36 +26,41 @@ RosCartesianAccelerationPID::~RosCartesianAccelerationPID()
 
 bool RosCartesianAccelerationPID::setDesiredService(orca_ros::SetDesired::Request &req, orca_ros::SetDesired::Response &res)
 {
-    // cart_acc_pid_->setDesired();
+    Eigen::Matrix4d pos;
+    orca::math::Vector6d vel, acc;
+    orca_ros::utils::floatMultiArrayToEigen(req.position, pos);
+    orca_ros::utils::floatMultiArrayToEigen(req.velocity, vel);
+    orca_ros::utils::floatMultiArrayToEigen(req.acceleration, acc);
+    cart_acc_pid_->setDesired(pos, vel, acc);
     return true;
 }
 
 bool RosCartesianAccelerationPID::getCommandService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res)
 {
-    // cart_acc_pid_->getCommand();
+    tf::matrixEigenToMsg(cart_acc_pid_->getCommand(), res.data);
     return true;
 }
 
 bool RosCartesianAccelerationPID::getCartesianPositionRefService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res)
 {
-    // cart_acc_pid_->getCartesianPositionRef();
+    tf::matrixEigenToMsg(cart_acc_pid_->getCartesianPositionRef(), res.data);
     return true;
 }
 
 bool RosCartesianAccelerationPID::getCartesianVelocityRefService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res)
 {
-    // cart_acc_pid_->getCartesianVelocityRef();
+    tf::matrixEigenToMsg(cart_acc_pid_->getCartesianVelocityRef(), res.data);
     return true;
 }
 
 bool RosCartesianAccelerationPID::getCartesianAccelerationRefService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res)
 {
-    // cart_acc_pid_->getCartesianAccelerationRef();
+    tf::matrixEigenToMsg(cart_acc_pid_->getCartesianAccelerationRef(), res.data);
     return true;
 }
 
 bool RosCartesianAccelerationPID::printService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res)
 {
-    // cart_acc_pid_->print();
+    cart_acc_pid_->print();
     return true;
 }
