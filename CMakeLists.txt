@@ -75,9 +75,12 @@ target_link_libraries(  ${PROJECT_NAME}
 add_dependencies(${PROJECT_NAME} orca_ros_generate_messages_cpp)
 
 
-
+# Example nodes:
 add_executable(minimal_controller examples/minimal_controller.cc)
 target_link_libraries(minimal_controller ${PROJECT_NAME})
+
+add_executable(minimal_client examples/minimal_client.cc)
+target_link_libraries(minimal_client ${PROJECT_NAME})
 
 # install(DIRECTORY include/${PROJECT_NAME}/
 #     DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}

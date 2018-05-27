@@ -4,6 +4,7 @@
 #include "orca_ros/messages.h"
 
 #include "orca_ros/optim/RosController.h"
+#include "orca_ros/optim/RosControllerProxy.h"
 
 namespace orca_ros
 {
