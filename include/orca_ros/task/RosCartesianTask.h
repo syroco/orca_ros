@@ -33,8 +33,9 @@
 
 #pragma once
 
-#include "orca_ros/task/GenericTask.h"
-#include "orca_ros/common/CartesianServoController.h"
+#include "orca/task/CartesianTask.h"
+#include "orca_ros/task/RosGenericTask.h"
+#include "orca_ros/common/RosCartesianAccelerationPID.h"
 
 namespace orca_ros
 {
@@ -45,18 +46,23 @@ namespace task
 class RosCartesianTask : public RosGenericTask
 {
 public:
-    RosCartesianTask(const std::string& name);
-    void setDesired(const orca::math::Vector6d& cartesian_acceleration_des);
-    void setBaseFrame(const std::string& base_ref_frame);
-    void setControlFrame(const std::string& control_frame);
-    const std::string& getBaseFrame() const;
-    const std::string& getControlFrame() const;
-    std::shared_ptr<common::CartesianServoController> servoController();
+    RosCartesianTask(const std::string& robot_name,
+                const std::string& controller_name,
+                std::shared_ptr<orca::task::CartesianTask> cart_task);
+    virtual ~RosCartesianTask();
 
 private:
-    std::string base_ref_frame_,control_frame_;
-    orca::math::Vector6d cart_acc_des_,cart_acc_bias_;
-    std::shared_ptr<common::CartesianServoController> servo_;
+
+    bool setDesiredService(orca_ros::SetMatrix::Request &req, orca_ros::SetMatrix::Response & res);
+    bool setBaseFrameService(orca_ros::SetString::Request &req, orca_ros::SetString::Response & res);
+    bool setControlFrameService(orca_ros::SetString::Request &req, orca_ros::SetString::Response & res);
+    bool getBaseFrameService(orca_ros::GetString::Request &req, orca_ros::GetString::Response & res);
+    bool getControlFrameService(orca_ros::GetString::Request &req, orca_ros::GetString::Response & res);
+
+private:
+    std::shared_ptr<orca::task::CartesianTask> cart_task_;
+    std::shared_ptr<orca_ros::common::RosCartesianAccelerationPID> cart_servo_wrapper_;
+
 };
 
 } // namespace task
