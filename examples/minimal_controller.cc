@@ -59,9 +59,8 @@ int main(int argc, char *argv[])
         ,ResolutionStrategy::OneLevelWeighted // MultiLevelWeighted, Generalized
         ,QPSolver::qpOASES
     );
-    
-    ros::NodeHandle n;
-    // auto controller_ros_server = RosController(robot_name, controller);
+
+    auto controller_ros_server = RosController(robot_name, controller);
 
     ros::Rate r(250);
 
