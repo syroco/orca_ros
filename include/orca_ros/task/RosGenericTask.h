@@ -86,6 +86,18 @@ namespace task
 
     private:
         std::shared_ptr<orca::task::GenericTask> gt_;
+
+        ros::ServiceServer ss_getWeightService_;
+        ros::ServiceServer ss_setWeightService_;
+        ros::ServiceServer ss_getSizeService_;
+        ros::ServiceServer ss_colsService_;
+        ros::ServiceServer ss_rowsService_;
+        ros::ServiceServer ss_getEService_;
+        ros::ServiceServer ss_getfService_;
+        ros::ServiceServer ss_printService_;
+        ros::ServiceServer ss_setEService_;
+        ros::ServiceServer ss_setfService_;
+
     };
 
 } // namespace task

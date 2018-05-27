@@ -8,52 +8,21 @@ RosTaskBase::RosTaskBase(   const std::string& robot_name,
                             std::shared_ptr<orca::common::TaskBase> base
                         )
 : base_(base)
-// , rn_(robot_name)
-// , cn_(controller_name)
-// , gp_(generic_prefix)
-, RosWrapperBase(robot_name, controller_name, base_->getName(), generic_prefix)
+, RosWrapperBase(robot_name, controller_name, base->getName(), generic_prefix)
 {
-    // nh_ = std::make_shared<ros::NodeHandle>(getNamespacePrefix());
-    // nh_->advertiseService("isActivated", &RosTaskBase::isActivatedService, this );
-    // nh_->advertiseService("getName", &RosTaskBase::getNameService, this );
-    // nh_->advertiseService("activate", &RosTaskBase::activateService, this );
-    // nh_->advertiseService("deactivate", &RosTaskBase::deactivateService, this );
-    // nh_->advertiseService("print", &RosTaskBase::printService, this );
-    // nh_->advertiseService("getState", &RosTaskBase::getStateService, this );
-    // nh_->advertiseService("setRampDuration", &RosTaskBase::setRampDurationService, this );
-    // nh_->advertiseService("getRampDuration", &RosTaskBase::getRampDurationService, this );
-
-    getNodeHandle()->advertiseService("isActivated", &RosTaskBase::isActivatedService, this );
-    getNodeHandle()->advertiseService("getName", &RosTaskBase::getNameService, this );
-    getNodeHandle()->advertiseService("activate", &RosTaskBase::activateService, this );
-    getNodeHandle()->advertiseService("deactivate", &RosTaskBase::deactivateService, this );
-    getNodeHandle()->advertiseService("print", &RosTaskBase::printService, this );
-    getNodeHandle()->advertiseService("getState", &RosTaskBase::getStateService, this );
-    getNodeHandle()->advertiseService("setRampDuration", &RosTaskBase::setRampDurationService, this );
-    getNodeHandle()->advertiseService("getRampDuration", &RosTaskBase::getRampDurationService, this );
+    ss_isActivated_ = getNodeHandle()->advertiseService("isActivated", &RosTaskBase::isActivatedService, this );
+    ss_getName_ = getNodeHandle()->advertiseService("getName", &RosTaskBase::getNameService, this );
+    ss_activate_ = getNodeHandle()->advertiseService("activate", &RosTaskBase::activateService, this );
+    ss_deactivate_ = getNodeHandle()->advertiseService("deactivate", &RosTaskBase::deactivateService, this );
+    ss_print_ = getNodeHandle()->advertiseService("print", &RosTaskBase::printService, this );
+    ss_getState_ = getNodeHandle()->advertiseService("getState", &RosTaskBase::getStateService, this );
+    ss_setRampDuration_ = getNodeHandle()->advertiseService("setRampDuration", &RosTaskBase::setRampDurationService, this );
+    ss_getRampDuration_ = getNodeHandle()->advertiseService("getRampDuration", &RosTaskBase::getRampDurationService, this );
 }
 
 RosTaskBase::~RosTaskBase()
 {
 }
-
-// std::shared_ptr<ros::NodeHandle> RosTaskBase::getNodeHandle()
-// {
-//     return nh_;
-// }
-// std::string RosTaskBase::getRobotName()
-// {
-//     return rn_;
-// }
-// std::string RosTaskBase::getControllerName()
-// {
-//     return cn_;
-// }
-// std::string RosTaskBase::getGenericPrefix()
-// {
-//     return gp_;
-// }
-
 
 bool RosTaskBase::isActivatedService(orca_ros::GetBool::Request& req, orca_ros::GetBool::Response& res)
 {

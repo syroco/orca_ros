@@ -6,17 +6,17 @@ RosCartesianTask::RosCartesianTask( const std::string& robot_name,
                                     const std::string& controller_name,
                                     std::shared_ptr<orca::task::CartesianTask> cart_task)
 : cart_task_(cart_task)
-, RosGenericTask(robot_name, controller_name, cart_task_)
+, RosGenericTask(robot_name, controller_name, cart_task)
 {
     cart_servo_wrapper_ = std::make_shared<orca_ros::common::RosCartesianAccelerationPID>(robot_name, controller_name, cart_task->getName(), cart_task_->servoController());
 
     // current_state_pub_ = getNodeHandle()->publish<orca_ros::CartesianTaskState>("current_state", 1, true);
 
-    getNodeHandle()->advertiseService("setDesired", &RosCartesianTask::setDesiredService, this);
-    getNodeHandle()->advertiseService("setBaseFrame", &RosCartesianTask::setBaseFrameService, this);
-    getNodeHandle()->advertiseService("setControlFrame", &RosCartesianTask::setControlFrameService, this);
-    getNodeHandle()->advertiseService("getBaseFrame", &RosCartesianTask::getBaseFrameService, this);
-    getNodeHandle()->advertiseService("getControlFrame", &RosCartesianTask::getControlFrameService, this);
+    ss_setDesired_ = getNodeHandle()->advertiseService("setDesired", &RosCartesianTask::setDesiredService, this);
+    ss_setBaseFrame_ = getNodeHandle()->advertiseService("setBaseFrame", &RosCartesianTask::setBaseFrameService, this);
+    ss_setControlFrame_ = getNodeHandle()->advertiseService("setControlFrame", &RosCartesianTask::setControlFrameService, this);
+    ss_getBaseFrame_ = getNodeHandle()->advertiseService("getBaseFrame", &RosCartesianTask::getBaseFrameService, this);
+    ss_getControlFrame_ = getNodeHandle()->advertiseService("getControlFrame", &RosCartesianTask::getControlFrameService, this);
 }
 
 RosCartesianTask::~RosCartesianTask()

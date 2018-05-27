@@ -75,6 +75,13 @@ namespace constraint
     private:
         std::shared_ptr<orca::constraint::GenericConstraint> gc_;
 
+        ros::ServiceServer ss_print_;
+        ros::ServiceServer ss_getSize_;
+        ros::ServiceServer ss_rows_;
+        ros::ServiceServer ss_cols_;
+        ros::ServiceServer ss_getLowerBound_;
+        ros::ServiceServer ss_getUpperBound_;
+        ros::ServiceServer ss_getConstraintMatrix_;
 
     };
 

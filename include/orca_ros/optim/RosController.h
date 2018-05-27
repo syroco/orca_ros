@@ -51,21 +51,33 @@ public:
 
     virtual ~RosController();
 
-    bool getName(orca_ros::GetString::Request &req, orca_ros::GetString::Response &res);
-    bool print(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
-    bool setPrintLevel(orca_ros::SetInt::Request &req, orca_ros::SetInt::Response &res);
-    bool update(orca_ros::UpdateController::Request &req, orca_ros::UpdateController::Response &res);
-    bool addTask(orca_ros::AddTask::Request &req, orca_ros::AddTask::Response &res);
-    bool addConstraint(orca_ros::AddConstraint::Request &req, orca_ros::AddConstraint::Response &res);
-    bool getFullSolution(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
-    bool getJointTorqueCommand(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
-    bool getJointAccelerationCommand(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
-    bool activateAll(orca_ros::SetDouble::Request &req, orca_ros::SetDouble::Response &res);
-    bool deactivateAll(orca_ros::SetDouble::Request &req, orca_ros::SetDouble::Response &res);
-    bool allDeactivated(orca_ros::GetBool::Request &req, orca_ros::GetBool::Response &res);
+    bool getNameService(orca_ros::GetString::Request &req, orca_ros::GetString::Response &res);
+    bool printService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
+    bool setPrintLevelService(orca_ros::SetInt::Request &req, orca_ros::SetInt::Response &res);
+    bool updateService(orca_ros::UpdateController::Request &req, orca_ros::UpdateController::Response &res);
+    bool addTaskService(orca_ros::AddTask::Request &req, orca_ros::AddTask::Response &res);
+    bool addConstraintService(orca_ros::AddConstraint::Request &req, orca_ros::AddConstraint::Response &res);
+    bool getFullSolutionService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
+    bool getJointTorqueCommandService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
+    bool getJointAccelerationCommandService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
+    bool activateAllService(orca_ros::SetDouble::Request &req, orca_ros::SetDouble::Response &res);
+    bool deactivateAllService(orca_ros::SetDouble::Request &req, orca_ros::SetDouble::Response &res);
+    bool allDeactivatedService(orca_ros::GetBool::Request &req, orca_ros::GetBool::Response &res);
 private:
     std::shared_ptr<orca::optim::Controller> ctrl_;
+    
     ros::ServiceServer ss_getName_;
+    ros::ServiceServer ss_print_;
+    ros::ServiceServer ss_setPrintLevel_;
+    ros::ServiceServer ss_update_;
+    ros::ServiceServer ss_addTask_;
+    ros::ServiceServer ss_addConstraint_;
+    ros::ServiceServer ss_getFullSolution_;
+    ros::ServiceServer ss_getJointTorqueCommand_;
+    ros::ServiceServer ss_getJointAccelerationCommand_;
+    ros::ServiceServer ss_activateAll_;
+    ros::ServiceServer ss_deactivateAll_;
+    ros::ServiceServer ss_allDeactivated_;
 };
 
 } // namespace optim

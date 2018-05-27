@@ -63,6 +63,11 @@ private:
     std::shared_ptr<orca::task::CartesianTask> cart_task_;
     std::shared_ptr<orca_ros::common::RosCartesianAccelerationPID> cart_servo_wrapper_;
 
+    ros::ServiceServer ss_setDesired_;
+    ros::ServiceServer ss_setBaseFrame_;
+    ros::ServiceServer ss_setControlFrame_;
+    ros::ServiceServer ss_getBaseFrame_;
+    ros::ServiceServer ss_getControlFrame_;
 };
 
 } // namespace task

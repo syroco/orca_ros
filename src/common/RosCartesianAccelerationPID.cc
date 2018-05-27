@@ -11,12 +11,12 @@ RosCartesianAccelerationPID::RosCartesianAccelerationPID(   const std::string& r
 {
     internal_pid_wrapper_ = std::make_shared<RosPIDController>(robot_name, controller_name, task_name, cart_acc_pid_->pid());
 
-    getNodeHandle()->advertiseService("setDesired", &RosCartesianAccelerationPID::setDesiredService, this);
-    getNodeHandle()->advertiseService("getCommand", &RosCartesianAccelerationPID::getCommandService, this);
-    getNodeHandle()->advertiseService("getCartesianPositionRef", &RosCartesianAccelerationPID::getCartesianPositionRefService, this);
-    getNodeHandle()->advertiseService("getCartesianVelocityRef", &RosCartesianAccelerationPID::getCartesianVelocityRefService, this);
-    getNodeHandle()->advertiseService("getCartesianAccelerationRef", &RosCartesianAccelerationPID::getCartesianAccelerationRefService, this);
-    getNodeHandle()->advertiseService("print", &RosCartesianAccelerationPID::printService, this);
+    ss_setDesired_ = getNodeHandle()->advertiseService("setDesired", &RosCartesianAccelerationPID::setDesiredService, this);
+    ss_getCommand_ = getNodeHandle()->advertiseService("getCommand", &RosCartesianAccelerationPID::getCommandService, this);
+    ss_getCartesianPositionRef_ = getNodeHandle()->advertiseService("getCartesianPositionRef", &RosCartesianAccelerationPID::getCartesianPositionRefService, this);
+    ss_getCartesianVelocityRef_ = getNodeHandle()->advertiseService("getCartesianVelocityRef", &RosCartesianAccelerationPID::getCartesianVelocityRefService, this);
+    ss_getCartesianAccelerationRef_ = getNodeHandle()->advertiseService("getCartesianAccelerationRef", &RosCartesianAccelerationPID::getCartesianAccelerationRefService, this);
+    ss_print_ = getNodeHandle()->advertiseService("print", &RosCartesianAccelerationPID::printService, this);
 }
 
 RosCartesianAccelerationPID::~RosCartesianAccelerationPID()

@@ -61,6 +61,13 @@ namespace orca_ros
         private:
             std::shared_ptr<orca::common::CartesianAccelerationPID> cart_acc_pid_;
             std::shared_ptr<RosPIDController> internal_pid_wrapper_;
+
+            ros::ServiceServer ss_setDesired_;
+            ros::ServiceServer ss_getCommand_;
+            ros::ServiceServer ss_getCartesianPositionRef_;
+            ros::ServiceServer ss_getCartesianVelocityRef_;
+            ros::ServiceServer ss_getCartesianAccelerationRef_;
+            ros::ServiceServer ss_print_;
         };
     }
 }

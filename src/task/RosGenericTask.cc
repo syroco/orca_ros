@@ -6,18 +6,18 @@ RosGenericTask::RosGenericTask(const std::string& robot_name,
                                 const std::string& controller_name,
                                 std::shared_ptr<orca::task::GenericTask> gen_task)
 : gt_(gen_task)
-, RosTaskBase(robot_name, controller_name, "tasks", gt_)
+, RosTaskBase(robot_name, controller_name, "tasks", gen_task)
 {
-    getNodeHandle()->advertiseService( "getWeightService", &RosGenericTask::getWeightService, this);
-    getNodeHandle()->advertiseService( "setWeightService", &RosGenericTask::setWeightService, this);
-    getNodeHandle()->advertiseService( "getSizeService", &RosGenericTask::getSizeService, this);
-    getNodeHandle()->advertiseService( "colsService", &RosGenericTask::colsService, this);
-    getNodeHandle()->advertiseService( "rowsService", &RosGenericTask::rowsService, this);
-    getNodeHandle()->advertiseService( "getEService", &RosGenericTask::getEService, this);
-    getNodeHandle()->advertiseService( "getfService", &RosGenericTask::getfService, this);
-    getNodeHandle()->advertiseService( "printService", &RosGenericTask::printService, this);
-    getNodeHandle()->advertiseService( "setEService", &RosGenericTask::setEService, this);
-    getNodeHandle()->advertiseService( "setfService", &RosGenericTask::setfService, this);
+    ss_getWeightService_ = getNodeHandle()->advertiseService( "getWeightService", &RosGenericTask::getWeightService, this);
+    ss_setWeightService_ = getNodeHandle()->advertiseService( "setWeightService", &RosGenericTask::setWeightService, this);
+    ss_getSizeService_ = getNodeHandle()->advertiseService( "getSizeService", &RosGenericTask::getSizeService, this);
+    ss_colsService_ = getNodeHandle()->advertiseService( "colsService", &RosGenericTask::colsService, this);
+    ss_rowsService_ = getNodeHandle()->advertiseService( "rowsService", &RosGenericTask::rowsService, this);
+    ss_getEService_ = getNodeHandle()->advertiseService( "getEService", &RosGenericTask::getEService, this);
+    ss_getfService_ = getNodeHandle()->advertiseService( "getfService", &RosGenericTask::getfService, this);
+    ss_printService_ = getNodeHandle()->advertiseService( "printService", &RosGenericTask::printService, this);
+    ss_setEService_ = getNodeHandle()->advertiseService( "setEService", &RosGenericTask::setEService, this);
+    ss_setfService_ = getNodeHandle()->advertiseService( "setfService", &RosGenericTask::setfService, this);
 }
 
 RosGenericTask::~RosGenericTask()

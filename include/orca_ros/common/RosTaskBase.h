@@ -79,8 +79,16 @@ namespace common
 
 
     private:
-            std::shared_ptr<orca::common::TaskBase> base_; /*!< Pointer to the base task */
+        std::shared_ptr<orca::common::TaskBase> base_; /*!< Pointer to the base task */
 
+        ros::ServiceServer ss_isActivated_;
+        ros::ServiceServer ss_getName_;
+        ros::ServiceServer ss_activate_;
+        ros::ServiceServer ss_deactivate_;
+        ros::ServiceServer ss_print_;
+        ros::ServiceServer ss_getState_;
+        ros::ServiceServer ss_setRampDuration_;
+        ros::ServiceServer ss_getRampDuration_;
     };
 
 } // namespace common

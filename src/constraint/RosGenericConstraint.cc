@@ -6,15 +6,15 @@ RosGenericConstraint::RosGenericConstraint(const std::string& robot_name,
                             const std::string& controller_name,
                             std::shared_ptr<orca::constraint::GenericConstraint> gen_con)
 : gc_(gen_con)
-, RosTaskBase(robot_name, controller_name, "constraints", gc_)
+, RosTaskBase(robot_name, controller_name, "constraints", gen_con)
 {
-    getNodeHandle()->advertiseService( "print", &RosGenericConstraint::printService, this);
-    getNodeHandle()->advertiseService( "getSize", &RosGenericConstraint::getSizeService, this);
-    getNodeHandle()->advertiseService( "rows", &RosGenericConstraint::rowsService, this);
-    getNodeHandle()->advertiseService( "cols", &RosGenericConstraint::colsService, this);
-    getNodeHandle()->advertiseService( "getLowerBound", &RosGenericConstraint::getLowerBoundService, this);
-    getNodeHandle()->advertiseService( "getUpperBound", &RosGenericConstraint::getUpperBoundService, this);
-    getNodeHandle()->advertiseService( "getConstraintMatrix", &RosGenericConstraint::getConstraintMatrixService, this);
+    ss_print_ = getNodeHandle()->advertiseService( "print", &RosGenericConstraint::printService, this);
+    ss_getSize_ = getNodeHandle()->advertiseService( "getSize", &RosGenericConstraint::getSizeService, this);
+    ss_rows_ = getNodeHandle()->advertiseService( "rows", &RosGenericConstraint::rowsService, this);
+    ss_cols_ = getNodeHandle()->advertiseService( "cols", &RosGenericConstraint::colsService, this);
+    ss_getLowerBound_ = getNodeHandle()->advertiseService( "getLowerBound", &RosGenericConstraint::getLowerBoundService, this);
+    ss_getUpperBound_ = getNodeHandle()->advertiseService( "getUpperBound", &RosGenericConstraint::getUpperBoundService, this);
+    ss_getConstraintMatrix_ = getNodeHandle()->advertiseService( "getConstraintMatrix", &RosGenericConstraint::getConstraintMatrixService, this);
 }
 
 RosGenericConstraint::~RosGenericConstraint()

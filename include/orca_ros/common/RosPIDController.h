@@ -79,7 +79,17 @@ namespace orca_ros
                                         );
 
         private:
-            std::shared_ptr<orca::common::PIDController> pid_; 
+            std::shared_ptr<orca::common::PIDController> pid_;
+
+            ros::ServiceServer ss_getSize_;
+            ros::ServiceServer ss_setProportionalGain_;
+            ros::ServiceServer ss_getProportionalGain_;
+            ros::ServiceServer ss_setIntegralGain_;
+            ros::ServiceServer ss_getIntegralGain_;
+            ros::ServiceServer ss_setWindupLimit_;
+            ros::ServiceServer ss_getWindupLimit_;
+            ros::ServiceServer ss_setDerivativeGain_;
+            ros::ServiceServer ss_getDerivativeGain_;
         };
     } // namespace common
 } // namespace orca_ros

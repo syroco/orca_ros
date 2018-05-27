@@ -9,15 +9,15 @@ RosPIDController::RosPIDController( const std::string& robot_name,
 : RosWrapperBase(robot_name, controller_name, task_name+"/pid", "tasks")
 , pid_(pid)
 {
-    getNodeHandle()->advertiseService("getSize", &RosPIDController::getSizeService, this);
-    getNodeHandle()->advertiseService("setProportionalGain", &RosPIDController::setProportionalGainService, this);
-    getNodeHandle()->advertiseService("getProportionalGain", &RosPIDController::getProportionalGainService, this);
-    getNodeHandle()->advertiseService("setIntegralGain", &RosPIDController::setIntegralGainService, this);
-    getNodeHandle()->advertiseService("getIntegralGain", &RosPIDController::getIntegralGainService, this);
-    getNodeHandle()->advertiseService("setWindupLimit", &RosPIDController::setWindupLimitService, this);
-    getNodeHandle()->advertiseService("getWindupLimit", &RosPIDController::getWindupLimitService, this);
-    getNodeHandle()->advertiseService("setDerivativeGain", &RosPIDController::setDerivativeGainService, this);
-    getNodeHandle()->advertiseService("getDerivativeGain", &RosPIDController::getDerivativeGainService, this);
+     ss_getSize_ = getNodeHandle()->advertiseService("getSize", &RosPIDController::getSizeService, this);
+     ss_setProportionalGain_ = getNodeHandle()->advertiseService("setProportionalGain", &RosPIDController::setProportionalGainService, this);
+     ss_getProportionalGain_ = getNodeHandle()->advertiseService("getProportionalGain", &RosPIDController::getProportionalGainService, this);
+     ss_setIntegralGain_ = getNodeHandle()->advertiseService("setIntegralGain", &RosPIDController::setIntegralGainService, this);
+     ss_getIntegralGain_ = getNodeHandle()->advertiseService("getIntegralGain", &RosPIDController::getIntegralGainService, this);
+     ss_setWindupLimit_ = getNodeHandle()->advertiseService("setWindupLimit", &RosPIDController::setWindupLimitService, this);
+     ss_getWindupLimit_ = getNodeHandle()->advertiseService("getWindupLimit", &RosPIDController::getWindupLimitService, this);
+     ss_setDerivativeGain_ = getNodeHandle()->advertiseService("setDerivativeGain", &RosPIDController::setDerivativeGainService, this);
+     ss_getDerivativeGain_ = getNodeHandle()->advertiseService("getDerivativeGain", &RosPIDController::getDerivativeGainService, this);
 }
 
 RosPIDController::~RosPIDController()
