@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ros/ros.h>
+#include <orca/orca.h>
 #include <orca_ros/utils/MsgUtils.h>
 #include <orca_ros/services.h>
 #include <orca_ros/messages.h>

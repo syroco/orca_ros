@@ -1,0 +1,6 @@
+---
+std_msgs/Float64MultiArray position
+std_msgs/Float64MultiArray velocity
+std_msgs/Float64MultiArray acceleration
+std_msgs/Float64MultiArray torque
+std_msgs/Float64MultiArray wrench
