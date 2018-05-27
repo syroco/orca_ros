@@ -9,11 +9,8 @@ RosCartesianAccelerationPID::RosCartesianAccelerationPID(   const std::string& r
 : RosWrapperBase(robot_name, controller_name, task_name+"/pid", "tasks")
 , cart_acc_pid_(cart_acc_pid)
 {
-    auto pid_internal = cart_acc_pid_->pid();
+    internal_pid_wrapper_ = std::make_shared<RosPIDController>(robot_name, controller_name, task_name, cart_acc_pid_->pid());
 
-    internal_pid_wrapper_ = std::make_shared<RosPIDController>(robot_name, controller_name, task_name, pid_internal);
-
-    // getNodeHandle()->advertiseService("getSize", &RosCartesianAccelerationPID::getSizeService, this);
     getNodeHandle()->advertiseService("setDesired", &RosCartesianAccelerationPID::setDesiredService, this);
     getNodeHandle()->advertiseService("getCommand", &RosCartesianAccelerationPID::getCommandService, this);
     getNodeHandle()->advertiseService("getCartesianPositionRef", &RosCartesianAccelerationPID::getCartesianPositionRefService, this);
