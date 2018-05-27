@@ -5,6 +5,10 @@
 using namespace orca::all;
 using namespace orca_ros::all;
 
+// To start this example :
+// rosrun orca_ros minimal_controller _robot_name:="lwr" _base_frame:="link_0" _urdf_url:="$(rospack find orca)/examples/lwr.urdf"
+
+
 int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "orca_cart_demo0");
