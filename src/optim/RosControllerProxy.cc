@@ -8,7 +8,7 @@ RosControllerProxy::RosControllerProxy( const std::string& robot_name,
 {
     sc_getName_ = getNodeHandle()->serviceClient<orca_ros::GetString>("getName");
     sc_print_ = getNodeHandle()->serviceClient<std_srvs::Empty>("print");
-    sc_setPrintLevel_ = getNodeHandle()->serviceClient<orca_ros::GetInt>("setPrintLevel");
+    sc_setPrintLevel_ = getNodeHandle()->serviceClient<orca_ros::SetInt>("setPrintLevel");
     sc_update_ = getNodeHandle()->serviceClient<orca_ros::UpdateController>("update");
     sc_addTask_ = getNodeHandle()->serviceClient<orca_ros::AddTask>("addTask");
     sc_addConstraint_ = getNodeHandle()->serviceClient<orca_ros::AddConstraint>("addConstraint");
@@ -46,7 +46,8 @@ void RosControllerProxy::print()
 
 void RosControllerProxy::setPrintLevel(int level)
 {
-    orca_ros::GetInt srv;
+    orca_ros::SetInt srv;
+    srv.request.value = level;
     if(!sc_setPrintLevel_.call(srv))
     {
         ROS_ERROR("Service call [setPrintLevel] failed.");
@@ -56,6 +57,8 @@ void RosControllerProxy::setPrintLevel(int level)
 void RosControllerProxy::update(double current_time, double dt)
 {
     orca_ros::UpdateController srv;
+    srv.request.current_time = current_time;
+    srv.request.dt = dt;
     if(!sc_update_.call(srv))
     {
         ROS_ERROR("Service call [update] failed.");
@@ -87,6 +90,9 @@ Eigen::VectorXd RosControllerProxy::getFullSolution()
     {
         ROS_ERROR("Service call [getFullSolution] failed.");
     }
+    Eigen::VectorXd v;
+    orca_ros::utils::floatMultiArrayToEigen(srv.response.data, v);
+    return v;
 }
 
 Eigen::VectorXd RosControllerProxy::getJointTorqueCommand()
@@ -96,6 +102,9 @@ Eigen::VectorXd RosControllerProxy::getJointTorqueCommand()
     {
         ROS_ERROR("Service call [getJointTorqueCommand] failed.");
     }
+    Eigen::VectorXd v;
+    orca_ros::utils::floatMultiArrayToEigen(srv.response.data, v);
+    return v;
 }
 
 Eigen::VectorXd RosControllerProxy::getJointAccelerationCommand()
@@ -105,11 +114,15 @@ Eigen::VectorXd RosControllerProxy::getJointAccelerationCommand()
     {
         ROS_ERROR("Service call [getJointAccelerationCommand] failed.");
     }
+    Eigen::VectorXd v;
+    orca_ros::utils::floatMultiArrayToEigen(srv.response.data, v);
+    return v;
 }
 
 void RosControllerProxy::activateAll(double current_time)
 {
     orca_ros::SetDouble srv;
+    srv.request.value = current_time;
     if(!sc_activateAll_.call(srv))
     {
         ROS_ERROR("Service call [activateAll] failed.");
@@ -119,6 +132,7 @@ void RosControllerProxy::activateAll(double current_time)
 void RosControllerProxy::deactivateAll(double current_time)
 {
     orca_ros::SetDouble srv;
+    srv.request.value = current_time;
     if(!sc_deactivateAll_.call(srv))
     {
         ROS_ERROR("Service call [deactivateAll] failed.");
@@ -132,4 +146,5 @@ bool RosControllerProxy::allDeactivated()
     {
         ROS_ERROR("Service call [allDeactivated] failed.");
     }
+    return srv.response.value;
 }

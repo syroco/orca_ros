@@ -52,17 +52,17 @@ public:
     virtual ~RosController();
 
     bool getName(orca_ros::GetString::Request &req, orca_ros::GetString::Response &res);
-    bool print(std_srvs::Empty::Request &req, std_srvs::Empty &res);
-    bool setPrintLevel(orca_ros::GetInt::Request &req, orca_ros::GetInt &res);
-    bool update(orca_ros::UpdateController::Request &req, orca_ros::UpdateController &res);
-    bool addTask(orca_ros::AddTask::Request &req, orca_ros::AddTask &res);
-    bool addConstraint(orca_ros::AddConstraint::Request &req, orca_ros::AddConstraint &res);
-    bool getFullSolution(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix &res);
-    bool getJointTorqueCommand(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix &res);
-    bool getJointAccelerationCommand(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix &res);
-    bool activateAll(orca_ros::SetDouble::Request &req, orca_ros::SetDouble &res);
-    bool deactivateAll(orca_ros::SetDouble::Request &req, orca_ros::SetDouble &res);
-    bool allDeactivated(orca_ros::GetBool::Request &req, orca_ros::GetBool &res);
+    bool print(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
+    bool setPrintLevel(orca_ros::SetInt::Request &req, orca_ros::SetInt::Response &res);
+    bool update(orca_ros::UpdateController::Request &req, orca_ros::UpdateController::Response &res);
+    bool addTask(orca_ros::AddTask::Request &req, orca_ros::AddTask::Response &res);
+    bool addConstraint(orca_ros::AddConstraint::Request &req, orca_ros::AddConstraint::Response &res);
+    bool getFullSolution(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
+    bool getJointTorqueCommand(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
+    bool getJointAccelerationCommand(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
+    bool activateAll(orca_ros::SetDouble::Request &req, orca_ros::SetDouble::Response &res);
+    bool deactivateAll(orca_ros::SetDouble::Request &req, orca_ros::SetDouble::Response &res);
+    bool allDeactivated(orca_ros::GetBool::Request &req, orca_ros::GetBool::Response &res);
 private:
     std::shared_ptr<orca::optim::Controller> ctrl_;
 };
