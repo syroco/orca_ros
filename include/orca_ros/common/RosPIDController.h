@@ -46,7 +46,7 @@ namespace orca_ros
             RosPIDController(   const std::string& robot_name,
                                 const std::string& controller_name,
                                 const std::string& task_name,
-                                std::shared_ptr<orca::common::PIDController<Eigen::Dynamic>> pid);
+                                std::shared_ptr<orca::common::PIDController> pid);
             virtual ~RosPIDController();
 
         private:
@@ -79,7 +79,7 @@ namespace orca_ros
                                         );
 
         private:
-            std::shared_ptr<orca::common::PIDController<Eigen::Dynamic>> pid_; 
+            std::shared_ptr<orca::common::PIDController> pid_; 
         };
     } // namespace common
 } // namespace orca_ros

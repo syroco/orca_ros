@@ -5,7 +5,7 @@ using namespace orca_ros::common;
 RosPIDController::RosPIDController( const std::string& robot_name,
                                     const std::string& controller_name,
                                     const std::string& task_name,
-                                    std::shared_ptr<orca::common::PIDController<Eigen::Dynamic>> pid)
+                                    std::shared_ptr<orca::common::PIDController> pid)
 : RosWrapperBase(robot_name, controller_name, task_name+"/pid", "tasks")
 , pid_(pid)
 {

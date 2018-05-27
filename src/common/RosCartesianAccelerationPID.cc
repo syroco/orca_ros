@@ -9,7 +9,7 @@ RosCartesianAccelerationPID::RosCartesianAccelerationPID(   const std::string& r
 : RosWrapperBase(robot_name, controller_name, task_name+"/pid", "tasks")
 , cart_acc_pid_(cart_acc_pid)
 {
-    auto pid_internal = std::make_shared<orca::common::PIDController<Eigen::Dynamic>>(std::move(cart_acc_pid_->pid()));
+    auto pid_internal = cart_acc_pid_->pid();
 
     internal_pid_wrapper_ = std::make_shared<RosPIDController>(robot_name, controller_name, task_name, pid_internal);
 
