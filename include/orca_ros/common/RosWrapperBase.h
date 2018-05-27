@@ -53,10 +53,10 @@ namespace common
         std::string getNamespacePrefix();
 
     private:
-        std::string rn_; /*!< robot name */
-        std::string cn_; /*!< controller name */
-        std::string gp_; /*!< generic prefix (either task or constraint) */
-        std::string on_; /*!< wrapped object name */
+        std::string rn_ = ""; /*!< robot name */
+        std::string cn_ = ""; /*!< controller name */
+        std::string gp_ = ""; /*!< generic prefix (either task or constraint) */
+        std::string on_ = ""; /*!< wrapped object name */
         std::shared_ptr<ros::NodeHandle> nh_; /*!< public NodeHandle */
     };
 

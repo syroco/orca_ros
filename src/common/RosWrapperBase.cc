@@ -11,7 +11,9 @@ RosWrapperBase::RosWrapperBase( const std::string& robot_name,
 , on_(object_name)
 , gp_(generic_prefix)
 {
-    nh_ = std::make_shared<ros::NodeHandle>(getNamespacePrefix());
+    std::string prefix = getNamespacePrefix();
+    std::cout << "Creating NodeHandle at prefix: " << prefix << '\n';
+    nh_ = std::make_shared<ros::NodeHandle>(prefix);
 }
 RosWrapperBase::~RosWrapperBase()
 {
