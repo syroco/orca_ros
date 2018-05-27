@@ -6,7 +6,7 @@ RosGenericTaskProxy::RosGenericTaskProxy(   const std::string& robot_name,
                                         const std::string& controller_name,
                                         const std::string& task_name
                                         )
-: RosTaskBaseProxy(robot_name, controller_name, "tasks", task_name)
+: RosTaskBaseProxy(robot_name, controller_name, task_name, "tasks")
 {
     sc_getWeight_ = getNodeHandle()->serviceClient<orca_ros::GetDouble>("getWeight");
     sc_setWeight_ = getNodeHandle()->serviceClient<orca_ros::SetDouble>("setWeight");

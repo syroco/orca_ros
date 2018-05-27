@@ -15,6 +15,12 @@ RosCartesianTaskProxy::RosCartesianTaskProxy(   const std::string& robot_name,
     sc_setControlFrame_ = getNodeHandle()->serviceClient<orca_ros::SetString>("setControlFrame");
     sc_getBaseFrame_ = getNodeHandle()->serviceClient<orca_ros::GetString>("getBaseFrame");
     sc_getControlFrame_ = getNodeHandle()->serviceClient<orca_ros::GetString>("getControlFrame");
+
+    sc_setDesired_.waitForExistence();
+    sc_setBaseFrame_.waitForExistence();
+    sc_setControlFrame_.waitForExistence();
+    sc_getBaseFrame_.waitForExistence();
+    sc_getControlFrame_.waitForExistence();
 }
 
 RosCartesianTaskProxy::~RosCartesianTaskProxy()

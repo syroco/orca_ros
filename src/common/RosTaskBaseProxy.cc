@@ -7,22 +7,8 @@ RosTaskBaseProxy::RosTaskBaseProxy(     const std::string& robot_name,
                                         const std::string& task_name,
                                         const std::string& generic_prefix
                         )
-// : rn_(robot_name)
-// , cn_(controller_name)
-// , tn_(task_name)
-// , gp_(generic_prefix)
 : RosWrapperBase(robot_name, controller_name, task_name, generic_prefix)
 {
-    // nh_ = std::make_shared<ros::NodeHandle>(getNamespacePrefix());
-    // sc_isActivated_ = nh_->serviceClient<orca_ros::GetBool>("isActivated");
-    // sc_getName_ = nh_->serviceClient<orca_ros::GetString>("getName");
-    // sc_activate_ = nh_->serviceClient<orca_ros::GetBool>("activate");
-    // sc_deactivate_ = nh_->serviceClient<orca_ros::GetBool>("deactivate");
-    // sc_print_ = nh_->serviceClient<std_srvs::Empty>("print");
-    // sc_getState_ = nh_->serviceClient<orca_ros::GetEnum>("getState");
-    // sc_setRampDuration_ = nh_->serviceClient<orca_ros::SetDouble>("setRampDuration");
-    // sc_getRampDuration_ = nh_->serviceClient<orca_ros::GetDouble>("getRampDuration");
-
     sc_isActivated_ = getNodeHandle()->serviceClient<orca_ros::GetBool>("isActivated");
     sc_getName_ = getNodeHandle()->serviceClient<orca_ros::GetString>("getName");
     sc_activate_ = getNodeHandle()->serviceClient<orca_ros::GetBool>("activate");

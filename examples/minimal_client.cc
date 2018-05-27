@@ -19,15 +19,24 @@ int main(int argc, char *argv[])
         return 0;
     }
 
+    std::string task_name("CartTask_EE");
     auto controller_proxy = orca_ros::optim::RosControllerProxy(robot_name,controller_name);
+    auto cart_task_proxy = orca_ros::task::RosCartesianTaskProxy(robot_name,controller_name,task_name);
 
     ros::Rate r(1);
 
     while (ros::ok())
     {
-        auto ctrl_name = controller_proxy.getName();
+        std::cout << "\n\n================================" << "\n";
+        std::cout << "Controller: " << controller_proxy.getName() << '\n';
+        std::cout << "---------------------------------" << '\n';
+        std::cout << "CartTask_EE:" << "\n\n";
+        std::cout << "Base Frame: " << cart_task_proxy.getBaseFrame() << "\n";
+        std::cout << "Control Frame: " << cart_task_proxy.getControlFrame() << "\n";
+        std::cout << "Postion Reference:\n" << cart_task_proxy.servoController()->getCartesianPositionRef() << "\n";
+        std::cout << "Proportional Gains:\n" << cart_task_proxy.servoController()->pid()->getProportionalGain() << "\n";
 
-        std::cout << "Controller name: " << ctrl_name << '\n';
+        // cart_task_proxy.print();
 
         ros::spinOnce();
         r.sleep();

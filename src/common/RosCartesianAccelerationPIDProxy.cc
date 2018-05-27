@@ -5,10 +5,10 @@ using namespace orca_ros::common;
 RosCartesianAccelerationPIDProxy::RosCartesianAccelerationPIDProxy( const std::string& robot_name,
                                                                     const std::string& controller_name,
                                                                     const std::string& task_name)
-: RosWrapperBase(robot_name, controller_name, task_name+"/pid", "tasks")
+: RosWrapperBase(robot_name, controller_name, task_name+"/servo", "tasks")
 {
 
-    internal_pid_proxy_ = std::make_shared<RosPIDControllerProxy>(robot_name, controller_name, task_name);
+    internal_pid_proxy_ = std::make_shared<RosPIDControllerProxy>(robot_name, controller_name, task_name+"/servo");
 
     sc_setDesired_ = getNodeHandle()->serviceClient<orca_ros::SetDesired>("setDesired");
     sc_getCommand_ = getNodeHandle()->serviceClient<orca_ros::GetMatrix>("getCommand");

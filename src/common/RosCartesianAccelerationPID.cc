@@ -6,10 +6,10 @@ RosCartesianAccelerationPID::RosCartesianAccelerationPID(   const std::string& r
                                                             const std::string& controller_name,
                                                             const std::string& task_name,
                                                             std::shared_ptr<orca::common::CartesianAccelerationPID> cart_acc_pid)
-: RosWrapperBase(robot_name, controller_name, task_name+"/pid", "tasks")
+: RosWrapperBase(robot_name, controller_name, task_name+"/servo", "tasks")
 , cart_acc_pid_(cart_acc_pid)
 {
-    internal_pid_wrapper_ = std::make_shared<RosPIDController>(robot_name, controller_name, task_name, cart_acc_pid_->pid());
+    internal_pid_wrapper_ = std::make_shared<RosPIDController>(robot_name, controller_name, task_name+"/servo", cart_acc_pid_->pid());
 
     ss_setDesired_ = getNodeHandle()->advertiseService("setDesired", &RosCartesianAccelerationPID::setDesiredService, this);
     ss_getCommand_ = getNodeHandle()->advertiseService("getCommand", &RosCartesianAccelerationPID::getCommandService, this);

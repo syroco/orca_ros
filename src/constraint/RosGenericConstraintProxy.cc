@@ -6,7 +6,7 @@ RosGenericConstraintProxy::RosGenericConstraintProxy(   const std::string& robot
                                                         const std::string& controller_name,
                                                         const std::string& constraint_name
                                                         )
-: RosTaskBaseProxy(robot_name, controller_name, "constraints", constraint_name)
+: RosTaskBaseProxy(robot_name, controller_name, constraint_name, "constraints")
 {
     sc_print_ = getNodeHandle()->serviceClient<std_srvs::Empty>("print");
     sc_getSize_ = getNodeHandle()->serviceClient<orca_ros::GetSize>("getSize");
