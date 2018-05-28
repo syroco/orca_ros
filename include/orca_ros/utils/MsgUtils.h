@@ -55,7 +55,10 @@ namespace utils
         int rows = m.layout.dim[0].size;
         int cols = m.layout.dim[1].size;
 
-        e = Eigen::Map<Derived>(m.data.data(), rows, cols);
+        // Data is stored in row major order
+        e = Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor>>(m.data.data(), rows, cols);
+        
+        // e = Eigen::Map<Derived>(m.data.data(), rows, cols);
     }
 
     inline void matrix4dEigenToPoseMsg(const Eigen::Matrix4d& e, geometry_msgs::Pose& m)
