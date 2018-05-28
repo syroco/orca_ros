@@ -61,7 +61,6 @@ private:
     bool getControlFrameService(orca_ros::GetString::Request &req, orca_ros::GetString::Response & res);
 
 private:
-    void startPublisherThread();
     void publishCurrentState();
     void desiredStateSubscriberCb(const orca_ros::CartesianTaskState::ConstPtr& msg);
 
@@ -78,8 +77,6 @@ private:
 private:
     ros::Publisher current_state_pub_;
     ros::Subscriber desired_state_sub_;
-    std::thread publisher_thread_;
-    int publisher_thread_hz_ = 250;
     orca_ros::CartesianTaskState current_state_msg_;
 };
 

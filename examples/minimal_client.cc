@@ -23,6 +23,21 @@ int main(int argc, char *argv[])
     auto controller_proxy = orca_ros::optim::RosControllerProxy(robot_name,controller_name);
     auto cart_task_proxy = orca_ros::task::RosCartesianTaskProxy(robot_name,controller_name,task_name);
 
+
+    // Set the pose desired for the link_7
+    Eigen::Affine3d cart_pos_ref;
+    // Translation
+    cart_pos_ref.translation() = Eigen::Vector3d(1.,0.75,0.5); // x,y,z in meters
+    cart_pos_ref.linear() = Eigen::Quaterniond::Identity().toRotationMatrix();
+
+    // Set the desired cartesian velocity to zero
+    orca::math::Vector6d cart_vel_ref;
+    cart_vel_ref.setZero();
+
+    // Set the desired cartesian velocity to zero
+    orca::math::Vector6d cart_acc_ref;
+    cart_acc_ref.setZero();
+
     ros::Rate r(1);
 
     while (ros::ok())
@@ -33,9 +48,12 @@ int main(int argc, char *argv[])
         std::cout << "CartTask_EE:" << "\n\n";
         std::cout << "Base Frame: " << cart_task_proxy.getBaseFrame() << "\n";
         std::cout << "Control Frame: " << cart_task_proxy.getControlFrame() << "\n";
-        std::cout << "Postion Reference:\n" << cart_task_proxy.servoController()->getCartesianPositionRef() << "\n";
+        std::cout << "Postion Reference:\n" << cart_task_proxy.servoController()->getCartesianPoseRef() << "\n";
         std::cout << "Proportional Gains:\n" << cart_task_proxy.servoController()->pid()->getProportionalGain() << "\n";
 
+        std::cout << "\n\nChanging reference:" << '\n';
+        cart_pos_ref.translation() += Eigen::Vector3d(0.1,0.1,0.1);
+        cart_task_proxy.servoController()->setDesired(cart_pos_ref.matrix(), cart_vel_ref, cart_acc_ref);
         // cart_task_proxy.print();
 
         ros::spinOnce();

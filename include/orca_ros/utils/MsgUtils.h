@@ -36,6 +36,7 @@
 
 #include <orca/math/Utils.h>
 #include <eigen_conversions/eigen_msg.h>
+#include <geometry_msgs/Accel.h>
 
 namespace orca_ros
 {
@@ -55,6 +56,39 @@ namespace utils
         int cols = m.layout.dim[1].size;
 
         e = Eigen::Map<Derived>(m.data.data(), rows, cols);
+    }
+
+    inline void matrix4dEigenToPoseMsg(const Eigen::Matrix4d& e, geometry_msgs::Pose& m)
+    {
+        Eigen::Affine3d a(e);
+        tf::poseEigenToMsg(a, m);
+    }
+
+    inline void poseMsgToMatrix4dEigen(const geometry_msgs::Pose& m, Eigen::Matrix4d& e)
+    {
+        Eigen::Affine3d a;
+        tf::poseMsgToEigen(m, a);
+        e = a.matrix();
+    }
+
+    inline void accelMsgToEigen(const geometry_msgs::Accel &m, Eigen::Matrix<double,6,1> &e)
+    {
+        e[0] = m.linear.x;
+        e[1] = m.linear.y;
+        e[2] = m.linear.z;
+        e[3] = m.angular.x;
+        e[4] = m.angular.y;
+        e[5] = m.angular.z;
+    }
+
+    inline void accelEigenToMsg(const Eigen::Matrix<double,6,1> &e, geometry_msgs::Accel &m)
+    {
+        m.linear.x = e[0];
+        m.linear.y = e[1];
+        m.linear.z = e[2];
+        m.angular.x = e[3];
+        m.angular.y = e[4];
+        m.angular.z = e[5];
     }
 
 }//namespace orca_ros

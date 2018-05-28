@@ -54,7 +54,9 @@ namespace orca_ros
         public:
             bool setDesiredService(orca_ros::SetDesired::Request &req, orca_ros::SetDesired::Response &res);
             bool getCommandService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
-            bool getCartesianPositionRefService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
+            bool getCurrentCartesianPoseService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
+            bool getCurrentCartesianVelocityService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
+            bool getCartesianPoseRefService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
             bool getCartesianVelocityRefService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
             bool getCartesianAccelerationRefService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
             bool printService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
@@ -65,7 +67,9 @@ namespace orca_ros
 
             ros::ServiceServer ss_setDesired_;
             ros::ServiceServer ss_getCommand_;
-            ros::ServiceServer ss_getCartesianPositionRef_;
+            ros::ServiceServer ss_getCurrentCartesianPose_;
+            ros::ServiceServer ss_getCurrentCartesianVelocity_;
+            ros::ServiceServer ss_getCartesianPoseRef_;
             ros::ServiceServer ss_getCartesianVelocityRef_;
             ros::ServiceServer ss_getCartesianAccelerationRef_;
             ros::ServiceServer ss_print_;

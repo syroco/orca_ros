@@ -65,21 +65,15 @@ int main(int argc, char *argv[])
 
     // Cartesian Task
     auto cart_task = std::make_shared<CartesianTask>("CartTask_EE");
+    controller->addTask(cart_task);
+
     cart_task->setControlFrame("link_7"); // We want to control the link_7
 
     // Set the pose desired for the link_7
     Eigen::Affine3d cart_pos_ref;
     // Translation
     cart_pos_ref.translation() = Eigen::Vector3d(1.,0.75,0.5); // x,y,z in meters
-    // Rotation is done with a Matrix3x3
-    Eigen::Quaterniond quat;
-    // Example 1 : create a quaternion from Euler anglers ZYZ convention
-    quat = Eigen::AngleAxisd(0, Eigen::Vector3d::UnitZ())
-         * Eigen::AngleAxisd(0, Eigen::Vector3d::UnitY())
-         * Eigen::AngleAxisd(0, Eigen::Vector3d::UnitZ());
-    // Example 2 : create a quaternion from RPY convention
-    cart_pos_ref.linear() = quatFromRPY(0,0,0).toRotationMatrix();
-    // Example 3 : create a quaternion from Kuka Convention
+    
     cart_pos_ref.linear() = quatFromKukaConvention(0,0,0).toRotationMatrix();
 
     // Set the desired cartesian velocity to zero

@@ -13,7 +13,9 @@ RosCartesianAccelerationPID::RosCartesianAccelerationPID(   const std::string& r
 
     ss_setDesired_ = getNodeHandle()->advertiseService("setDesired", &RosCartesianAccelerationPID::setDesiredService, this);
     ss_getCommand_ = getNodeHandle()->advertiseService("getCommand", &RosCartesianAccelerationPID::getCommandService, this);
-    ss_getCartesianPositionRef_ = getNodeHandle()->advertiseService("getCartesianPositionRef", &RosCartesianAccelerationPID::getCartesianPositionRefService, this);
+    ss_getCurrentCartesianPose_ = getNodeHandle()->advertiseService("getCurrentCartesianPose", &RosCartesianAccelerationPID::getCurrentCartesianPoseService, this);
+    ss_getCurrentCartesianVelocity_ = getNodeHandle()->advertiseService("getCurrentCartesianVelocity", &RosCartesianAccelerationPID::getCurrentCartesianVelocityService, this);
+    ss_getCartesianPoseRef_ = getNodeHandle()->advertiseService("getCartesianPoseRef", &RosCartesianAccelerationPID::getCartesianPoseRefService, this);
     ss_getCartesianVelocityRef_ = getNodeHandle()->advertiseService("getCartesianVelocityRef", &RosCartesianAccelerationPID::getCartesianVelocityRefService, this);
     ss_getCartesianAccelerationRef_ = getNodeHandle()->advertiseService("getCartesianAccelerationRef", &RosCartesianAccelerationPID::getCartesianAccelerationRefService, this);
     ss_print_ = getNodeHandle()->advertiseService("print", &RosCartesianAccelerationPID::printService, this);
@@ -41,9 +43,21 @@ bool RosCartesianAccelerationPID::getCommandService(orca_ros::GetMatrix::Request
     return true;
 }
 
-bool RosCartesianAccelerationPID::getCartesianPositionRefService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res)
+bool RosCartesianAccelerationPID::getCurrentCartesianPoseService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res)
 {
-    tf::matrixEigenToMsg(cart_acc_pid_->getCartesianPositionRef(), res.data);
+    tf::matrixEigenToMsg(cart_acc_pid_->getCurrentCartesianPose(), res.data);
+    return true;
+}
+
+bool RosCartesianAccelerationPID::getCurrentCartesianVelocityService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res)
+{
+    tf::matrixEigenToMsg(cart_acc_pid_->getCurrentCartesianVelocity(), res.data);
+    return true;
+}
+
+bool RosCartesianAccelerationPID::getCartesianPoseRefService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res)
+{
+    tf::matrixEigenToMsg(cart_acc_pid_->getCartesianPoseRef(), res.data);
     return true;
 }
 

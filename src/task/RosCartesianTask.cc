@@ -12,7 +12,8 @@ RosCartesianTask::RosCartesianTask( const std::string& robot_name,
 
     current_state_pub_ = getNodeHandle()->advertise<orca_ros::CartesianTaskState>("current_state", 1, true);
     desired_state_sub_ = getNodeHandle()->subscribe( "desired_state", 1, &RosCartesianTask::desiredStateSubscriberCb, this);
-    publisher_thread_ = std::thread(std::bind(&RosCartesianTask::startPublisherThread, this));
+
+    cart_task_->setUpdateCallback( std::bind(&RosCartesianTask::publishCurrentState, this) );
 
 
     ss_setDesired_ = getNodeHandle()->advertiseService("setDesired", &RosCartesianTask::setDesiredService, this);
@@ -59,28 +60,37 @@ bool RosCartesianTask::getControlFrameService(orca_ros::GetString::Request &req,
     return true;
 }
 
-void RosCartesianTask::startPublisherThread()
-{
-    ros::Rate thread_rate(publisher_thread_hz_);
-    while (ros::ok())
-    {
-        publishCurrentState();
-        ros::spinOnce();
-        thread_rate.sleep();
-    }
-}
-
 void RosCartesianTask::publishCurrentState()
 {
     current_state_msg_.header.stamp = ros::Time::now();
-    // tf::poseEigenToMsg(cart_task_->servoController()->getCartesianPositionRef(), current_state_msg_.current_pose );
-    // Eigen::VectorXd::Map(current_state_msg_.current_velocity.data, 6) = cart_task_->servoController()->getCartesianVelocityRef();
 
-    // tf::matrixEigenToMsg(cart_task_->servoController()->getCartesianAccelerationRef(), current_state_msg_.current_acceleration );
+    std::cout << "cart_task_->servoController()->getCurrentCartesianPose(): \n" << cart_task_->servoController()->getCurrentCartesianPose() << '\n';
+    orca_ros::utils::matrix4dEigenToPoseMsg(cart_task_->servoController()->getCurrentCartesianPose(), current_state_msg_.current_pose);
+
+    std::cout << "cart_task_->servoController()->getCurrentCartesianVelocity(): \n" << cart_task_->servoController()->getCurrentCartesianVelocity() << '\n';
+    tf::twistEigenToMsg(cart_task_->servoController()->getCurrentCartesianVelocity(), current_state_msg_.current_velocity);
+
+    std::cout << "cart_task_->servoController()->getCartesianPoseRef(): \n" << cart_task_->servoController()->getCartesianPoseRef() << '\n';
+    orca_ros::utils::matrix4dEigenToPoseMsg(cart_task_->servoController()->getCartesianPoseRef(), current_state_msg_.desired_pose);
+
+    std::cout << "cart_task_->servoController()->getCartesianVelocityRef(): \n" << cart_task_->servoController()->getCartesianVelocityRef() << '\n';
+    tf::twistEigenToMsg(cart_task_->servoController()->getCartesianVelocityRef(), current_state_msg_.desired_velocity);
+
+    std::cout << "cart_task_->servoController()->getCartesianAccelerationRef(): \n" << cart_task_->servoController()->getCartesianAccelerationRef() << '\n';
+    orca_ros::utils::accelEigenToMsg(cart_task_->servoController()->getCartesianAccelerationRef(), current_state_msg_.desired_acceleration);
+
     current_state_pub_.publish(current_state_msg_);
 }
 
 void RosCartesianTask::desiredStateSubscriberCb(const orca_ros::CartesianTaskState::ConstPtr& msg)
 {
 
+    Eigen::Matrix4d des_pose;
+    orca_ros::utils::poseMsgToMatrix4dEigen(msg->desired_pose, des_pose);
+
+    orca::math::Vector6d des_velocity, des_acceleration;
+    tf::twistMsgToEigen(msg->desired_velocity, des_velocity);
+    orca_ros::utils::accelMsgToEigen(msg->desired_acceleration, des_acceleration);
+
+    cart_task_->servoController()->setDesired( des_pose, des_velocity, des_acceleration );
 }
