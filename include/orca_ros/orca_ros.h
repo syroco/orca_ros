@@ -48,6 +48,9 @@
 #include "orca_ros/optim/RosController.h"
 #include "orca_ros/optim/RosControllerProxy.h"
 
+#include "orca_ros/robot/RosRobotDynTree.h"
+#include "orca_ros/robot/RosRobotDynTreeProxy.h"
+
 namespace orca_ros
 {
     namespace all
@@ -56,7 +59,7 @@ namespace orca_ros
         using namespace optim;
         using namespace task;
         // using namespace constraint;
-        // using namespace robot;
+        using namespace robot;
         // using namespace math;
         // using namespace utils;
     }
