@@ -15,9 +15,9 @@ namespace common
     {
     public:
         RosWrapperBase (const std::string& robot_name,
-                        const std::string& controller_name,
-                        const std::string& obj_name,
-                        const std::string& generic_prefix);
+                        const std::string& controller_name="",
+                        const std::string& obj_name="",
+                        const std::string& generic_prefix="");
         virtual ~RosWrapperBase ();
 
 

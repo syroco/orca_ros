@@ -14,7 +14,8 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_message_files(
   FILES
-  DesiredJoints.msg
+  RobotState.msg
+  JointTorqueCommand.msg
   TaskDescription.msg
   ConstraintDescription.msg
   CartesianTaskState.msg
