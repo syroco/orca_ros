@@ -10,7 +10,10 @@ RosCartesianTask::RosCartesianTask( const std::string& robot_name,
 {
     cart_servo_wrapper_ = std::make_shared<orca_ros::common::RosCartesianAccelerationPID>(robot_name, controller_name, cart_task->getName(), cart_task_->servoController());
 
-    // current_state_pub_ = getNodeHandle()->publish<orca_ros::CartesianTaskState>("current_state", 1, true);
+    current_state_pub_ = getNodeHandle()->advertise<orca_ros::CartesianTaskState>("current_state", 1, true);
+    desired_state_sub_ = getNodeHandle()->subscribe( "desired_state", 1, &RosCartesianTask::desiredStateSubscriberCb, this);
+    publisher_thread_ = std::thread(std::bind(&RosCartesianTask::startPublisherThread, this));
+
 
     ss_setDesired_ = getNodeHandle()->advertiseService("setDesired", &RosCartesianTask::setDesiredService, this);
     ss_setBaseFrame_ = getNodeHandle()->advertiseService("setBaseFrame", &RosCartesianTask::setBaseFrameService, this);
@@ -54,4 +57,30 @@ bool RosCartesianTask::getControlFrameService(orca_ros::GetString::Request &req,
 {
     res.data = cart_task_->getControlFrame();
     return true;
+}
+
+void RosCartesianTask::startPublisherThread()
+{
+    ros::Rate thread_rate(publisher_thread_hz_);
+    while (ros::ok())
+    {
+        publishCurrentState();
+        ros::spinOnce();
+        thread_rate.sleep();
+    }
+}
+
+void RosCartesianTask::publishCurrentState()
+{
+    current_state_msg_.header.stamp = ros::Time::now();
+    // tf::poseEigenToMsg(cart_task_->servoController()->getCartesianPositionRef(), current_state_msg_.current_pose );
+    // Eigen::VectorXd::Map(current_state_msg_.current_velocity.data, 6) = cart_task_->servoController()->getCartesianVelocityRef();
+
+    // tf::matrixEigenToMsg(cart_task_->servoController()->getCartesianAccelerationRef(), current_state_msg_.current_acceleration );
+    current_state_pub_.publish(current_state_msg_);
+}
+
+void RosCartesianTask::desiredStateSubscriberCb(const orca_ros::CartesianTaskState::ConstPtr& msg)
+{
+
 }

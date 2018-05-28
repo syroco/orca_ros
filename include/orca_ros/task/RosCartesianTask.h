@@ -60,6 +60,11 @@ private:
     bool getControlFrameService(orca_ros::GetString::Request &req, orca_ros::GetString::Response & res);
 
 private:
+    void startPublisherThread();
+    void publishCurrentState();
+    void desiredStateSubscriberCb(const orca_ros::CartesianTaskState::ConstPtr& msg);
+
+private:
     std::shared_ptr<orca::task::CartesianTask> cart_task_;
     std::shared_ptr<orca_ros::common::RosCartesianAccelerationPID> cart_servo_wrapper_;
 
@@ -68,6 +73,13 @@ private:
     ros::ServiceServer ss_setControlFrame_;
     ros::ServiceServer ss_getBaseFrame_;
     ros::ServiceServer ss_getControlFrame_;
+
+private:
+    ros::Publisher current_state_pub_;
+    ros::Subscriber desired_state_sub_;
+    std::thread publisher_thread_;
+    int publisher_thread_hz_ = 250;
+    orca_ros::CartesianTaskState current_state_msg_;
 };
 
 } // namespace task

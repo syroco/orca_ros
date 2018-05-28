@@ -17,6 +17,7 @@ add_message_files(
   DesiredJoints.msg
   TaskDescription.msg
   ConstraintDescription.msg
+  CartesianTaskState.msg
 )
 
 add_service_files(
