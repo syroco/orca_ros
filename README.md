@@ -31,4 +31,6 @@ while(ros::ok())
 }
 ```
 
-In the `controller_node` we see that the only line that is needed to wrap the `orca::task::CartesianTask` is `orca_ros::task::RosCartesianTask(robot_name, controller_name, orca_task);`.
+In the `controller_node` we see that the only line that is needed to wrap the `orca::task::CartesianTask` is `orca_ros::task::RosCartesianTask(robot_name, controller_name, orca_task);`. We just have to make sure the `RosCartesianTask` object doesn't go out of scope in order to keep the services alive.
+
+On the `task_proxy_node` side of things we need 3 pieces of information: the robot, controller and task names. With these three strings we can connect to the `CartesianTask` using the `RosCartesianTaskProxy` object and control it remotely from this node. In the example we are simply getting the current position reference from the internal servo controller.
