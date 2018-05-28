@@ -85,7 +85,20 @@ include_directories(include
                     ${EIGEN3_INCLUDE_DIRS}
                     )
 
-file(GLOB_RECURSE source_files src/*)
+set(sub-dirs
+    optim
+    constraint
+    common
+    #math
+    robot
+    task
+    utils
+)
+
+foreach(sub : ${sub-dirs})
+    file(GLOB sub-srcs src/${sub}/*.cc)
+    list(APPEND source_files ${sub-srcs})
+endforeach()
 
 add_library(${PROJECT_NAME} ${source_files})
 
@@ -95,7 +108,6 @@ target_link_libraries(  ${PROJECT_NAME}
                     )
 add_dependencies(${PROJECT_NAME} orca_ros_generate_messages_cpp)
 
-
 # Example nodes:
 add_executable(minimal_controller examples/minimal_controller.cc)
 target_link_libraries(minimal_controller ${PROJECT_NAME})
@@ -103,8 +115,10 @@ target_link_libraries(minimal_controller ${PROJECT_NAME})
 add_executable(minimal_client examples/minimal_client.cc)
 target_link_libraries(minimal_client ${PROJECT_NAME})
 
+add_library(${PROJECT_NAME}_gazebo src/gazebo/RosGazeboModel.cc)
+target_link_libraries(${PROJECT_NAME}_gazebo ${PROJECT_NAME} ${GAZEBO_LIBRARIES} pthread tinyxml)
 add_executable(gazebo_node examples/gazebo_node.cc)
-target_link_libraries(gazebo_node ${PROJECT_NAME} ${GAZEBO_LIBRARIES} pthread tinyxml)
+target_link_libraries(gazebo_node ${PROJECT_NAME}_gazebo)
 
 # install(DIRECTORY include/${PROJECT_NAME}/
 #     DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
