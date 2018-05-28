@@ -6,13 +6,26 @@ using namespace orca_ros::gazebo;
 
 int main(int argc, char** argv)
 {
-    // Get the urdf file from the command line
-    if(argc < 2)
+    std::string robot_name("");
+    if(!ros::param::get("~robot_name",robot_name))
     {
-        std::cerr << "Usage : " << argv[0] << " /path/to/robot-urdf.urdf" << "\n";
-        return -1;
+        ROS_ERROR_STREAM("Could not find robot_name in namespace " << ros::this_node::getNamespace());
+        return 0;
     }
-    std::string urdf_url(argv[1]);
+
+    std::string base_frame("");
+    if(!ros::param::get("~base_frame",base_frame))
+    {
+        ROS_ERROR_STREAM("Could not find base_frame in namespace " << ros::this_node::getNamespace());
+        return 0;
+    }
+
+    std::string urdf_url("");
+    if(!ros::param::get("~urdf_url",urdf_url))
+    {
+        ROS_ERROR_STREAM("Could not find urdf_url in namespace " << ros::this_node::getNamespace());
+        return 0;
+    }
 
     GazeboServer gzserver;
 

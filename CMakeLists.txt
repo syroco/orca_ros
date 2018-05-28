@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
     message_generation
     orca
 )
-find_package(gazebo QUIET)
+find_package(gazebo REQUIRED)
 
 if(${GAZEBO_VERSION} VERSION_GREATER "7.0")
     message(STATUS "Gazebo ${GAZEBO_VERSION} found, building examples")
@@ -26,7 +26,7 @@ if(${GAZEBO_VERSION} VERSION_GREATER "7.0")
         add_definitions(-fext-numeric-literals)
     endif()
 else()
-    message(WARNING "Gazebo ${GAZEBO_VERSION} found, we need at least gazebo 7")
+    message(FATAL_ERROR "Gazebo ${GAZEBO_VERSION} found, we need at least gazebo 7")
 endif()
 
 add_message_files(
