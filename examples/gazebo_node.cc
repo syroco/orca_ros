@@ -25,7 +25,7 @@ public:
 
         gz_model->setCallback([&](uint32_t n_iter,double current_time,double dt)
         {
-            state_.header.stamp = current_time;
+            state_.header.stamp = ros::Time(current_time);
             tf::transformEigenToMsg(gz_model->getWorldToBaseTransform(), state_.world_to_base_transform);
             tf::twistEigenToMsg(gz_model->getBaseVelocity(), state_.base_velocity);
             tf::vectorEigenToMsg(gz_model->getGravity(), state_.gravity);
@@ -41,12 +41,12 @@ public:
 
     void desiredTorqueSubscriberCb(const orca_ros::JointTorqueCommand::ConstPtr& msg)
     {
-        if(msg->torque_command.size() != gz_model_->getNDof())
+        if(msg->joint_torque_commands.size() != gz_model_->getNDof())
         {
-            ROS_ERROR_STREAM("Torque command size (" << msg->torque_command.size() << ")do not match the robot ndof (" << gz_model_->getNDof() << ")");
+            ROS_ERROR_STREAM("Torque command size (" << msg->joint_torque_commands.size() << ")do not match the robot ndof (" << gz_model_->getNDof() << ")");
             return;
         }
-        Eigen::VectorXd::Map(msg->torque_command.data(),msg->torque_command.size()) = torque_command_;
+        torque_command_ = Eigen::Map<const Eigen::VectorXd>(msg->joint_torque_commands.data(),msg->joint_torque_commands.size());
         this->gz_model_->setJointTorqueCommand(torque_command_);
     }
 

@@ -104,7 +104,7 @@ add_executable(minimal_client examples/minimal_client.cc)
 target_link_libraries(minimal_client ${PROJECT_NAME})
 
 add_executable(gazebo_node examples/gazebo_node.cc)
-target_link_libraries(gazebo_node ${PROJECT_NAME} ${GAZEBO_LIBRARIES} pthread orca tinyxml)
+target_link_libraries(gazebo_node ${PROJECT_NAME} ${GAZEBO_LIBRARIES} pthread tinyxml)
 
 # install(DIRECTORY include/${PROJECT_NAME}/
 #     DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}

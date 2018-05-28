@@ -1,3 +1,3 @@
 std_msgs/Header header
-string[] name
-float64[] torque_command
+string[] joint_names
+float64[] joint_torque_commands
