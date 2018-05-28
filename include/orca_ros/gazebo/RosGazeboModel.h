@@ -17,10 +17,12 @@ public:
 
 private:
     ros::Publisher state_pub_;
+    ros::Publisher joint_states_pub_;
     ros::Subscriber desired_torque_sub_;
     Eigen::VectorXd torque_command_;
     std::shared_ptr<orca::gazebo::GazeboModel> gz_model_;
     orca_ros::RobotState state_;
+    sensor_msgs::JointState joint_states_;
 };
 
 } // namespace gazebo
