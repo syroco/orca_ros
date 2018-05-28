@@ -43,6 +43,7 @@ namespace robot
 {
 
 class RosRobotDynTreeProxy : public orca_ros::common::RosWrapperBase
+                           , public orca::robot::RobotDynTree
 {
 public:
     RosRobotDynTreeProxy(const std::string& robot_name);
@@ -56,7 +57,6 @@ private:
     void currentStateSubscriberCb(const orca_ros::RobotState::ConstPtr& msg);
 
 private:
-    std::shared_ptr<orca::robot::RobotDynTree> robot_;
     ros::Subscriber robot_state_sub_;
 
     Eigen::Matrix4d world_H_base_;

@@ -4,6 +4,7 @@ using namespace orca_ros::robot;
 
 RosRobotDynTreeProxy::RosRobotDynTreeProxy( const std::string& robot_name )
 : RosWrapperBase(robot_name)
+, orca::robot::RobotDynTree(robot_name)
 {
     sc_getBaseFrame_ = getNodeHandle()->serviceClient<orca_ros::GetString>("getBaseFrame");
     sc_getUrdfUrl_ = getNodeHandle()->serviceClient<orca_ros::GetString>("getUrdfUrl");
@@ -19,12 +20,11 @@ RosRobotDynTreeProxy::RosRobotDynTreeProxy( const std::string& robot_name )
     ROS_INFO_STREAM("URDF URL:" << urdf_url);
     ROS_INFO_STREAM("Base Frame:" << base_frame);
 
-    robot_ = std::make_shared<orca::robot::RobotDynTree>(getRobotName());
-    robot_->loadModelFromFile(urdf_url);
-    robot_->setBaseFrame(base_frame); // All the transformations will be expressed wrt this base frame
+    this->loadModelFromFile(urdf_url);
+    this->setBaseFrame(base_frame); // All the transformations will be expressed wrt this base frame
 
-    robot_->setRobotState(   Eigen::VectorXd::Zero(robot_->getNrOfDegreesOfFreedom()),
-                            Eigen::VectorXd::Zero(robot_->getNrOfDegreesOfFreedom())
+    this->setRobotState(   Eigen::VectorXd::Zero(this->getNrOfDegreesOfFreedom()),
+                            Eigen::VectorXd::Zero(this->getNrOfDegreesOfFreedom())
                         );
 
     robot_state_sub_ = getNodeHandle()->subscribe( "current_state", 1, &RosRobotDynTreeProxy::currentStateSubscriberCb, this);
@@ -44,7 +44,7 @@ void RosRobotDynTreeProxy::currentStateSubscriberCb(const orca_ros::RobotState::
     // jointVel_ = ;
     // gravity_ = ;
 
-    robot_->setRobotState(world_H_base_, jointPos_, baseVel_, jointVel_, gravity_);
+    this->setRobotState(world_H_base_, jointPos_, baseVel_, jointVel_, gravity_);
 }
 
 std::string RosRobotDynTreeProxy::getBaseFrame()
