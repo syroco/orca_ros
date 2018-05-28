@@ -34,9 +34,14 @@
 
 #pragma once
 
+<<<<<<< HEAD
 #include <orca_ros/CartesianTaskState.h>
 #include <orca_ros/JointTorqueCommand.h>
 #include <orca_ros/RobotState.h>
+=======
+#include <orca_ros/RobotState.h>
+#include <orca_ros/JointTorqueCommand.h>
+>>>>>>> b5f0bdefddd04e699082063083ab91a1bfb16d62
 #include <orca_ros/TaskDescription.h>
 #include <orca_ros/ConstraintDescription.h>
 #include <orca_ros/CartesianTaskState.h>

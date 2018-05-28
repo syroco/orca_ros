@@ -1,8 +1,11 @@
 std_msgs/Header header
 string robot_name
 geometry_msgs/Transform world_to_base_transform
-string[] joint_name
-float64[] joint_position
-float64[] joint_velocity
-float64[] joint_external_torque
-float64[] joint_measured_torque
+geometry_msgs/Twist base_velocity
+string base_name
+string[] joint_names
+float64[] joint_positions
+float64[] joint_velocities
+float64[] joint_external_torques
+float64[] joint_measured_torques
+geometry_msgs/Vector3 gravity

@@ -11,6 +11,23 @@ find_package(catkin REQUIRED COMPONENTS
     message_generation
     orca
 )
+find_package(gazebo QUIET)
+
+if(${GAZEBO_VERSION} VERSION_GREATER "7.0")
+    message(STATUS "Gazebo ${GAZEBO_VERSION} found, building examples")
+
+    include_directories(${GAZEBO_INCLUDE_DIRS})
+    link_directories(${GAZEBO_LIBRARY_DIRS})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
+
+    add_definitions(-DGAZEBO_VERSION_MAJOR=${gazebo_VERSION_MAJOR})
+
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        add_definitions(-fext-numeric-literals)
+    endif()
+else()
+    message(WARNING "Gazebo ${GAZEBO_VERSION} found, we need at least gazebo 7")
+endif()
 
 add_message_files(
   FILES
@@ -85,6 +102,9 @@ target_link_libraries(minimal_controller ${PROJECT_NAME})
 
 add_executable(minimal_client examples/minimal_client.cc)
 target_link_libraries(minimal_client ${PROJECT_NAME})
+
+add_executable(gazebo_node examples/gazebo_node.cc)
+target_link_libraries(gazebo_node ${PROJECT_NAME} ${GAZEBO_LIBRARIES} pthread tinyxml)
 
 # install(DIRECTORY include/${PROJECT_NAME}/
 #     DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
