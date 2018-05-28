@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
     Eigen::Affine3d cart_pos_ref;
     // Translation
     cart_pos_ref.translation() = Eigen::Vector3d(1.,0.75,0.5); // x,y,z in meters
-    
+
     cart_pos_ref.linear() = quatFromKukaConvention(0,0,0).toRotationMatrix();
 
     // Set the desired cartesian velocity to zero
