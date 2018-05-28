@@ -1,6 +1,7 @@
-// This file is a part of the orca framework.
+// This file is a part of the orca_ros framework.
 // Copyright 2017, ISIR / Universite Pierre et Marie Curie (UPMC)
-// Main contributor(s): Antoine Hoarau, hoarau@isir.upmc.fr
+// Copyright 2018, Fuzzy Logic Robotics
+// Main contributor(s): Antoine Hoarau, Ryan Lober, Fuzzy Logic Robotics (info@fuzzylogicrobotics.com)
 //
 // This software is a computer program whose purpose is to [describe
 // functionalities and technical features of your software].
