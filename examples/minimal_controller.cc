@@ -20,7 +20,7 @@ void sigintHandler(int sig)
 
 int main(int argc, char *argv[])
 {
-    ros::init(argc, argv, "orca_cart_demo0");
+    ros::init(argc, argv, "orca_cart_demo0", ros::init_options::NoSigintHandler);
     signal(SIGINT, sigintHandler);
 
     std::string robot_name("");
@@ -49,6 +49,8 @@ int main(int argc, char *argv[])
     robot->setBaseFrame(base_frame); // All the transformations will be expressed wrt this base frame
 
     // Current state of the robot
+    const int ndof = robot->getNrOfDegreesOfFreedom();
+
     Eigen::VectorXd current_joint_positions(ndof);
     Eigen::VectorXd current_joint_velocities(ndof);
 
@@ -109,6 +111,7 @@ int main(int argc, char *argv[])
     controller->activateTasksAndConstraints();
 
     auto t_now = ros::Time::now();
+    std::cout << "Controller running" << '\n';
     while (!exit_)
     {
         auto t_dt = ros::Time().now() - t_now;
@@ -120,6 +123,7 @@ int main(int argc, char *argv[])
         ros::spinOnce();
         r.sleep();
     }
+    std::cout << "Controller shutdown initiated" << '\n';
     // Shutdown components
     controller->deactivateTasksAndConstraints();
     while (!controller->tasksAndConstraintsDeactivated())
@@ -134,5 +138,6 @@ int main(int argc, char *argv[])
         r.sleep();
     }
     ros::shutdown();
+    std::cout << "exit" << '\n';
     return 0;
 }
