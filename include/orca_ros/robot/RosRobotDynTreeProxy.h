@@ -64,7 +64,8 @@ private:
     Eigen::Matrix<double,6,1> baseVel_;
     Eigen::VectorXd jointVel_;
     Eigen::Vector3d gravity_;
-
+    
+    bool initialized_ = false;
 private:
     ros::ServiceClient sc_getBaseFrame_;
     ros::ServiceClient sc_getUrdfUrl_;

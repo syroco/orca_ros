@@ -23,9 +23,13 @@ RosRobotDynTreeProxy::RosRobotDynTreeProxy( const std::string& robot_name )
     this->loadModelFromFile(urdf_url);
     this->setBaseFrame(base_frame); // All the transformations will be expressed wrt this base frame
 
-    this->setRobotState(   Eigen::VectorXd::Zero(this->getNrOfDegreesOfFreedom()),
-                            Eigen::VectorXd::Zero(this->getNrOfDegreesOfFreedom())
-                        );
+    // TODO: in robot RobotDynTree disallow to get anything (q,qdot) when no state has been received
+    // this->setRobotState(   Eigen::VectorXd::Zero(this->getNrOfDegreesOfFreedom()),
+    //                         Eigen::VectorXd::Zero(this->getNrOfDegreesOfFreedom())
+    //                     );
+
+    jointPos_.setZero(this->getNrOfDegreesOfFreedom());
+    jointVel_.setZero(this->getNrOfDegreesOfFreedom());
 
     robot_state_sub_ = getNodeHandle()->subscribe( "current_state", 1, &RosRobotDynTreeProxy::currentStateSubscriberCb, this);
 }
@@ -37,12 +41,12 @@ RosRobotDynTreeProxy::~RosRobotDynTreeProxy()
 
 void RosRobotDynTreeProxy::currentStateSubscriberCb(const orca_ros::RobotState::ConstPtr& msg)
 {
+    orca_ros::utils::transformMsgToEigen(msg->world_to_base_transform,world_H_base_);
+    tf::twistMsgToEigen(msg->base_velocity,baseVel_);
+    tf::vectorMsgToEigen(msg->gravity,gravity_);
 
-    // world_H_base_ = ;
-    // jointPos_ = ;
-    // baseVel_ = ;
-    // jointVel_ = ;
-    // gravity_ = ;
+    jointPos_ = Eigen::Map<const Eigen::VectorXd>(msg->joint_positions.data(),msg->joint_positions.size());
+    jointVel_ = Eigen::Map<const Eigen::VectorXd>(msg->joint_velocities.data(),msg->joint_velocities.size());
 
     this->setRobotState(world_H_base_, jointPos_, baseVel_, jointVel_, gravity_);
 }

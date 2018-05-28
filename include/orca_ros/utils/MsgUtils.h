@@ -66,14 +66,27 @@ namespace utils
         Eigen::Affine3d a(e);
         tf::poseEigenToMsg(a, m);
     }
-
+    
+    inline void transformEigenToMsg(const Eigen::Matrix4d& t, geometry_msgs::Transform& m)
+    {
+        Eigen::Affine3d a(t);
+        tf::transformEigenToMsg(a, m);
+    }
+    
     inline void poseMsgToMatrix4dEigen(const geometry_msgs::Pose& m, Eigen::Matrix4d& e)
     {
         Eigen::Affine3d a;
         tf::poseMsgToEigen(m, a);
         e = a.matrix();
     }
-
+    
+    inline void transformMsgToEigen(const geometry_msgs::Transform& t, Eigen::Matrix4d& e)
+    {
+        Eigen::Affine3d a;
+        tf::transformMsgToEigen(t, a);
+        e = a.matrix();
+    }
+    
     inline void accelMsgToEigen(const geometry_msgs::Accel &m, Eigen::Matrix<double,6,1> &e)
     {
         e[0] = m.linear.x;
