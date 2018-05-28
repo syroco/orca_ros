@@ -41,8 +41,11 @@ std::string RosWrapperBase::getObjectName()
 }
 std::string RosWrapperBase::getNamespacePrefix()
 {
-
-    std::string prefix = "/orca/"+getRobotName()+"/"+getControllerName()+"/";
+    std::string prefix = "/orca/"+getRobotName()+"/";
+    if(!getControllerName().empty())
+    {
+        prefix += getControllerName()+"/";
+    }
     if(!getGenericPrefix().empty())
     {
         prefix += getGenericPrefix()+"/";
