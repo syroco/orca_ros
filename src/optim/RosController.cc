@@ -16,9 +16,9 @@ RosController::RosController(   const std::string& robot_name,
     ss_getSolution_ = getNodeHandle()->advertiseService("getSolution", &RosController::getSolutionService, this);
     ss_getJointTorqueCommand_ = getNodeHandle()->advertiseService("getJointTorqueCommand", &RosController::getJointTorqueCommandService, this);
     ss_getJointAccelerationCommand_ = getNodeHandle()->advertiseService("getJointAccelerationCommand", &RosController::getJointAccelerationCommandService, this);
-    ss_activateAll_ = getNodeHandle()->advertiseService("activateAll", &RosController::activateAllService, this);
-    ss_deactivateAll_ = getNodeHandle()->advertiseService("deactivateAll", &RosController::deactivateAllService, this);
-    ss_allDeactivated_ = getNodeHandle()->advertiseService("allDeactivated", &RosController::allDeactivatedService, this);
+    ss_activateTasksAndConstraints_ = getNodeHandle()->advertiseService("activateTasksAndConstraints", &RosController::activateTasksAndConstraintsService, this);
+    ss_deactivateTasksAndConstraints_ = getNodeHandle()->advertiseService("deactivateTasksAndConstraints", &RosController::deactivateTasksAndConstraintsService, this);
+    ss_tasksAndConstraintsDeactivated_ = getNodeHandle()->advertiseService("tasksAndConstraintsDeactivated", &RosController::tasksAndConstraintsDeactivatedService, this);
 }
 
 RosController::~RosController()
@@ -88,20 +88,20 @@ bool RosController::getJointAccelerationCommandService(orca_ros::GetMatrix::Requ
     return true;
 }
 
-bool RosController::activateAllService(orca_ros::SetDouble::Request &req, orca_ros::SetDouble::Response &res)
+bool RosController::activateTasksAndConstraintsService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res)
 {
-    ctrl_->activateAll(req.value);
+    ctrl_->activateTasksAndConstraints();
     return true;
 }
 
-bool RosController::deactivateAllService(orca_ros::SetDouble::Request &req, orca_ros::SetDouble::Response &res)
+bool RosController::deactivateTasksAndConstraintsService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res)
 {
-    ctrl_->deactivateAll(req.value);
+    ctrl_->deactivateTasksAndConstraints();
     return true;
 }
 
-bool RosController::allDeactivatedService(orca_ros::GetBool::Request &req, orca_ros::GetBool::Response &res)
+bool RosController::tasksAndConstraintsDeactivatedService(orca_ros::GetBool::Request &req, orca_ros::GetBool::Response &res)
 {
-    res.value = ctrl_->allDeactivated();
+    res.value = ctrl_->tasksAndConstraintsDeactivated();
     return true;
 }

@@ -61,9 +61,9 @@ public:
     bool getSolutionService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
     bool getJointTorqueCommandService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
     bool getJointAccelerationCommandService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
-    bool activateAllService(orca_ros::SetDouble::Request &req, orca_ros::SetDouble::Response &res);
-    bool deactivateAllService(orca_ros::SetDouble::Request &req, orca_ros::SetDouble::Response &res);
-    bool allDeactivatedService(orca_ros::GetBool::Request &req, orca_ros::GetBool::Response &res);
+    bool activateTasksAndConstraintsService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
+    bool deactivateTasksAndConstraintsService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
+    bool tasksAndConstraintsDeactivatedService(orca_ros::GetBool::Request &req, orca_ros::GetBool::Response &res);
 private:
     std::shared_ptr<orca::optim::Controller> ctrl_;
 
@@ -76,9 +76,9 @@ private:
     ros::ServiceServer ss_getSolution_;
     ros::ServiceServer ss_getJointTorqueCommand_;
     ros::ServiceServer ss_getJointAccelerationCommand_;
-    ros::ServiceServer ss_activateAll_;
-    ros::ServiceServer ss_deactivateAll_;
-    ros::ServiceServer ss_allDeactivated_;
+    ros::ServiceServer ss_activateTasksAndConstraints_;
+    ros::ServiceServer ss_deactivateTasksAndConstraints_;
+    ros::ServiceServer ss_tasksAndConstraintsDeactivated_;
 };
 
 } // namespace optim
