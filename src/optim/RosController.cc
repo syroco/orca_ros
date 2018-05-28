@@ -13,7 +13,7 @@ RosController::RosController(   const std::string& robot_name,
     ss_update_ = getNodeHandle()->advertiseService("update", &RosController::updateService, this);
     ss_addTask_ = getNodeHandle()->advertiseService("addTask", &RosController::addTaskService, this);
     ss_addConstraint_ = getNodeHandle()->advertiseService("addConstraint", &RosController::addConstraintService, this);
-    ss_getFullSolution_ = getNodeHandle()->advertiseService("getFullSolution", &RosController::getFullSolutionService, this);
+    ss_getSolution_ = getNodeHandle()->advertiseService("getSolution", &RosController::getSolutionService, this);
     ss_getJointTorqueCommand_ = getNodeHandle()->advertiseService("getJointTorqueCommand", &RosController::getJointTorqueCommandService, this);
     ss_getJointAccelerationCommand_ = getNodeHandle()->advertiseService("getJointAccelerationCommand", &RosController::getJointAccelerationCommandService, this);
     ss_activateAll_ = getNodeHandle()->advertiseService("activateAll", &RosController::activateAllService, this);
@@ -70,9 +70,9 @@ bool RosController::addConstraintService(orca_ros::AddConstraint::Request &req, 
     return true;
 }
 
-bool RosController::getFullSolutionService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res)
+bool RosController::getSolutionService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res)
 {
-    tf::matrixEigenToMsg(ctrl_->getFullSolution(), res.data);
+    tf::matrixEigenToMsg(ctrl_->getSolution(), res.data);
     return true;
 }
 
