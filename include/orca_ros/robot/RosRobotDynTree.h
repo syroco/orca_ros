@@ -34,25 +34,25 @@
 
 #pragma once
 
-// #include <ros/ros.h>
 #include <orca/robot/RobotDynTree.h>
 #include "orca_ros/common/RosWrapperBase.h"
-// #include <orca_ros/GetString.h>
 
 namespace orca_ros
 {
 namespace robot
 {
 
-class RosController : public orca_ros::common::RosWrapperBase
+class RosRobotDynTree : public orca_ros::common::RosWrapperBase
 {
 public:
-    RosController(std::shared_ptr<orca::robot::RobotDynTree> r);
+    RosRobotDynTree(std::shared_ptr<orca::robot::RobotDynTree> r);
 
-    virtual ~RosController();
+    virtual ~RosRobotDynTree();
 
 private:
     void currentStateSubscriberCb(const orca_ros::RobotState::ConstPtr& msg);
+    bool getBaseFrameService(orca_ros::GetString::Request &req, orca_ros::GetString::Response &res);
+    bool getUrdfUrlService(orca_ros::GetString::Request &req, orca_ros::GetString::Response &res);
 
 private:
     std::shared_ptr<orca::robot::RobotDynTree> robot_;
@@ -63,6 +63,10 @@ private:
     Eigen::Matrix<double,6,1> baseVel_;
     Eigen::VectorXd jointVel_;
     Eigen::Vector3d gravity_;
+
+private:
+    ros::ServiceServer ss_getBaseFrame_;
+    ros::ServiceServer ss_getUrdfUrl_;
 };
 
 } // namespace robot

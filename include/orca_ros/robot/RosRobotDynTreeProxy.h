@@ -34,9 +34,41 @@
 
 #pragma once
 
-#include <orca_ros/CartesianTaskState.h>
-#include <orca_ros/JointTorqueCommand.h>
-#include <orca_ros/RobotState.h>
-#include <orca_ros/TaskDescription.h>
-#include <orca_ros/ConstraintDescription.h>
-#include <orca_ros/CartesianTaskState.h>
+#include <orca/robot/RobotDynTree.h>
+#include "orca_ros/common/RosWrapperBase.h"
+
+namespace orca_ros
+{
+namespace robot
+{
+
+class RosRobotDynTreeProxy : public orca_ros::common::RosWrapperBase
+{
+public:
+    RosRobotDynTreeProxy(const std::string& robot_name);
+
+    virtual ~RosRobotDynTreeProxy();
+
+    std::string getBaseFrame();
+    std::string getUrdfUrl();
+
+private:
+    void currentStateSubscriberCb(const orca_ros::RobotState::ConstPtr& msg);
+
+private:
+    std::shared_ptr<orca::robot::RobotDynTree> robot_;
+    ros::Subscriber robot_state_sub_;
+
+    Eigen::Matrix4d world_H_base_;
+    Eigen::VectorXd jointPos_;
+    Eigen::Matrix<double,6,1> baseVel_;
+    Eigen::VectorXd jointVel_;
+    Eigen::Vector3d gravity_;
+
+private:
+    ros::ServiceClient sc_getBaseFrame_;
+    ros::ServiceClient sc_getUrdfUrl_;
+};
+
+} // namespace robot
+} // namespace orca
