@@ -15,9 +15,9 @@ RosControllerProxy::RosControllerProxy( const std::string& robot_name,
     sc_getFullSolution_ = getNodeHandle()->serviceClient<orca_ros::GetMatrix>("getFullSolution");
     sc_getJointTorqueCommand_ = getNodeHandle()->serviceClient<orca_ros::GetMatrix>("getJointTorqueCommand");
     sc_getJointAccelerationCommand_ = getNodeHandle()->serviceClient<orca_ros::GetMatrix>("getJointAccelerationCommand");
-    sc_activateAll_ = getNodeHandle()->serviceClient<orca_ros::SetDouble>("activateAll");
-    sc_deactivateAll_ = getNodeHandle()->serviceClient<orca_ros::SetDouble>("deactivateAll");
-    sc_allDeactivated_ = getNodeHandle()->serviceClient<orca_ros::GetBool>("allDeactivated");
+    sc_activateTasksAndConstraints_ = getNodeHandle()->serviceClient<std_srvs::Empty>("activateTasksAndConstraints");
+    sc_deactivateTasksAndConstraints_ = getNodeHandle()->serviceClient<std_srvs::Empty>("deactivateTasksAndConstraints");
+    sc_tasksAndConstraintsDeactivated_ = getNodeHandle()->serviceClient<orca_ros::GetBool>("tasksAndConstraintsDeactivated");
 }
 
 RosControllerProxy::~RosControllerProxy()
@@ -119,32 +119,30 @@ Eigen::VectorXd RosControllerProxy::getJointAccelerationCommand()
     return v;
 }
 
-void RosControllerProxy::activateAll(double current_time)
+void RosControllerProxy::activateTasksAndConstraints()
 {
     orca_ros::SetDouble srv;
-    srv.request.value = current_time;
-    if(!sc_activateAll_.call(srv))
+    if(!sc_activateTasksAndConstraints_.call(srv))
     {
-        ROS_ERROR("Service call [activateAll] failed.");
+        ROS_ERROR("Service call [activateTasksAndConstraints] failed.");
     }
 }
 
-void RosControllerProxy::deactivateAll(double current_time)
+void RosControllerProxy::deactivateTasksAndConstraints()
 {
     orca_ros::SetDouble srv;
-    srv.request.value = current_time;
-    if(!sc_deactivateAll_.call(srv))
+    if(!sc_deactivateTasksAndConstraints_.call(srv))
     {
-        ROS_ERROR("Service call [deactivateAll] failed.");
+        ROS_ERROR("Service call [deactivateTasksAndConstraints] failed.");
     }
 }
 
-bool RosControllerProxy::allDeactivated()
+bool RosControllerProxy::tasksAndConstraintsDeactivated()
 {
     orca_ros::GetBool srv;
-    if(!sc_allDeactivated_.call(srv))
+    if(!sc_tasksAndConstraintsDeactivated_.call(srv))
     {
-        ROS_ERROR("Service call [allDeactivated] failed.");
+        ROS_ERROR("Service call [tasksAndConstraintsDeactivated] failed.");
     }
     return srv.response.value;
 }

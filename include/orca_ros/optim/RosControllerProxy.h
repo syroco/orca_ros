@@ -57,9 +57,9 @@ public:
     Eigen::VectorXd getFullSolution();
     Eigen::VectorXd getJointTorqueCommand();
     Eigen::VectorXd getJointAccelerationCommand();
-    void activateAll(double current_time);
-    void deactivateAll(double current_time);
-    bool allDeactivated();
+    void activateTasksAndConstraints();
+    void deactivateTasksAndConstraints();
+    bool tasksAndConstraintsDeactivated();
 
 
 private:
@@ -72,9 +72,9 @@ private:
     ros::ServiceClient sc_getFullSolution_;
     ros::ServiceClient sc_getJointTorqueCommand_;
     ros::ServiceClient sc_getJointAccelerationCommand_;
-    ros::ServiceClient sc_activateAll_;
-    ros::ServiceClient sc_deactivateAll_;
-    ros::ServiceClient sc_allDeactivated_;
+    ros::ServiceClient sc_activateTasksAndConstraints_;
+    ros::ServiceClient sc_deactivateTasksAndConstraints_;
+    ros::ServiceClient sc_tasksAndConstraintsDeactivated_;
 };
 
 } // namespace optim
