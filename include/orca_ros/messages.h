@@ -34,7 +34,8 @@
 
 #pragma once
 
-#include <orca_ros/DesiredJoints.h>
+#include <orca_ros/RobotState.h>
+#include <orca_ros/JointTorqueCommand.h>
 #include <orca_ros/TaskDescription.h>
 #include <orca_ros/ConstraintDescription.h>
 #include <orca_ros/CartesianTaskState.h>
