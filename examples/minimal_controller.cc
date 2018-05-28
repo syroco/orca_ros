@@ -68,7 +68,8 @@ int main(int argc, char *argv[])
         ,QPSolver::qpOASES
     );
 
-    auto controller_ros_server = RosController(robot_name, controller);
+    auto controller_ros_wrapper = RosController(robot_name, controller);
+    auto robot_ros_wrapper = RosRobotDynTree(robot);
 
 
     // Cartesian Task

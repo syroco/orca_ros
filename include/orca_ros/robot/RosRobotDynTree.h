@@ -34,37 +34,40 @@
 
 #pragma once
 
-#include "orca_ros/services.h"
-#include "orca_ros/messages.h"
-
-#include "orca_ros/common/RosTaskBase.h"
-#include "orca_ros/common/RosTaskBaseProxy.h"
-
-#include "orca_ros/task/RosCartesianTask.h"
-#include "orca_ros/task/RosCartesianTaskProxy.h"
-#include "orca_ros/task/RosGenericTask.h"
-#include "orca_ros/task/RosGenericTaskProxy.h"
-
-#include "orca_ros/optim/RosController.h"
-#include "orca_ros/optim/RosControllerProxy.h"
-
-#include "orca_ros/robot/RosRobotDynTree.h"
-#include "orca_ros/robot/RosRobotDynTreeProxy.h"
+#include <orca/robot/RobotDynTree.h>
+#include "orca_ros/common/RosWrapperBase.h"
 
 namespace orca_ros
 {
-    namespace all
-    {
-        // using namespace common;
-        using namespace optim;
-        using namespace task;
-        // using namespace constraint;
-        using namespace robot;
-        // using namespace math;
-        // using namespace utils;
-    }
-}
+namespace robot
+{
 
-// #include <orca_ros/common/...>
-// #include <orca_ros/task/...>
-// #include <orca_ros/constraint/...>
+class RosRobotDynTree : public orca_ros::common::RosWrapperBase
+{
+public:
+    RosRobotDynTree(std::shared_ptr<orca::robot::RobotDynTree> r);
+
+    virtual ~RosRobotDynTree();
+
+private:
+    void currentStateSubscriberCb(const orca_ros::RobotState::ConstPtr& msg);
+    bool getBaseFrameService(orca_ros::GetString::Request &req, orca_ros::GetString::Response &res);
+    bool getUrdfUrlService(orca_ros::GetString::Request &req, orca_ros::GetString::Response &res);
+
+private:
+    std::shared_ptr<orca::robot::RobotDynTree> robot_;
+    ros::Subscriber robot_state_sub_;
+
+    Eigen::Matrix4d world_H_base_;
+    Eigen::VectorXd jointPos_;
+    Eigen::Matrix<double,6,1> baseVel_;
+    Eigen::VectorXd jointVel_;
+    Eigen::Vector3d gravity_;
+
+private:
+    ros::ServiceServer ss_getBaseFrame_;
+    ros::ServiceServer ss_getUrdfUrl_;
+};
+
+} // namespace robot
+} // namespace orca
