@@ -64,19 +64,14 @@ void RosCartesianTask::publishCurrentState()
 {
     current_state_msg_.header.stamp = ros::Time::now();
 
-    // std::cout << "cart_task_->servoController()->getCurrentCartesianPose(): \n" << cart_task_->servoController()->getCurrentCartesianPose() << '\n';
     orca_ros::utils::matrix4dEigenToPoseMsg(cart_task_->servoController()->getCurrentCartesianPose(), current_state_msg_.current_pose);
 
-    // std::cout << "cart_task_->servoController()->getCurrentCartesianVelocity(): \n" << cart_task_->servoController()->getCurrentCartesianVelocity() << '\n';
     tf::twistEigenToMsg(cart_task_->servoController()->getCurrentCartesianVelocity(), current_state_msg_.current_velocity);
 
-    // std::cout << "cart_task_->servoController()->getCartesianPoseRef(): \n" << cart_task_->servoController()->getCartesianPoseRef() << '\n';
     orca_ros::utils::matrix4dEigenToPoseMsg(cart_task_->servoController()->getCartesianPoseRef(), current_state_msg_.desired_pose);
 
-    // std::cout << "cart_task_->servoController()->getCartesianVelocityRef(): \n" << cart_task_->servoController()->getCartesianVelocityRef() << '\n';
     tf::twistEigenToMsg(cart_task_->servoController()->getCartesianVelocityRef(), current_state_msg_.desired_velocity);
 
-    // std::cout << "cart_task_->servoController()->getCartesianAccelerationRef(): \n" << cart_task_->servoController()->getCartesianAccelerationRef() << '\n';
     orca_ros::utils::accelEigenToMsg(cart_task_->servoController()->getCartesianAccelerationRef(), current_state_msg_.desired_acceleration);
 
     current_state_pub_.publish(current_state_msg_);
