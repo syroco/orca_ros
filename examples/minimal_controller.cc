@@ -1,9 +1,18 @@
 #include <ros/ros.h>
 #include <orca/orca.h>
 #include <orca_ros/orca_ros.h>
+#include <signal.h>
 
 using namespace orca::all;
 using namespace orca_ros::all;
+
+bool exit_ = false;
+
+void sigintHandler(int sig)
+{
+  exit_ = true;
+}
+
 
 // To start this example :
 // rosrun orca_ros minimal_controller _robot_name:="lwr" _base_frame:="link_0" _urdf_url:="$(rospack find orca)/examples/lwr.urdf"
@@ -12,6 +21,7 @@ using namespace orca_ros::all;
 int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "orca_cart_demo0");
+    signal(SIGINT, sigintHandler);
 
     std::string robot_name("");
     if(!ros::param::get("~robot_name",robot_name))
@@ -38,19 +48,15 @@ int main(int argc, char *argv[])
     robot->loadModelFromFile(urdf_url);
     robot->setBaseFrame(base_frame); // All the transformations will be expressed wrt this base frame
 
-    // This is an helper function to store the whole state of the robot as eigen vectors/matrices
-    // This class is totally optional, it is just meant to keep consistency for the sizes of all the vectors/matrices
-    // You can use it to fill data from either real robot and simulated robot
-    EigenRobotState eigState;
-    eigState.setFixedBaseValues(); // sets world to base to identity and base velocity to zero
-    eigState.resize(robot->getNrOfDegreesOfFreedom()); // resize all the vectors/matrices to match the robot configuration
-    // Set the initial state to zero (arbitrary)
-    // NOTE : here we only set q,qot because this example asserts we have a fixed base robot
-    eigState.jointPos.setZero();
-    eigState.jointVel.setZero();
+    // Current state of the robot
+    Eigen::VectorXd current_joint_positions(ndof);
+    Eigen::VectorXd current_joint_velocities(ndof);
+
+    current_joint_positions.setZero(); // <------------ initial state
+    current_joint_velocities.setZero();// <------------ (arbitrary zero)
+
     // Set the first state to the robot
-    robot->setRobotState(eigState.jointPos,eigState.jointVel); // Now is the robot is considered 'initialized'
-    robot->isInitialized(); // --> returns true
+    robot->setRobotState(current_joint_positions,current_joint_velocities); // Now is the robot is considered 'initialized'
 
     // Instanciate and ORCA Controller
     auto controller = std::make_shared<Controller>(
@@ -73,7 +79,7 @@ int main(int argc, char *argv[])
     Eigen::Affine3d cart_pos_ref;
     // Translation
     cart_pos_ref.translation() = Eigen::Vector3d(1.,0.75,0.5); // x,y,z in meters
-    
+
     cart_pos_ref.linear() = quatFromKukaConvention(0,0,0).toRotationMatrix();
 
     // Set the desired cartesian velocity to zero
@@ -100,8 +106,10 @@ int main(int argc, char *argv[])
 
     ros::Rate r(250);
 
+    controller->activateTasksAndConstraints();
+
     auto t_now = ros::Time::now();
-    while (ros::ok())
+    while (!exit_)
     {
         auto t_dt = ros::Time().now() - t_now;
 
@@ -112,5 +120,19 @@ int main(int argc, char *argv[])
         ros::spinOnce();
         r.sleep();
     }
+    // Shutdown components
+    controller->deactivateTasksAndConstraints();
+    while (!controller->tasksAndConstraintsDeactivated())
+    {
+        auto t_dt = ros::Time().now() - t_now;
+
+        controller->update(t_now.toSec(),t_dt.toSec());
+
+        t_now = ros::Time::now();
+
+        ros::spinOnce();
+        r.sleep();
+    }
+    ros::shutdown();
     return 0;
 }
