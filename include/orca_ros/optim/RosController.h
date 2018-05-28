@@ -57,7 +57,7 @@ public:
     bool updateService(orca_ros::UpdateController::Request &req, orca_ros::UpdateController::Response &res);
     bool addTaskService(orca_ros::AddTask::Request &req, orca_ros::AddTask::Response &res);
     bool addConstraintService(orca_ros::AddConstraint::Request &req, orca_ros::AddConstraint::Response &res);
-    bool getFullSolutionService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
+    bool getSolutionService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
     bool getJointTorqueCommandService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
     bool getJointAccelerationCommandService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res);
     bool activateAllService(orca_ros::SetDouble::Request &req, orca_ros::SetDouble::Response &res);
@@ -65,14 +65,14 @@ public:
     bool allDeactivatedService(orca_ros::GetBool::Request &req, orca_ros::GetBool::Response &res);
 private:
     std::shared_ptr<orca::optim::Controller> ctrl_;
-    
+
     ros::ServiceServer ss_getName_;
     ros::ServiceServer ss_print_;
     ros::ServiceServer ss_setPrintLevel_;
     ros::ServiceServer ss_update_;
     ros::ServiceServer ss_addTask_;
     ros::ServiceServer ss_addConstraint_;
-    ros::ServiceServer ss_getFullSolution_;
+    ros::ServiceServer ss_getSolution_;
     ros::ServiceServer ss_getJointTorqueCommand_;
     ros::ServiceServer ss_getJointAccelerationCommand_;
     ros::ServiceServer ss_activateAll_;
