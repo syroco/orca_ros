@@ -92,9 +92,10 @@ int main(int argc, char *argv[])
         ,QPSolver::qpOASES
     );
 
+    controller->removeGravityTorquesFromSolution(robot_compensates_gravity);
+
     RosController controller_ros_wrapper(robot_name, controller);
     RosRobotDynTree robot_ros_wrapper(robot);
-
 
     // Cartesian Task
     auto cart_task = std::make_shared<CartesianTask>("CartTask_EE");
