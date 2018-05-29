@@ -26,21 +26,36 @@ int main(int argc, char *argv[])
     std::string robot_name("");
     if(!ros::param::get("~robot_name",robot_name))
     {
-        ROS_ERROR_STREAM("Could not find robot_name in namespace " << ros::this_node::getNamespace());
+        ROS_ERROR_STREAM("" << ros::this_node::getName() << "Could not find robot_name in namespace "
+            << ros::this_node::getNamespace()
+            << "/" << ros::this_node::getName());
         return 0;
     }
 
     std::string base_frame("");
     if(!ros::param::get("~base_frame",base_frame))
     {
-        ROS_ERROR_STREAM("Could not find base_frame in namespace " << ros::this_node::getNamespace());
+        ROS_ERROR_STREAM("" << ros::this_node::getName() << "Could not find base_frame in namespace "
+            << ros::this_node::getNamespace()
+            << "/" << ros::this_node::getName());
         return 0;
     }
 
     std::string urdf_url("");
     if(!ros::param::get("~urdf_url",urdf_url))
     {
-        ROS_ERROR_STREAM("Could not find urdf_url in namespace " << ros::this_node::getNamespace());
+        ROS_ERROR_STREAM("" << ros::this_node::getName() << "Could not find urdf_url in namespace "
+            << ros::this_node::getNamespace()
+            << "/" << ros::this_node::getName());
+        return 0;
+    }
+
+    std::string controller_name("");
+    if(!ros::param::get("~controller_name",controller_name))
+    {
+        ROS_ERROR_STREAM("" << ros::this_node::getName() << "Could not find controller_name in namespace "
+            << ros::this_node::getNamespace()
+            << "/" << ros::this_node::getName());
         return 0;
     }
 
@@ -62,7 +77,7 @@ int main(int argc, char *argv[])
 
     // Instanciate and ORCA Controller
     auto controller = std::make_shared<Controller>(
-        robot_name + "_orca_controller"
+         controller_name
         ,robot
         ,ResolutionStrategy::OneLevelWeighted // MultiLevelWeighted, Generalized
         ,QPSolver::qpOASES
@@ -80,10 +95,6 @@ int main(int argc, char *argv[])
 
     // Set the pose desired for the link_7
     Eigen::Affine3d cart_pos_ref;
-    // Translation
-    cart_pos_ref.translation() = Eigen::Vector3d(1.,0.75,0.5); // x,y,z in meters
-
-    cart_pos_ref.linear() = quatFromKukaConvention(0,0,0).toRotationMatrix();
 
     // Set the desired cartesian velocity to zero
     Vector6d cart_vel_ref;
@@ -103,7 +114,7 @@ int main(int argc, char *argv[])
     // The desired values are set on the servo controller
     // Because cart_task->setDesired expects a cartesian acceleration
     // Which is computed automatically by the servo controller
-    cart_task->servoController()->setDesired(cart_pos_ref.matrix(),cart_vel_ref,cart_acc_ref);
+    //cart_task->servoController()->setDesired(cart_pos_ref.matrix(),cart_vel_ref,cart_acc_ref);
 
     RosCartesianTask cart_task_wrapper(robot_name, controller->getName(), cart_task);
 
