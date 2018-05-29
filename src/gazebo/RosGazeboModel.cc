@@ -50,11 +50,11 @@ RosGazeboModel::RosGazeboModel(std::shared_ptr<GazeboModel> gz_model)
 
 void RosGazeboModel::desiredTorqueSubscriberCb(const orca_ros::JointTorqueCommand::ConstPtr& msg)
 {
-    if(msg->joint_torque_commands.size() != gz_model_->getNDof())
+    if(msg->joint_torque_command.size() != gz_model_->getNDof())
     {
-        ROS_ERROR_STREAM("Torque command size (" << msg->joint_torque_commands.size() << ")do not match the robot ndof (" << gz_model_->getNDof() << ")");
+        ROS_ERROR_STREAM("Torque command size (" << msg->joint_torque_command.size() << ")do not match the robot ndof (" << gz_model_->getNDof() << ")");
         return;
     }
-    torque_command_ = Eigen::Map<const Eigen::VectorXd>(msg->joint_torque_commands.data(),msg->joint_torque_commands.size());
+    torque_command_ = Eigen::Map<const Eigen::VectorXd>(msg->joint_torque_command.data(),msg->joint_torque_command.size());
     this->gz_model_->setJointTorqueCommand(torque_command_);
 }

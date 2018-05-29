@@ -10,7 +10,7 @@ RosController::RosController(   const std::string& robot_name,
     trq_msg_.joint_names = ctrl_->robot()->getJointNames();
     trq_msg_.header.frame_id = ctrl_->robot()->getBaseFrame();
     ndof_ = trq_msg_.joint_names.size();
-    trq_msg_.joint_torque_commands.resize(ndof_);
+    trq_msg_.joint_torque_command.resize(ndof_);
 
     std::string trq_prefix(getRobotNamespacePrefix()+"desired_torque");
     desired_torque_pub_ = getNodeHandle()->advertise<orca_ros::JointTorqueCommand>(trq_prefix,1,true);
@@ -119,9 +119,16 @@ bool RosController::tasksAndConstraintsDeactivatedService(orca_ros::GetBool::Req
 
 void RosController::publishJointTorqueCommands()
 {
+    if(ctrl_->solutionFound())
+    {
+        Eigen::VectorXd::Map(trq_msg_.joint_torque_command.data(),trq_msg_.joint_torque_command.size()) = ctrl_->getJointTorqueCommand();
+    }
+    else
+    {
+        ROS_WARN("Optimal solution not found, sending KKTTorques as fallback solution");
+        Eigen::VectorXd::Map(trq_msg_.joint_torque_command.data(),trq_msg_.joint_torque_command.size()) = ctrl_->computeKKTTorques();
+    }
+
     trq_msg_.header.stamp = ros::Time::now();
-
-    Eigen::VectorXd::Map(trq_msg_.joint_torque_commands.data(),trq_msg_.joint_torque_commands.size()) = ctrl_->getJointTorqueCommand();
-
     desired_torque_pub_.publish(trq_msg_);
 }
