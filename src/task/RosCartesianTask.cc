@@ -8,7 +8,9 @@ RosCartesianTask::RosCartesianTask( const std::string& robot_name,
 : cart_task_(cart_task)
 , RosGenericTask(robot_name, controller_name, cart_task)
 {
-    cart_servo_wrapper_ = std::make_shared<orca_ros::common::RosCartesianAccelerationPID>(robot_name, controller_name, cart_task->getName(), cart_task_->servoController());
+    cart_servo_ = cart_task_->servoController();
+
+    cart_servo_wrapper_ = std::make_shared<orca_ros::common::RosCartesianAccelerationPID>(robot_name, controller_name, cart_task->getName(), cart_servo_);
 
     current_state_pub_ = getNodeHandle()->advertise<orca_ros::CartesianTaskState>("current_state", 1, true);
     desired_state_sub_ = getNodeHandle()->subscribe( "desired_state", 1, &RosCartesianTask::desiredStateSubscriberCb, this);
@@ -64,15 +66,15 @@ void RosCartesianTask::publishCurrentState()
 {
     current_state_msg_.header.stamp = ros::Time::now();
 
-    orca_ros::utils::matrix4dEigenToPoseMsg(cart_task_->servoController()->getCurrentCartesianPose(), current_state_msg_.current_pose);
+    orca_ros::utils::matrix4dEigenToPoseMsg(cart_servo_->getCurrentCartesianPose(), current_state_msg_.current_pose);
 
-    tf::twistEigenToMsg(cart_task_->servoController()->getCurrentCartesianVelocity(), current_state_msg_.current_velocity);
+    tf::twistEigenToMsg(cart_servo_->getCurrentCartesianVelocity(), current_state_msg_.current_velocity);
 
-    orca_ros::utils::matrix4dEigenToPoseMsg(cart_task_->servoController()->getCartesianPoseRef(), current_state_msg_.desired_pose);
+    orca_ros::utils::matrix4dEigenToPoseMsg(cart_servo_->getCartesianPoseRef(), current_state_msg_.desired_pose);
 
-    tf::twistEigenToMsg(cart_task_->servoController()->getCartesianVelocityRef(), current_state_msg_.desired_velocity);
+    tf::twistEigenToMsg(cart_servo_->getCartesianVelocityRef(), current_state_msg_.desired_velocity);
 
-    orca_ros::utils::accelEigenToMsg(cart_task_->servoController()->getCartesianAccelerationRef(), current_state_msg_.desired_acceleration);
+    orca_ros::utils::accelEigenToMsg(cart_servo_->getCartesianAccelerationRef(), current_state_msg_.desired_acceleration);
 
     current_state_pub_.publish(current_state_msg_);
 }
@@ -87,5 +89,5 @@ void RosCartesianTask::desiredStateSubscriberCb(const orca_ros::CartesianTaskSta
     tf::twistMsgToEigen(msg->desired_velocity, des_velocity);
     orca_ros::utils::accelMsgToEigen(msg->desired_acceleration, des_acceleration);
 
-    cart_task_->servoController()->setDesired( des_pose, des_velocity, des_acceleration );
+    cart_servo_->setDesired( des_pose, des_velocity, des_acceleration );
 }
