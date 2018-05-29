@@ -61,8 +61,41 @@ public:
     std::string getBaseFrame();
     std::string getControlFrame();
 
+public: // not part of the base ORCA API (just some helper functions)
+    void setDesired(    const Eigen::Matrix4d& des_pose,
+                        const orca::math::Vector6d& des_vel,
+                        const orca::math::Vector6d& des_acc);
+    void setDesiredPose(const Eigen::Matrix4d& des_pose);
+    void setDesiredVelocity(const orca::math::Vector6d& des_vel);
+    void setDesiredAcceleration(const orca::math::Vector6d& des_acc);
+
+    const Eigen::Matrix4d& getDesiredPose();
+    const orca::math::Vector6d& getDesiredVelocity();
+    const orca::math::Vector6d& getDesiredAcceleration();
+
+    const Eigen::Matrix4d& getCurrentPose();
+    const orca::math::Vector6d& getCurrentVelocity();
+
+private:
+    void currentStateSubscriberCb(const orca_ros::CartesianTaskState::ConstPtr& msg);
+    void waitForFirstState();
+
+private:
+    Eigen::Matrix4d current_pose_;
+    orca::math::Vector6d current_velocity_;
+
+    Eigen::Matrix4d desired_pose_;
+    orca::math::Vector6d desired_velocity_;
+    orca::math::Vector6d desired_acceleration_;
+
+    bool first_cart_task_state_received_ = false;
+
+
 private:
     std::shared_ptr<orca_ros::common::RosCartesianAccelerationPIDProxy> cart_servo_proxy_;
+
+    ros::Subscriber current_state_sub_;
+    ros::Publisher desired_state_pub_;
 
     ros::ServiceClient sc_setDesired_;
     ros::ServiceClient sc_setBaseFrame_;
