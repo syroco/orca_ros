@@ -42,7 +42,8 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    GazeboServer gzserver;
+    // Start the server with ROS enabled
+    GazeboServer gzserver({"-s","libgazebo_ros_paths_plugin.so","-s","libgazebo_ros_api_plugin.so"});
 
     auto gzrobot = std::make_shared<GazeboModel>(gzserver.insertModelFromURDFFile(urdf_url));
     auto rosrobot = RosGazeboModel(gzrobot);
