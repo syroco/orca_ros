@@ -1,16 +1,16 @@
 #include <ros/ros.h>
 #include <orca/orca.h>
 #include <orca_ros/orca_ros.h>
-#include <signal.h>
 
 using namespace orca::all;
 using namespace orca_ros::all;
 
+// CTRL+C Signal handling
+#include <signal.h>
 bool exit_ = false;
-
 void sigintHandler(int sig)
 {
-  exit_ = true;
+    exit_ = true;
 }
 
 

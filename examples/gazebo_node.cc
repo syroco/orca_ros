@@ -1,4 +1,10 @@
 #include "orca_ros/gazebo/RosGazeboModel.h"
+#include <signal.h>
+bool exit_ = false;
+void sigintHandler(int sig)
+{
+    exit_ = true;
+}
 
 using namespace orca::gazebo;
 using namespace orca_ros::common;
@@ -6,6 +12,9 @@ using namespace orca_ros::gazebo;
 
 int main(int argc, char** argv)
 {
+    ros::init(argc, argv, "gazebo_node", ros::init_options::NoSigintHandler);
+    signal(SIGINT, sigintHandler);
+
     std::string robot_name("");
     if(!ros::param::get("~robot_name",robot_name))
     {
@@ -34,7 +43,11 @@ int main(int argc, char** argv)
 
     gzserver.run([&](uint32_t n_iter,double current_time,double dt)
     {
-        ros::spinOnce();
+        if(!exit_)
+            ros::spinOnce();
+        else
+            gzserver.shutdown();
     });
+    ros::shutdown();
     return 0;
 }

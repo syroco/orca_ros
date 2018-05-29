@@ -8,15 +8,22 @@ RosGazeboModel::RosGazeboModel(std::shared_ptr<GazeboModel> gz_model)
 : RosWrapperBase(gz_model->getName())
 , gz_model_(gz_model)
 {
-    torque_command_.resize(gz_model_->getNDof());
+    const int ndof = gz_model_->getNDof();
+    torque_command_.resize(ndof);
     state_.robot_name = gz_model_->getName();
     state_.joint_names = gz_model_->getActuatedJointNames();
-    state_.joint_positions.resize(gz_model_->getNDof());
-    state_.joint_velocities.resize(gz_model_->getNDof());
-    state_.joint_external_torques.resize(gz_model_->getNDof());
-    state_.joint_measured_torques.resize(gz_model_->getNDof());
+    state_.joint_positions.resize(ndof);
+    state_.joint_velocities.resize(ndof);
+    state_.joint_external_torques.resize(ndof);
+    state_.joint_measured_torques.resize(ndof);
+
+    joint_states_.name = state_.joint_names;
+    joint_states_.position.resize(ndof);
+    joint_states_.velocity.resize(ndof);
+    joint_states_.effort.resize(ndof);
 
     state_pub_ = getNodeHandle()->advertise<orca_ros::RobotState>("current_state", 1, true);
+    joint_states_pub_ = getNodeHandle()->advertise<sensor_msgs::JointState>("joint_states", 1, true);
     desired_torque_sub_ = getNodeHandle()->subscribe( "desired_torque", 1, &RosGazeboModel::desiredTorqueSubscriberCb, this);
 
     gz_model->setCallback([&](uint32_t n_iter,double current_time,double dt)
@@ -31,6 +38,12 @@ RosGazeboModel::RosGazeboModel(std::shared_ptr<GazeboModel> gz_model)
         Eigen::VectorXd::Map(state_.joint_external_torques.data(),state_.joint_external_torques.size()) = gz_model->getJointExternalTorques();
         Eigen::VectorXd::Map(state_.joint_measured_torques.data(),state_.joint_measured_torques.size()) = gz_model->getJointMeasuredTorques();
 
+        joint_states_.header.stamp = state_.header.stamp;
+        joint_states_.position = state_.joint_positions;
+        joint_states_.velocity = state_.joint_velocities;
+        joint_states_.effort = state_.joint_measured_torques;
+
+        joint_states_pub_.publish(joint_states_);
         state_pub_.publish(state_);
     });
 }

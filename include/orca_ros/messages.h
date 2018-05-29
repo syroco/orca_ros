@@ -39,3 +39,4 @@
 #include <orca_ros/TaskDescription.h>
 #include <orca_ros/ConstraintDescription.h>
 #include <orca_ros/CartesianTaskState.h>
+#include <sensor_msgs/JointState.h>
