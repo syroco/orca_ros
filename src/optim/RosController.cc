@@ -121,9 +121,7 @@ void RosController::publishJointTorqueCommands()
 {
     if(ctrl_->solutionFound())
     {
-        bool remove_gravity = false;
-        bool remove_coriolis = false;
-        Eigen::VectorXd::Map(trq_msg_.joint_torque_command.data(),trq_msg_.joint_torque_command.size()) = ctrl_->getJointTorqueCommand(remove_gravity,remove_coriolis);
+        Eigen::VectorXd::Map(trq_msg_.joint_torque_command.data(),trq_msg_.joint_torque_command.size()) = ctrl_->getJointTorqueCommand();
     }
     else
     {
