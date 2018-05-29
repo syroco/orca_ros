@@ -1,0 +1,44 @@
+<launch>
+    <arg name="robot_name" default="lwr"/>
+    <arg name="base_frame"  default="link_0"/>
+    <arg name="urdf_url"  default="$(find orca)/examples/lwr.urdf"/>
+    <arg name="robot_compensates_gravity"  default="true"/>
+
+    <arg name="task_name"  default="CartTask_EE"/>
+    <arg name="frame_id"  default="world"/>
+    <arg name="show_dof_controls"  default="true"/>
+
+    <!-- Synchronise the gazebo clock with ROS clock -->
+    <param name="use_sim_time" value="true"/>
+
+    <node name="gazebo" pkg="orca_ros" type="gazebo_node" output="screen">
+        <param name="robot_name" value="$(arg robot_name)"/>
+        <param name="base_frame" value="$(arg base_frame)"/>
+        <param name="urdf_url" value="$(arg urdf_url)"/>
+        <param name="robot_compensates_gravity" value="$(arg robot_compensates_gravity)"/>
+    </node>
+
+    <node name="minimal_controller" pkg="orca_ros" type="minimal_controller" output="screen">
+        <param name="robot_name" value="$(arg robot_name)"/>
+        <param name="base_frame" value="$(arg base_frame)"/>
+        <param name="urdf_url" value="$(arg urdf_url)"/>
+        <param name="controller_name" value="$(arg robot_name)_orca_controller"/>
+        <param name="robot_compensates_gravity" value="$(arg robot_compensates_gravity)"/>
+    </node>
+
+    <node name="rviz_task_controller" pkg="orca_ros" type="rviz_task_controller" output="screen">
+        <param name="robot_name" value="$(arg robot_name)"/>
+        <param name="controller_name" value="$(arg robot_name)_orca_controller"/>
+        <param name="task_name" value="$(arg task_name)"/>
+        <param name="frame_id" value="$(arg frame_id)"/>
+        <param name="show_dof_controls" value="$(arg show_dof_controls)"/>
+    </node>
+
+    <group ns="/orca">
+        <group ns="$(arg robot_name)">
+
+            <param name="robot_description" command="$(find xacro)/xacro '$(arg urdf_url)' --inorder"/>
+            <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen"/>
+        </group>
+    </group>
+</launch>

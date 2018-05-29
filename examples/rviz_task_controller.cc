@@ -42,6 +42,15 @@ int main(int argc, char** argv)
       return 0;
   }
 
+  std::string frame_id("");
+  if(!ros::param::get("~frame_id",frame_id))
+  {
+      ROS_ERROR_STREAM("" << ros::this_node::getName() << "Could not find frame_id in namespace "
+          << ros::this_node::getNamespace()
+          << "/" << ros::this_node::getName());
+      return 0;
+  }
+
   bool show_dof_controls = true;
   if(!ros::param::get("~show_dof_controls",show_dof_controls))
   {
@@ -57,7 +66,7 @@ int main(int argc, char** argv)
   interactive_markers::InteractiveMarkerServer server("rviz_task_controller");
 
   visualization_msgs::InteractiveMarker int_marker;
-  int_marker.header.frame_id = "world";
+  int_marker.header.frame_id = frame_id;
   int_marker.header.stamp=ros::Time::now();
   int_marker.name = task_name;
 
