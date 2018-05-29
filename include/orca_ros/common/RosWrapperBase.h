@@ -52,6 +52,9 @@ namespace common
          */
         std::string getNamespacePrefix();
 
+
+        std::string getRobotNamespacePrefix();
+
     private:
         std::string rn_ = ""; /*!< robot name */
         std::string cn_ = ""; /*!< controller name */
