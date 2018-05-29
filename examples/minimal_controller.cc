@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
 
     RosCartesianTask cart_task_wrapper(robot_name, controller->getName(), cart_task);
 
-    ros::Rate r(250);
+    ros::Rate r(1000);
 
     controller->activateTasksAndConstraints();
 
