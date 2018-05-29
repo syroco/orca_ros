@@ -1,4 +1,5 @@
 #include "orca_ros/robot/RosRobotDynTree.h"
+#include <chrono>
 
 using namespace orca_ros::robot;
 
@@ -9,7 +10,13 @@ RosRobotDynTree::RosRobotDynTree( std::shared_ptr<orca::robot::RobotDynTree> r )
     jointPos_.setZero(robot_->getNrOfDegreesOfFreedom());
     jointVel_.setZero(robot_->getNrOfDegreesOfFreedom());
 
-    //robot_state_sub_ = getNodeHandle()->subscribe( "current_state", 1, &RosRobotDynTree::currentStateSubscriberCb, this);
+    robot_state_sub_ = getNodeHandle()->subscribe( "current_state", 1, &RosRobotDynTree::currentStateSubscriberCb, this);
+
+
+    while(!first_robot_state_received_)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
 
     ss_getBaseFrame_ = getNodeHandle()->advertiseService("getBaseFrame", &RosRobotDynTree::getBaseFrameService, this);
     ss_getUrdfUrl_ = getNodeHandle()->advertiseService("getUrdfUrl", &RosRobotDynTree::getUrdfUrlService, this);
@@ -31,6 +38,11 @@ void RosRobotDynTree::currentStateSubscriberCb(const orca_ros::RobotState::Const
     jointVel_ = Eigen::Map<const Eigen::VectorXd>(msg->joint_velocities.data(),msg->joint_velocities.size());
 
     robot_->setRobotState(world_H_base_, jointPos_, baseVel_, jointVel_, gravity_);
+
+    if (!first_robot_state_received_)
+    {
+        first_robot_state_received_ = true;
+    }
 }
 
 bool RosRobotDynTree::getBaseFrameService(orca_ros::GetString::Request &req, orca_ros::GetString::Response &res)
