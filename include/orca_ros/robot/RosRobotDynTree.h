@@ -64,6 +64,8 @@ private:
     Eigen::VectorXd jointVel_;
     Eigen::Vector3d gravity_;
 
+    bool first_robot_state_received_ = false;
+
 private:
     ros::ServiceServer ss_getBaseFrame_;
     ros::ServiceServer ss_getUrdfUrl_;
