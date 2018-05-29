@@ -11,6 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
     eigen_conversions
     message_generation
     orca
+    interactive_markers
+    visualization_msgs
 )
 find_package(gazebo REQUIRED)
 
@@ -74,10 +76,13 @@ catkin_package(
                INCLUDE_DIRS include ${EIGEN3_INCLUDE_DIRS}
                LIBRARIES ${PROJECT_NAME}
                CATKIN_DEPENDS
+               roscpp
                std_msgs
                geometry_msgs
                eigen_conversions
                message_runtime
+               interactive_markers
+               visualization_msgs
             )
 
 
@@ -118,8 +123,12 @@ target_link_libraries(minimal_client ${PROJECT_NAME})
 
 add_library(${PROJECT_NAME}_gazebo src/gazebo/RosGazeboModel.cc)
 target_link_libraries(${PROJECT_NAME}_gazebo ${PROJECT_NAME} ${GAZEBO_LIBRARIES} pthread tinyxml)
+
 add_executable(gazebo_node examples/gazebo_node.cc)
 target_link_libraries(gazebo_node ${PROJECT_NAME}_gazebo)
+
+add_executable(rviz_task_controller examples/rviz_task_controller.cc)
+target_link_libraries(rviz_task_controller ${PROJECT_NAME})
 
 # install(DIRECTORY include/${PROJECT_NAME}/
 #     DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
