@@ -12,7 +12,10 @@ using namespace orca_ros::gazebo;
 
 int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "gazebo_node", ros::init_options::NoSigintHandler);
+    // Start the server with ROS enabled
+    GazeboServer gzserver({"-s","libgazebo_ros_paths_plugin.so","-s","libgazebo_ros_api_plugin.so"});
+
+    // ros::init(argc, argv, "gazebo_node", ros::init_options::NoSigintHandler);
     signal(SIGINT, sigintHandler);
 
     std::string robot_name("");
@@ -51,8 +54,6 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    // Start the server with ROS enabled
-    GazeboServer gzserver({"-s","libgazebo_ros_paths_plugin.so","-s","libgazebo_ros_api_plugin.so"});
 
     auto gzrobot = std::make_shared<GazeboModel>(gzserver.insertModelFromURDFFile(urdf_url));
     auto robot_kinematics = std::make_shared<orca::robot::RobotDynTree>();

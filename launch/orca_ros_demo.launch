@@ -7,7 +7,7 @@
     <!-- Synchronise the gazebo clock with ROS clock -->
     <param name="use_sim_time" value="true"/>
 
-    <node name="gazebo_node" pkg="orca_ros" type="gazebo_node" output="screen">
+    <node name="gazebo" pkg="orca_ros" type="gazebo_node" output="screen">
         <param name="robot_name" value="$(arg robot_name)"/>
         <param name="base_frame" value="$(arg base_frame)"/>
         <param name="urdf_url" value="$(arg urdf_url)"/>

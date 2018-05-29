@@ -127,8 +127,10 @@ void RosController::publishJointTorqueCommands()
     }
     else
     {
-        ROS_WARN("Optimal solution not found, sending KKTTorques as fallback solution");
-        Eigen::VectorXd::Map(trq_msg_.joint_torque_command.data(),trq_msg_.joint_torque_command.size()) = ctrl_->computeKKTTorques();
+        // ROS_WARN("Optimal solution not found, sending KKTTorques as fallback solution");
+        // Eigen::VectorXd::Map(trq_msg_.joint_torque_command.data(),trq_msg_.joint_torque_command.size()) = ctrl_->computeKKTTorques();
+        ROS_WARN("Optimal solution not found, sending gravity compensation torques as fallback solution");
+        Eigen::VectorXd::Map(trq_msg_.joint_torque_command.data(),trq_msg_.joint_torque_command.size()) = ctrl_->robot()->getJointGravityTorques();
     }
 
     trq_msg_.header.stamp = ros::Time::now();

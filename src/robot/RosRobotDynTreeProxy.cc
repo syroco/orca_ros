@@ -31,7 +31,7 @@ RosRobotDynTreeProxy::RosRobotDynTreeProxy( const std::string& robot_name )
     jointPos_.setZero(this->getNrOfDegreesOfFreedom());
     jointVel_.setZero(this->getNrOfDegreesOfFreedom());
 
-    robot_state_sub_ = getNodeHandle()->subscribe( "current_state", 1, &RosRobotDynTreeProxy::currentStateSubscriberCb, this);
+    robot_state_sub_ = getNodeHandle()->subscribe( "robot_state", 1, &RosRobotDynTreeProxy::currentStateSubscriberCb, this);
 }
 
 RosRobotDynTreeProxy::~RosRobotDynTreeProxy()
