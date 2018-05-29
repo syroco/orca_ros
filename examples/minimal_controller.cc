@@ -50,6 +50,15 @@ int main(int argc, char *argv[])
         return 0;
     }
 
+    bool robot_compensates_gravity = false;
+    if(!ros::param::get("~robot_compensates_gravity",robot_compensates_gravity))
+    {
+        ROS_ERROR_STREAM("" << ros::this_node::getName() << "Could not find robot_compensates_gravity in namespace "
+            << ros::this_node::getNamespace()
+            << "/" << ros::this_node::getName());
+        return 0;
+    }
+
     std::string controller_name("");
     if(!ros::param::get("~controller_name",controller_name))
     {
