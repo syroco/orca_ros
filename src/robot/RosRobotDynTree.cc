@@ -13,13 +13,7 @@ RosRobotDynTree::RosRobotDynTree( std::shared_ptr<orca::robot::RobotDynTree> r )
     robot_state_sub_ = getNodeHandle()->subscribe( "robot_state", 1, &RosRobotDynTree::currentStateSubscriberCb, this);
 
     // Block execution until the robot gets its first state.
-    while(!first_robot_state_received_)
-    {
-        ROS_WARN_ONCE("[RosRobotDynTree] Waiting to receive first robot state from either the real robot or simulation. We can't do anything until the first state is received. Have you tried turning it off and on again?");
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-        ros::spinOnce();
-    }
-    ROS_INFO("[RosRobotDynTree] Got first state! Welcome to the party pal.");
+    waitForFirstState();
 
     ss_getBaseFrame_ = getNodeHandle()->advertiseService("getBaseFrame", &RosRobotDynTree::getBaseFrameService, this);
     ss_getUrdfUrl_ = getNodeHandle()->advertiseService("getUrdfUrl", &RosRobotDynTree::getUrdfUrlService, this);
@@ -29,6 +23,17 @@ RosRobotDynTree::RosRobotDynTree( std::shared_ptr<orca::robot::RobotDynTree> r )
 RosRobotDynTree::~RosRobotDynTree()
 {
 
+}
+
+void RosRobotDynTree::waitForFirstState()
+{
+    while(!first_robot_state_received_)
+    {
+        ROS_WARN_ONCE("[RosRobotDynTree] Waiting to receive first robot state from either the real robot or simulation. We can't do anything until the first state is received. Have you tried turning it off and on again?");
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        ros::spinOnce();
+    }
+    ROS_INFO("[RosRobotDynTree] Got first state! Welcome to the party pal.");
 }
 
 void RosRobotDynTree::currentStateSubscriberCb(const orca_ros::RobotState::ConstPtr& msg)

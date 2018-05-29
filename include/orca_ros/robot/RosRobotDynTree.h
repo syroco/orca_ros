@@ -55,6 +55,9 @@ private:
     bool getUrdfUrlService(orca_ros::GetString::Request &req, orca_ros::GetString::Response &res);
 
 private:
+    void waitForFirstState();
+
+private:
     std::shared_ptr<orca::robot::RobotDynTree> robot_;
     ros::Subscriber robot_state_sub_;
 
