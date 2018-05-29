@@ -4,18 +4,22 @@
 int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "minimal_client");
-    std::string robot_name("");
-    std::string controller_name("");
 
+    std::string robot_name("");
     if(!ros::param::get("~robot_name",robot_name))
     {
-        ROS_ERROR_STREAM("Could not find robot_name in namespace " << ros::this_node::getNamespace());
+        ROS_ERROR_STREAM("" << ros::this_node::getName() << "Could not find robot_name in namespace "
+            << ros::this_node::getNamespace()
+            << "/" << ros::this_node::getName());
         return 0;
     }
 
+    std::string controller_name("");
     if(!ros::param::get("~controller_name",controller_name))
     {
-        ROS_ERROR_STREAM("Could not find controller_name in namespace " << ros::this_node::getNamespace());
+        ROS_ERROR_STREAM("" << ros::this_node::getName() << "Could not find controller_name in namespace "
+            << ros::this_node::getNamespace()
+            << "/" << ros::this_node::getName());
         return 0;
     }
 
