@@ -64,6 +64,10 @@ public:
     bool activateTasksAndConstraintsService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
     bool deactivateTasksAndConstraintsService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
     bool tasksAndConstraintsDeactivatedService(orca_ros::GetBool::Request &req, orca_ros::GetBool::Response &res);
+
+private:
+    void publishJointTorqueCommands();
+
 private:
     std::shared_ptr<orca::optim::Controller> ctrl_;
 
@@ -79,6 +83,11 @@ private:
     ros::ServiceServer ss_activateTasksAndConstraints_;
     ros::ServiceServer ss_deactivateTasksAndConstraints_;
     ros::ServiceServer ss_tasksAndConstraintsDeactivated_;
+
+private:
+    ros::Publisher desired_torque_pub_;
+    orca_ros::JointTorqueCommand trq_msg_;
+    int ndof_;
 };
 
 } // namespace optim

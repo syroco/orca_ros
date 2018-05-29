@@ -7,6 +7,16 @@ RosController::RosController(   const std::string& robot_name,
 : orca_ros::common::RosWrapperBase(robot_name, c->getName(), "", "")
 , ctrl_(c)
 {
+    trq_msg_.joint_names = ctrl_->robot()->getJointNames();
+    ndof_ = trq_msg_.joint_names.size();
+    trq_msg_.joint_torque_commands.resize(ndof_);
+
+    std::string trq_prefix("/"+getRobotName()+"/desired_torque");
+    desired_torque_pub_ = getNodeHandle()->advertise<orca_ros::JointTorqueCommand>(trq_prefix,1,true);
+
+    // ctrl_->setUpdateCallback( std::bind(&RosController::publishJointTorqueCommands, this) );
+
+
     ss_getName_ = getNodeHandle()->advertiseService("getName", &RosController::getNameService, this);
     ss_print_ = getNodeHandle()->advertiseService("print", &RosController::printService, this);
     ss_setPrintLevel_ = getNodeHandle()->advertiseService("setPrintLevel", &RosController::setPrintLevelService, this);
@@ -104,4 +114,13 @@ bool RosController::tasksAndConstraintsDeactivatedService(orca_ros::GetBool::Req
 {
     res.value = ctrl_->tasksAndConstraintsDeactivated();
     return true;
+}
+
+void RosController::publishJointTorqueCommands()
+{
+    trq_msg_.header.stamp = ros::Time::now();
+
+    Eigen::VectorXd::Map(trq_msg_.joint_torque_commands.data(),trq_msg_.joint_torque_commands.size()) = ctrl_->getJointTorqueCommand();
+
+    desired_torque_pub_.publish(trq_msg_);
 }
