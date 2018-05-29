@@ -1,4 +1,4 @@
-#include "orca_ros/gazebo/RosGazeboModel.h"
+#include "orca_ros/orca_ros.h"
 #include <signal.h>
 bool exit_ = false;
 void sigintHandler(int sig)
@@ -42,11 +42,23 @@ int main(int argc, char** argv)
         return 0;
     }
 
+    bool robot_compensates_gravity = false;
+    if(!ros::param::get("~robot_compensates_gravity",robot_compensates_gravity))
+    {
+        ROS_ERROR_STREAM("" << ros::this_node::getName() << "Could not find robot_compensates_gravity in namespace "
+            << ros::this_node::getNamespace()
+            << "/" << ros::this_node::getName());
+        return 0;
+    }
+
     // Start the server with ROS enabled
     GazeboServer gzserver({"-s","libgazebo_ros_paths_plugin.so","-s","libgazebo_ros_api_plugin.so"});
 
     auto gzrobot = std::make_shared<GazeboModel>(gzserver.insertModelFromURDFFile(urdf_url));
-    auto rosrobot = RosGazeboModel(gzrobot);
+    auto robot_kinematics = std::make_shared<orca::robot::RobotDynTree>();
+    robot_kinematics->loadModelFromFile(urdf_url);
+
+    auto gzrobot_ros_wrapper = RosGazeboModel(gzrobot,robot_kinematics,robot_compensates_gravity);
 
     gzserver.run([&](uint32_t n_iter,double current_time,double dt)
     {

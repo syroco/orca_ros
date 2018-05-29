@@ -4,9 +4,13 @@ using namespace orca_ros;
 using namespace orca::gazebo;
 using namespace orca_ros::gazebo;
 
-RosGazeboModel::RosGazeboModel(std::shared_ptr<GazeboModel> gz_model)
+RosGazeboModel::RosGazeboModel(std::shared_ptr<GazeboModel> gz_model
+                            , std::shared_ptr<orca::robot::RobotDynTree> robot_kinematics
+                            , bool robot_compensates_gravity)
 : RosWrapperBase(gz_model->getName())
 , gz_model_(gz_model)
+, robot_kinematics_(robot_kinematics)
+, robot_compensates_gravity_(robot_compensates_gravity)
 {
     const int ndof = gz_model_->getNDof();
     torque_command_.resize(ndof);
@@ -28,6 +32,16 @@ RosGazeboModel::RosGazeboModel(std::shared_ptr<GazeboModel> gz_model)
 
     gz_model->setCallback([&](uint32_t n_iter,double current_time,double dt)
     {
+        robot_kinematics_->setRobotState(gz_model->getWorldToBaseTransform().matrix()
+                            ,gz_model->getJointPositions()
+                            ,gz_model->getBaseVelocity()
+                            ,gz_model->getJointVelocities()
+                            ,gz_model->getGravity()
+                        );
+
+        if(robot_compensates_gravity_)
+            gz_model_->setJointGravityTorques(robot_kinematics_->getJointGravityTorques());
+
         state_.header.stamp = ros::Time(current_time);
         tf::transformEigenToMsg(gz_model->getWorldToBaseTransform(), state_.world_to_base_transform);
         tf::twistEigenToMsg(gz_model->getBaseVelocity(), state_.base_velocity);
