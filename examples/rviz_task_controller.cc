@@ -56,47 +56,50 @@ bool getPose(const std::string& from_frame, const std::string& to_frame, geometr
     return false;
 }
 
-void publishTf(const std::string& from_frame, const std::string& to_frame, const geometry_msgs::Pose &pose)
-{
-    static tf::TransformBroadcaster br;
-
-    tf::Transform t;
-    ros::Time time = ros::Time::now();
-
-    tf::poseMsgToTF(pose,t);
-    br.sendTransform(tf::StampedTransform(t, time, from_frame, to_frame));
-}
+// void publishTf(const std::string& from_frame, const std::string& to_frame, const geometry_msgs::Pose &pose)
+// {
+//     static tf::TransformBroadcaster br;
+//
+//     tf::Transform t;
+//     ros::Time time = ros::Time::now();
+//
+//     tf::poseMsgToTF(pose,t);
+//     br.sendTransform(tf::StampedTransform(t, time, from_frame, to_frame));
+// }
 
 void processRvizFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback )
 {
     // The feedback contains the position of the marker w.r.t its frame id
-
+    Eigen::Matrix4d desired_pose;
+    
     if(interactive_marker_frame_id == base_frame)
     {
-        Eigen::Matrix4d des_pose;
-        orca_ros::utils::poseMsgToMatrix4dEigen(feedback->pose,des_pose);
-        cart_task_proxy->setDesiredPose(des_pose);
+        orca_ros::utils::poseMsgToMatrix4dEigen(feedback->pose,desired_pose); // T(base->marker)
+        cart_task_proxy->setDesiredPose(desired_pose);
     }
     else
     {
-        latest_pose = geometry_msgs::Pose();
-        // TODO In tool Frame
-        //geometry_msgs::Pose
-        //getPose(interactive_marker_frame_id,control_frame,)
+        tf::Transform base_to_marker_frame_id;
+        if(getPose(base_frame,interactive_marker_frame_id,base_to_marker_frame_id)) // T(base->tool)
+        { 
+            tf::Pose marker_frame_id_to_marker;
+            tf::poseMsgToTF(feedback->pose,marker_frame_id_to_marker);
+            tf::Transform base_to_marker = base_to_marker_frame_id * marker_frame_id_to_marker; // T(base->marker) = T(base->tool) + T(tool->marker)
+            Eigen::Affine3d desired_pose_affine3d;
+            tf::transformTFToEigen(base_to_marker_frame_id,desired_pose_affine3d);
+            desired_pose = desired_pose_affine3d.matrix();
+            cart_task_proxy->setDesiredPose(desired_pose);
+        }
     }
 
-    std::cout << feedback->pose << '\n';
-    std::cout << feedback->header << '\n';
-
-    latest_pose = feedback->pose;
-    server->applyChanges();
+    std::cout << "Desired pose : \n" << desired_pose << '\n';
 }
 
-void frameCallback(const ros::TimerEvent&)
-{
-    geometry_msgs::Pose zero;
-    publishTf(base_frame,interactive_marker_frame_id,zero);
-}
+// void frameCallback(const ros::TimerEvent&)
+// {
+//     geometry_msgs::Pose zero;
+//     publishTf(base_frame,interactive_marker_frame_id,zero);
+// }
 
 int main(int argc, char** argv)
 {
@@ -145,28 +148,22 @@ int main(int argc, char** argv)
     control_frame = cart_task_proxy->getControlFrame();
 
 
+    geometry_msgs::Pose init_pose = geometry_msgs::Pose();
+    
     if(interactive_marker_frame_id == base_frame)
     {
         // It means no need to transform the pose given by feedback
-        getPose(base_frame,control_frame,latest_pose);
+        getPose(base_frame,control_frame,init_pose);
     }
-    else
-    {
-        latest_pose = geometry_msgs::Pose();
-        // TODO In tool Frame
-        //geometry_msgs::Pose
-        //getPose(interactive_marker_frame_id,control_frame,)
-    }
-    // Get the initial value of the cartesian task
 
-    std::cout << "Initial position for marker " << latest_pose << '\n';
+    std::cout << "Initial position for marker " << init_pose << '\n';
 
     //ros::NodeHandle n;
     //ros::Timer frame_timer = n.createTimer(ros::Duration(0.01), frameCallback);
     int_marker.scale = 0.2;
-    int_marker.pose = latest_pose;
+    int_marker.pose = init_pose;
     int_marker.header.frame_id = interactive_marker_frame_id;
-    int_marker.header.stamp = ros::Time(0); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<THIS IS THE TRICK
+    int_marker.header.stamp = ros::Time(0);
     int_marker.name = task_name + "_interactive_marker";
     int_marker.description = task_name + " control frame";
 
