@@ -12,7 +12,7 @@ RosController::RosController(   const std::string& robot_name,
     ndof_ = trq_msg_.joint_names.size();
     trq_msg_.joint_torque_command.resize(ndof_);
 
-    std::string trq_prefix(getRobotNamespacePrefix()+"desired_torque");
+    std::string trq_prefix(getRobotNamespacePrefix()+"joint_torque_command");
     desired_torque_pub_ = getNodeHandle()->advertise<orca_ros::JointTorqueCommand>(trq_prefix,1,true);
 
     ctrl_->setUpdateCallback( std::bind(&RosController::publishJointTorqueCommands, this) );

@@ -28,7 +28,7 @@ RosGazeboModel::RosGazeboModel(std::shared_ptr<GazeboModel> gz_model
 
     state_pub_ = getNodeHandle()->advertise<orca_ros::RobotState>("robot_state", 1, true);
     joint_states_pub_ = getNodeHandle()->advertise<sensor_msgs::JointState>("joint_states", 1, true);
-    desired_torque_sub_ = getNodeHandle()->subscribe( "desired_torque", 1, &RosGazeboModel::desiredTorqueSubscriberCb, this);
+    desired_torque_sub_ = getNodeHandle()->subscribe( "joint_torque_command", 1, &RosGazeboModel::desiredTorqueSubscriberCb, this);
 
     gz_model->setCallback([&](uint32_t n_iter,double current_time,double dt)
     {
