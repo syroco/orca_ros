@@ -59,6 +59,11 @@ RosGazeboModel::RosGazeboModel(std::shared_ptr<GazeboModel> gz_model
 
         joint_states_pub_.publish(joint_states_);
         state_pub_.publish(state_);
+
+        if(first_command_received_)
+        {
+            // wait for next command
+        }
     });
 }
 
@@ -71,4 +76,6 @@ void RosGazeboModel::desiredTorqueSubscriberCb(const orca_ros::JointTorqueComman
     }
     torque_command_ = Eigen::Map<const Eigen::VectorXd>(msg->joint_torque_command.data(),msg->joint_torque_command.size());
     this->gz_model_->setJointTorqueCommand(torque_command_);
+    //ros::topic::waitForMessage(desired_torque_sub_.getTopic(), ros::Duration(3.0));
+    first_command_received_ = true;
 }

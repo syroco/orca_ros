@@ -28,6 +28,7 @@ private:
     sensor_msgs::JointState joint_states_;
     std::shared_ptr<orca::robot::RobotDynTree> robot_kinematics_;
     bool robot_compensates_gravity_ = false;
+    bool first_command_received_ = false;
 };
 
 } // namespace gazebo

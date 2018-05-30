@@ -47,8 +47,9 @@ namespace optim
 class RosController : public orca_ros::common::RosWrapperBase
 {
 public:
-    RosController(  const std::string& robot_name,
-                    std::shared_ptr<orca::optim::Controller> c);
+    RosController(  const std::string& robot_name
+                , std::shared_ptr<orca::optim::Controller> c
+                , bool robot_compensates_gravity);
 
     virtual ~RosController();
 
@@ -87,7 +88,8 @@ private:
 private:
     ros::Publisher desired_torque_pub_;
     orca_ros::JointTorqueCommand trq_msg_;
-    int ndof_;
+    int ndof_ = 0;
+    bool robot_compensates_gravity_ = false;
 };
 
 } // namespace optim

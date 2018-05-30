@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
 
     controller->removeGravityTorquesFromSolution(robot_compensates_gravity);
 
-    RosController controller_ros_wrapper(robot_name, controller);
+    RosController controller_ros_wrapper(robot_name, controller,robot_compensates_gravity);
     RosRobotDynTree robot_ros_wrapper(robot);
 
     // Cartesian Task
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
     controller->addTask(cart_task);
 
     cart_task->setControlFrame("link_7"); // We want to control the link_7
-
+    cart_task->setRampDuration(0);
     // Set the pose desired for the link_7
     Eigen::Affine3d cart_pos_ref;
 

@@ -3,9 +3,11 @@
 using namespace orca_ros::optim;
 
 RosController::RosController(   const std::string& robot_name,
-                                std::shared_ptr<orca::optim::Controller> c)
+                                std::shared_ptr<orca::optim::Controller> c
+                                ,bool robot_compensates_gravity)
 : orca_ros::common::RosWrapperBase(robot_name, c->getName(), "", "")
 , ctrl_(c)
+, robot_compensates_gravity_(robot_compensates_gravity)
 {
     trq_msg_.joint_names = ctrl_->robot()->getJointNames();
     trq_msg_.header.frame_id = ctrl_->robot()->getBaseFrame();
@@ -125,10 +127,19 @@ void RosController::publishJointTorqueCommands()
     }
     else
     {
-        // ROS_WARN("Optimal solution not found, sending KKTTorques as fallback solution");
-        // Eigen::VectorXd::Map(trq_msg_.joint_torque_command.data(),trq_msg_.joint_torque_command.size()) = ctrl_->computeKKTTorques();
-        ROS_WARN("Optimal solution not found, sending gravity compensation torques as fallback solution");
-        Eigen::VectorXd::Map(trq_msg_.joint_torque_command.data(),trq_msg_.joint_torque_command.size()) = ctrl_->robot()->getJointGravityTorques();
+        if(!robot_compensates_gravity_)
+        {
+            // ROS_WARN("Optimal solution not found, sending KKTTorques as fallback solution");
+            // Eigen::VectorXd::Map(trq_msg_.joint_torque_command.data(),trq_msg_.joint_torque_command.size()) = ctrl_->computeKKTTorques();
+            ROS_WARN("Optimal solution not found, sending gravity compensation torques as fallback solution");
+            Eigen::VectorXd::Map(trq_msg_.joint_torque_command.data(),trq_msg_.joint_torque_command.size()) = ctrl_->robot()->getJointGravityTorques();
+        }
+        else
+        {
+            ROS_WARN("Optimal solution not found, robot is compensating gravity, sending 0 torques as fallback solution");
+            for(auto& t : trq_msg_.joint_torque_command)
+                t = 0;
+        }
     }
 
     trq_msg_.header.stamp = ros::Time::now();
