@@ -14,9 +14,9 @@ RosCartesianAccelerationPIDProxy::RosCartesianAccelerationPIDProxy( const std::s
     sc_getCommand_ = getNodeHandle()->serviceClient<orca_ros::GetMatrix>("getCommand");
     sc_getCurrentCartesianPose_ = getNodeHandle()->serviceClient<orca_ros::GetMatrix>("getCurrentCartesianPose");
     sc_getCurrentCartesianVelocity_ = getNodeHandle()->serviceClient<orca_ros::GetMatrix>("getCurrentCartesianVelocity");
-    sc_getCartesianPoseRef_ = getNodeHandle()->serviceClient<orca_ros::GetMatrix>("getCartesianPoseRef");
-    sc_getCartesianVelocityRef_ = getNodeHandle()->serviceClient<orca_ros::GetMatrix>("getCartesianVelocityRef");
-    sc_getCartesianAccelerationRef_ = getNodeHandle()->serviceClient<orca_ros::GetMatrix>("getCartesianAccelerationRef");
+    sc_getDesiredCartesianPose_ = getNodeHandle()->serviceClient<orca_ros::GetMatrix>("getDesiredCartesianPose");
+    sc_getDesiredCartesianVelocity_ = getNodeHandle()->serviceClient<orca_ros::GetMatrix>("getDesiredCartesianVelocity");
+    sc_getDesiredCartesianAcceleration_ = getNodeHandle()->serviceClient<orca_ros::GetMatrix>("getDesiredCartesianAcceleration");
     sc_print_ = getNodeHandle()->serviceClient<std_srvs::Empty>("print");
 }
 
@@ -80,24 +80,24 @@ orca::math::Vector6d RosCartesianAccelerationPIDProxy::getCurrentCartesianVeloci
     return v;
 }
 
-Eigen::Matrix4d RosCartesianAccelerationPIDProxy::getCartesianPoseRef()
+Eigen::Matrix4d RosCartesianAccelerationPIDProxy::getDesiredCartesianPose()
 {
     orca_ros::GetMatrix srv;
-    if(!sc_getCartesianPoseRef_.call(srv))
+    if(!sc_getDesiredCartesianPose_.call(srv))
     {
-        ROS_ERROR("Service call [getCartesianPoseRef] failed.");
+        ROS_ERROR("Service call [getDesiredCartesianPose] failed.");
     }
     Eigen::Matrix4d v;
     orca_ros::utils::floatMultiArrayToEigen(srv.response.data, v);
     return v;
 }
 
-orca::math::Vector6d RosCartesianAccelerationPIDProxy::getCartesianVelocityRef()
+orca::math::Vector6d RosCartesianAccelerationPIDProxy::getDesiredCartesianVelocity()
 {
     orca_ros::GetMatrix srv;
-    if(!sc_getCartesianVelocityRef_.call(srv))
+    if(!sc_getDesiredCartesianVelocity_.call(srv))
     {
-        ROS_ERROR("Service call [getCartesianVelocityRef] failed.");
+        ROS_ERROR("Service call [getDesiredCartesianVelocity] failed.");
     }
     orca::math::Vector6d v;
     orca_ros::utils::floatMultiArrayToEigen(srv.response.data, v);
@@ -105,12 +105,12 @@ orca::math::Vector6d RosCartesianAccelerationPIDProxy::getCartesianVelocityRef()
 }
 
 
-orca::math::Vector6d RosCartesianAccelerationPIDProxy::getCartesianAccelerationRef()
+orca::math::Vector6d RosCartesianAccelerationPIDProxy::getDesiredCartesianAcceleration()
 {
     orca_ros::GetMatrix srv;
-    if(!sc_getCartesianAccelerationRef_.call(srv))
+    if(!sc_getDesiredCartesianAcceleration_.call(srv))
     {
-        ROS_ERROR("Service call [getCartesianAccelerationRef] failed.");
+        ROS_ERROR("Service call [getDesiredCartesianAcceleration] failed.");
     }
     orca::math::Vector6d v;
     orca_ros::utils::floatMultiArrayToEigen(srv.response.data, v);

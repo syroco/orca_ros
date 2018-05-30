@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
         std::cout << "CartTask_EE:" << "\n\n";
         std::cout << "Base Frame: " << cart_task_proxy.getBaseFrame() << "\n";
         std::cout << "Control Frame: " << cart_task_proxy.getControlFrame() << "\n";
-        std::cout << "Postion Reference:\n" << cart_task_proxy.servoController()->getCartesianPoseRef() << "\n";
+        std::cout << "Postion Reference:\n" << cart_task_proxy.servoController()->getDesiredCartesianPose() << "\n";
         std::cout << "Proportional Gains:\n" << cart_task_proxy.servoController()->pid()->getProportionalGain() << "\n";
 
         std::cout << "\n\nChanging reference:" << '\n';

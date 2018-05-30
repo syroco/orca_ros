@@ -27,7 +27,7 @@ orca_ros::task::RosCartesianTaskProxy cart_task_proxy(robot_name, controller_nam
 
 while(ros::ok())
 {
-    std::cout << "Postion Reference:\n" << cart_task_proxy.servoController()->getCartesianPoseRef() << "\n";
+    std::cout << "Postion Reference:\n" << cart_task_proxy.servoController()->getDesiredCartesianPose() << "\n";
 }
 ```
 

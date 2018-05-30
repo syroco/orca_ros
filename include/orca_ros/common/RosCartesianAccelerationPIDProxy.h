@@ -59,9 +59,9 @@ namespace orca_ros
             orca::math::Vector6d getCommand();
             Eigen::Matrix4d getCurrentCartesianPose();
             orca::math::Vector6d getCurrentCartesianVelocity();
-            Eigen::Matrix4d getCartesianPoseRef();
-            orca::math::Vector6d getCartesianVelocityRef();
-            orca::math::Vector6d getCartesianAccelerationRef();
+            Eigen::Matrix4d getDesiredCartesianPose();
+            orca::math::Vector6d getDesiredCartesianVelocity();
+            orca::math::Vector6d getDesiredCartesianAcceleration();
             void print();
 
         private:
@@ -72,9 +72,9 @@ namespace orca_ros
             ros::ServiceClient sc_getCommand_;
             ros::ServiceClient sc_getCurrentCartesianPose_;
             ros::ServiceClient sc_getCurrentCartesianVelocity_;
-            ros::ServiceClient sc_getCartesianPoseRef_;
-            ros::ServiceClient sc_getCartesianVelocityRef_;
-            ros::ServiceClient sc_getCartesianAccelerationRef_;
+            ros::ServiceClient sc_getDesiredCartesianPose_;
+            ros::ServiceClient sc_getDesiredCartesianVelocity_;
+            ros::ServiceClient sc_getDesiredCartesianAcceleration_;
             ros::ServiceClient sc_print_;
         };
     }

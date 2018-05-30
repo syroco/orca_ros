@@ -70,11 +70,11 @@ void RosCartesianTask::publishCurrentState()
 
     tf::twistEigenToMsg(cart_servo_->getCurrentCartesianVelocity(), current_state_msg_.current_velocity);
 
-    orca_ros::utils::matrix4dEigenToPoseMsg(cart_servo_->getCartesianPoseRef(), current_state_msg_.desired_pose);
+    orca_ros::utils::matrix4dEigenToPoseMsg(cart_servo_->getDesiredCartesianPose(), current_state_msg_.desired_pose);
 
-    tf::twistEigenToMsg(cart_servo_->getCartesianVelocityRef(), current_state_msg_.desired_velocity);
+    tf::twistEigenToMsg(cart_servo_->getDesiredCartesianVelocity(), current_state_msg_.desired_velocity);
 
-    orca_ros::utils::accelEigenToMsg(cart_servo_->getCartesianAccelerationRef(), current_state_msg_.desired_acceleration);
+    orca_ros::utils::accelEigenToMsg(cart_servo_->getDesiredCartesianAcceleration(), current_state_msg_.desired_acceleration);
 
     current_state_pub_.publish(current_state_msg_);
 }

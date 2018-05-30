@@ -15,9 +15,9 @@ RosCartesianAccelerationPID::RosCartesianAccelerationPID(   const std::string& r
     ss_getCommand_ = getNodeHandle()->advertiseService("getCommand", &RosCartesianAccelerationPID::getCommandService, this);
     ss_getCurrentCartesianPose_ = getNodeHandle()->advertiseService("getCurrentCartesianPose", &RosCartesianAccelerationPID::getCurrentCartesianPoseService, this);
     ss_getCurrentCartesianVelocity_ = getNodeHandle()->advertiseService("getCurrentCartesianVelocity", &RosCartesianAccelerationPID::getCurrentCartesianVelocityService, this);
-    ss_getCartesianPoseRef_ = getNodeHandle()->advertiseService("getCartesianPoseRef", &RosCartesianAccelerationPID::getCartesianPoseRefService, this);
-    ss_getCartesianVelocityRef_ = getNodeHandle()->advertiseService("getCartesianVelocityRef", &RosCartesianAccelerationPID::getCartesianVelocityRefService, this);
-    ss_getCartesianAccelerationRef_ = getNodeHandle()->advertiseService("getCartesianAccelerationRef", &RosCartesianAccelerationPID::getCartesianAccelerationRefService, this);
+    ss_getDesiredCartesianPose_ = getNodeHandle()->advertiseService("getDesiredCartesianPose", &RosCartesianAccelerationPID::getDesiredCartesianPoseService, this);
+    ss_getDesiredCartesianVelocity_ = getNodeHandle()->advertiseService("getDesiredCartesianVelocity", &RosCartesianAccelerationPID::getDesiredCartesianVelocityService, this);
+    ss_getDesiredCartesianAcceleration_ = getNodeHandle()->advertiseService("getDesiredCartesianAcceleration", &RosCartesianAccelerationPID::getDesiredCartesianAccelerationService, this);
     ss_print_ = getNodeHandle()->advertiseService("print", &RosCartesianAccelerationPID::printService, this);
 }
 
@@ -55,21 +55,21 @@ bool RosCartesianAccelerationPID::getCurrentCartesianVelocityService(orca_ros::G
     return true;
 }
 
-bool RosCartesianAccelerationPID::getCartesianPoseRefService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res)
+bool RosCartesianAccelerationPID::getDesiredCartesianPoseService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res)
 {
-    tf::matrixEigenToMsg(cart_acc_pid_->getCartesianPoseRef(), res.data);
+    tf::matrixEigenToMsg(cart_acc_pid_->getDesiredCartesianPose(), res.data);
     return true;
 }
 
-bool RosCartesianAccelerationPID::getCartesianVelocityRefService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res)
+bool RosCartesianAccelerationPID::getDesiredCartesianVelocityService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res)
 {
-    tf::matrixEigenToMsg(cart_acc_pid_->getCartesianVelocityRef(), res.data);
+    tf::matrixEigenToMsg(cart_acc_pid_->getDesiredCartesianVelocity(), res.data);
     return true;
 }
 
-bool RosCartesianAccelerationPID::getCartesianAccelerationRefService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res)
+bool RosCartesianAccelerationPID::getDesiredCartesianAccelerationService(orca_ros::GetMatrix::Request &req, orca_ros::GetMatrix::Response &res)
 {
-    tf::matrixEigenToMsg(cart_acc_pid_->getCartesianAccelerationRef(), res.data);
+    tf::matrixEigenToMsg(cart_acc_pid_->getDesiredCartesianAcceleration(), res.data);
     return true;
 }
 
