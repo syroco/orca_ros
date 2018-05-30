@@ -42,22 +42,20 @@ int main(int argc, char** argv)
       return 0;
   }
 
-  std::string frame_id("");
+  std::string frame_id("world");
   if(!ros::param::get("~frame_id",frame_id))
   {
-      ROS_ERROR_STREAM("" << ros::this_node::getName() << "Could not find frame_id in namespace "
+      ROS_WARN_STREAM("" << ros::this_node::getName() << "Could not find frame_id in namespace "
           << ros::this_node::getNamespace()
           << "/" << ros::this_node::getName());
-      return 0;
   }
 
   bool show_dof_controls = true;
   if(!ros::param::get("~show_dof_controls",show_dof_controls))
   {
-      ROS_ERROR_STREAM("" << ros::this_node::getName() << "Could not find show_dof_controls in namespace "
+      ROS_WARN_STREAM("" << ros::this_node::getName() << "Could not find show_dof_controls in namespace "
           << ros::this_node::getNamespace()
           << "/" << ros::this_node::getName());
-      return 0;
   }
 
   cart_task_proxy = std::make_shared<orca_ros::task::RosCartesianTaskProxy>(robot_name,controller_name,task_name);
@@ -70,6 +68,8 @@ int main(int argc, char** argv)
   int_marker.header.stamp=ros::Time::now();
   int_marker.name = task_name;
 
+  orca_ros::utils::matrix4dEigenToPoseMsg(cart_task_proxy->getCurrentPose(), int_marker.pose);
+
   visualization_msgs::Marker box_marker;
   box_marker.type = visualization_msgs::Marker::CUBE;
   box_marker.scale.x = 0.10;
@@ -79,6 +79,8 @@ int main(int argc, char** argv)
   box_marker.color.g = 0.5;
   box_marker.color.b = 0.5;
   box_marker.color.a = 0.6;
+
+
 
   visualization_msgs::InteractiveMarkerControl control;
   control.always_visible = true;
