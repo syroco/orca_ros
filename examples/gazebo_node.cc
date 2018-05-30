@@ -16,7 +16,7 @@ int main(int argc, char** argv)
     GazeboServer gzserver({"-s","libgazebo_ros_paths_plugin.so","-s","libgazebo_ros_api_plugin.so"});
 
     // ros::init(argc, argv, "gazebo_node", ros::init_options::NoSigintHandler);
-    signal(SIGINT, sigintHandler);
+    // signal(SIGINT, sigintHandler);
 
     std::string robot_name("");
     if(!ros::param::get("~robot_name",robot_name))
@@ -63,9 +63,8 @@ int main(int argc, char** argv)
 
     gzserver.run([&](uint32_t n_iter,double current_time,double dt)
     {
-        if(exit_)
-            gzserver.shutdown();
+        // if(exit_)
+        //     gzserver.shutdown();
     });
-    ros::shutdown();
     return 0;
 }

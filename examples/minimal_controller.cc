@@ -6,13 +6,13 @@ using namespace orca::all;
 using namespace orca_ros::all;
 
 // CTRL+C Signal handling
-#include <signal.h>
-bool exit_ = false;
-void sigintHandler(int sig)
-{
-    exit_ = true;
-}
-
+// #include <signal.h>
+// bool exit_ = false;
+// void sigintHandler(int sig)
+// {
+//     exit_ = true;
+// }
+//
 
 // To start this example :
 // rosrun orca_ros minimal_controller _robot_name:="lwr" _base_frame:="link_0" _urdf_url:="$(rospack find orca)/examples/lwr.urdf"
@@ -20,8 +20,8 @@ void sigintHandler(int sig)
 
 int main(int argc, char *argv[])
 {
-    ros::init(argc, argv, "orca_cart_demo0", ros::init_options::NoSigintHandler);
-    signal(SIGINT, sigintHandler);
+    ros::init(argc, argv, "orca_cart_demo0");//, ros::init_options::NoSigintHandler);
+    // signal(SIGINT, sigintHandler);
 
     std::string robot_name("");
     if(!ros::param::get("~robot_name",robot_name))
@@ -128,13 +128,13 @@ int main(int argc, char *argv[])
 
     RosCartesianTask cart_task_wrapper(robot_name, controller->getName(), cart_task);
 
-    ros::Rate r(1000);
+    ros::Rate r(500);
 
     controller->activateTasksAndConstraints();
 
     auto t_now = ros::Time::now();
     std::cout << "Controller running" << '\n';
-    while (!exit_)
+    while (ros::ok())
     {
         auto t_dt = ros::Time().now() - t_now;
 
@@ -145,21 +145,21 @@ int main(int argc, char *argv[])
         ros::spinOnce();
         r.sleep();
     }
-    std::cout << "Controller shutdown initiated" << '\n';
-    // Shutdown components
-    controller->deactivateTasksAndConstraints();
-    while (!controller->tasksAndConstraintsDeactivated())
-    {
-        auto t_dt = ros::Time().now() - t_now;
-
-        controller->update(t_now.toSec(),t_dt.toSec());
-
-        t_now = ros::Time::now();
-
-        ros::spinOnce();
-        r.sleep();
-    }
-    ros::shutdown();
+    // std::cout << "Controller shutdown initiated" << '\n';
+    // // Shutdown components
+    // controller->deactivateTasksAndConstraints();
+    // while (!controller->tasksAndConstraintsDeactivated())
+    // {
+    //     auto t_dt = ros::Time().now() - t_now;
+    //
+    //     controller->update(t_now.toSec(),t_dt.toSec());
+    //
+    //     t_now = ros::Time::now();
+    //
+    //     ros::spinOnce();
+    //     r.sleep();
+    // }
+    // ros::shutdown();
     std::cout << "exit" << '\n';
     return 0;
 }
