@@ -18,6 +18,11 @@
         <param name="base_frame" value="$(arg base_frame)"/>
         <param name="urdf_url" value="$(arg urdf_url)"/>
         <param name="robot_compensates_gravity" value="$(arg robot_compensates_gravity)"/>
+        <rosparam param="init_joint_positions">
+            joint_0:  1.0
+            joint_3: -1.57
+            joint_5:  1.57
+        </rosparam>
     </node>
 
     <node name="minimal_controller" pkg="orca_ros" type="minimal_controller" output="screen">

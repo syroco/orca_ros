@@ -2,16 +2,21 @@
     <arg name="robot_name" default="lwr"/>
     <arg name="base_frame"  default="link_0"/>
     <arg name="urdf_url"  default="$(find orca)/examples/resources/lwr.urdf"/>
-    <arg name="robot_compensates_gravity"  default="true"/>
+    <arg name="robot_compensates_gravity" default="true"/>
 
     <!-- Synchronise the gazebo clock with ROS clock -->
-    <param name="use_sim_time" value="true"/>
+    <param name="/use_sim_time" value="true"/>
 
     <node name="gazebo" pkg="orca_ros" type="gazebo_node" output="screen">
         <param name="robot_name" value="$(arg robot_name)"/>
         <param name="base_frame" value="$(arg base_frame)"/>
         <param name="urdf_url" value="$(arg urdf_url)"/>
         <param name="robot_compensates_gravity" value="$(arg robot_compensates_gravity)"/>
+
+        <rosparam param="init_joint_positions">
+            joint_4: 1.57
+            joint_5: -1.57
+        </rosparam>
     </node>
 
     <node name="minimal_controller" pkg="orca_ros" type="minimal_controller" output="screen">

@@ -71,7 +71,7 @@ void processRvizFeedback( const visualization_msgs::InteractiveMarkerFeedbackCon
 {
     // The feedback contains the position of the marker w.r.t its frame id
     Eigen::Matrix4d desired_pose;
-    
+
     if(interactive_marker_frame_id == base_frame)
     {
         orca_ros::utils::poseMsgToMatrix4dEigen(feedback->pose,desired_pose); // T(base->marker)
@@ -81,7 +81,7 @@ void processRvizFeedback( const visualization_msgs::InteractiveMarkerFeedbackCon
     {
         tf::Transform base_to_marker_frame_id;
         if(getPose(base_frame,interactive_marker_frame_id,base_to_marker_frame_id)) // T(base->tool)
-        { 
+        {
             tf::Pose marker_frame_id_to_marker;
             tf::poseMsgToTF(feedback->pose,marker_frame_id_to_marker);
             tf::Transform base_to_marker = base_to_marker_frame_id * marker_frame_id_to_marker; // T(base->marker) = T(base->tool) + T(tool->marker)
@@ -92,7 +92,7 @@ void processRvizFeedback( const visualization_msgs::InteractiveMarkerFeedbackCon
         }
     }
 
-    std::cout << "Desired pose : \n" << desired_pose << '\n';
+    //std::cout << "Desired pose : \n" << desired_pose << '\n';
 }
 
 // void frameCallback(const ros::TimerEvent&)
@@ -149,7 +149,7 @@ int main(int argc, char** argv)
 
 
     geometry_msgs::Pose init_pose = geometry_msgs::Pose();
-    
+
     if(interactive_marker_frame_id == base_frame)
     {
         // It means no need to transform the pose given by feedback

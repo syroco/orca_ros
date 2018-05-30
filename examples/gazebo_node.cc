@@ -54,8 +54,26 @@ int main(int argc, char** argv)
         return 0;
     }
 
-
     auto gzrobot = std::make_shared<GazeboModel>(gzserver.insertModelFromURDFFile(urdf_url));
+    
+    std::map<std::string, double> init_joint_positions;
+    if(!ros::param::get("~init_joint_positions",init_joint_positions))
+    {
+        ROS_WARN_STREAM("" << ros::this_node::getName() << "Could not find init_joint_positions in namespace "
+            << ros::this_node::getNamespace()
+            << "/" << ros::this_node::getName());
+    }
+    std::vector<std::string> jn;
+    std::vector<double> jp;
+    for(auto e : init_joint_positions)
+    {
+        jn.push_back(e.first);
+        jp.push_back(e.second);
+    }
+    gzrobot->setModelConfiguration(jn,jp);
+
+
+    
     auto robot_kinematics = std::make_shared<orca::robot::RobotDynTree>();
     robot_kinematics->loadModelFromFile(urdf_url);
 

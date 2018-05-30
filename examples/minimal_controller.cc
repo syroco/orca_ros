@@ -116,10 +116,10 @@ int main(int argc, char *argv[])
 
     // Now set the servoing PID
     Vector6d P;
-    P << 5000, 5000, 5000, 100, 100, 100;
+    P << 100, 100, 100, 10, 10, 10;
     cart_task->servoController()->pid()->setProportionalGain(P);
     Vector6d D;
-    D << 100, 100, 100, 1, 1, 1;
+    D << 10, 10, 10, 1, 1, 1;
     cart_task->servoController()->pid()->setDerivativeGain(D);
     // The desired values are set on the servo controller
     // Because cart_task->setDesired expects a cartesian acceleration
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
     ros::Rate r(500);
 
     controller->activateTasksAndConstraints();
-
+    controller->globalRegularization()->euclidianNorm().setWeight(1E-8);
     auto t_now = ros::Time::now();
     std::cout << "Controller running" << '\n';
     while (ros::ok())
