@@ -71,26 +71,16 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    auto robot = std::make_shared<RobotDynTree>(robot_name);
-    robot->loadModelFromFile(urdf_url);
-    robot->setBaseFrame(base_frame); // All the transformations will be expressed wrt this base frame
-
-    // Current state of the robot
-    const int ndof = robot->getNrOfDegreesOfFreedom();
-
-    Eigen::VectorXd current_joint_positions(ndof);
-    Eigen::VectorXd current_joint_velocities(ndof);
-
-    current_joint_positions.setZero(); // <------------ initial state
-    current_joint_velocities.setZero();// <------------ (arbitrary zero)
-
-    // Set the first state to the robot
-    robot->setRobotState(current_joint_positions,current_joint_velocities); // Now is the robot is considered 'initialized'
+    auto gzrobot = std::make_shared<GazeboModel>(gzserver.insertModelFromURDFFile(urdf_url));
+    auto robot_kinematics = std::make_shared<orca::robot::RobotDynTree>();
+    robot_kinematics->loadModelFromFile(urdf_url);
+    robot_kinematics->setBaseFrame(base_frame);
+    const int ndof = robot_kinematics->getNrOfDegreesOfFreedom();
 
     // Instanciate and ORCA Controller
     auto controller = std::make_shared<Controller>(
          controller_name
-        ,robot
+        ,robot_kinematics
         ,ResolutionStrategy::OneLevelWeighted // MultiLevelWeighted, Generalized
         ,QPSolver::qpOASES
     );
@@ -132,15 +122,9 @@ int main(int argc, char *argv[])
     controller->activateTasksAndConstraints();
 
 
-    auto gzrobot = std::make_shared<GazeboModel>(gzserver.insertModelFromURDFFile(urdf_url));
-    auto robot_kinematics = std::make_shared<orca::robot::RobotDynTree>();
-    robot_kinematics->loadModelFromFile(urdf_url);
-
     RosGazeboModel gzrobot_ros_wrapper(gzrobot,robot_kinematics);
     RosController controller_ros_wrapper(robot_name, controller); // TODO: take robot_kinematics
     RosCartesianTask cart_task_ros_wrapper(robot_name, controller->getName(), cart_task); // TODO: take robot_kinematics
-
-    Eigen::VectorXd final_joint_torque_command(robot_kinematics->getNrOfDegreesOfFreedom());
 
     gzrobot->setCallback([&](uint32_t n_iter,double current_time,double dt)
     {
@@ -161,7 +145,9 @@ int main(int argc, char *argv[])
         controller->update(current_time,dt);
 
         // Method 1 : always send torques / add fallback in case of failure
-
+        //
+        // Eigen::VectorXd final_joint_torque_command(robot_kinematics->getNrOfDegreesOfFreedom());
+        //
         // if(controller->solutionFound())
         // {
         //     final_joint_torque_command = controller->getJointTorqueCommand();
@@ -182,6 +168,7 @@ int main(int argc, char *argv[])
         if(controller->solutionFound())
         {
             // NOTE : breaks are automatically disabled when sending a command
+            // So no need to call gzrobot->setBrakes(false);
             gzrobot->setJointTorqueCommand( controller->getJointTorqueCommand() );
         }
         else
