@@ -55,7 +55,7 @@ namespace common
 
         public: // public interface functions to be wrapped by services
             bool isActivated();
-            std::string getName();
+            const std::string& getName();
             bool activate();
             bool deactivate();
             void print();
@@ -64,6 +64,7 @@ namespace common
             double getRampDuration();
 
     private:
+        const std::string task_name_;
         ros::ServiceClient sc_isActivated_;
         ros::ServiceClient sc_getName_;
         ros::ServiceClient sc_activate_;

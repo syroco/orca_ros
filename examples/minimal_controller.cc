@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
 
     // Now set the servoing PID
     Vector6d P;
-    P << 1000, 1000, 1000, 10, 10, 10;
+    P << 5000, 5000, 5000, 100, 100, 100;
     cart_task->servoController()->pid()->setProportionalGain(P);
     Vector6d D;
     D << 100, 100, 100, 1, 1, 1;

@@ -63,9 +63,7 @@ int main(int argc, char** argv)
 
     gzserver.run([&](uint32_t n_iter,double current_time,double dt)
     {
-        if(!exit_)
-            ros::spinOnce();
-        else
+        if(exit_)
             gzserver.shutdown();
     });
     ros::shutdown();

@@ -13,6 +13,8 @@ find_package(catkin REQUIRED COMPONENTS
     orca
     interactive_markers
     visualization_msgs
+    tf
+    tf_conversions
 )
 find_package(gazebo REQUIRED)
 

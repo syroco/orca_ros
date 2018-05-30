@@ -8,6 +8,7 @@ RosTaskBaseProxy::RosTaskBaseProxy(     const std::string& robot_name,
                                         const std::string& generic_prefix
                         )
 : RosWrapperBase(robot_name, controller_name, task_name, generic_prefix)
+, task_name_(task_name)
 {
     sc_isActivated_ = getNodeHandle()->serviceClient<orca_ros::GetBool>("isActivated");
     sc_getName_ = getNodeHandle()->serviceClient<orca_ros::GetString>("getName");
@@ -32,14 +33,9 @@ bool RosTaskBaseProxy::isActivated()
     }
     return srv.response.value;
 }
-std::string RosTaskBaseProxy::getName()
+const std::string& RosTaskBaseProxy::getName()
 {
-    orca_ros::GetString srv;
-    if (!sc_getName_.call(srv))
-    {
-        ROS_ERROR("Service call [getName] failed.");
-    }
-    return srv.response.data;
+    return task_name_;
 }
 bool RosTaskBaseProxy::activate()
 {
