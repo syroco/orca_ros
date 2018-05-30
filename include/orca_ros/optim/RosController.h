@@ -48,8 +48,7 @@ class RosController : public orca_ros::common::RosWrapperBase
 {
 public:
     RosController(  const std::string& robot_name
-                , std::shared_ptr<orca::optim::Controller> c
-                , bool robot_compensates_gravity);
+                , std::shared_ptr<orca::optim::Controller> c);
 
     virtual ~RosController();
 

@@ -129,6 +129,9 @@ target_link_libraries(${PROJECT_NAME}_gazebo ${PROJECT_NAME} ${GAZEBO_LIBRARIES}
 add_executable(gazebo_node examples/gazebo_node.cc)
 target_link_libraries(gazebo_node ${PROJECT_NAME}_gazebo)
 
+add_executable(minimal_controller_gazebo examples/minimal_controller_gazebo.cc)
+target_link_libraries(minimal_controller_gazebo ${PROJECT_NAME}_gazebo)
+
 add_executable(rviz_task_controller examples/rviz_task_controller.cc)
 target_link_libraries(rviz_task_controller ${PROJECT_NAME})
 

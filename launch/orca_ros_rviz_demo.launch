@@ -12,25 +12,17 @@
 
     <node pkg="tf2_ros" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0.32 0 0 0 1 link_7 my_super_tool" />
 
-
-    <node name="gazebo" pkg="orca_ros" type="gazebo_node" output="screen">
+    <node name="gazebo" pkg="orca_ros" type="minimal_controller_gazebo" output="screen">
         <param name="robot_name" value="$(arg robot_name)"/>
         <param name="base_frame" value="$(arg base_frame)"/>
         <param name="urdf_url" value="$(arg urdf_url)"/>
+        <param name="controller_name" value="$(arg robot_name)_orca_controller"/>
         <param name="robot_compensates_gravity" value="$(arg robot_compensates_gravity)"/>
         <rosparam param="init_joint_positions">
             joint_0:  1.0
             joint_3: -1.57
             joint_5:  1.57
         </rosparam>
-    </node>
-
-    <node name="minimal_controller" pkg="orca_ros" type="minimal_controller" output="screen">
-        <param name="robot_name" value="$(arg robot_name)"/>
-        <param name="base_frame" value="$(arg base_frame)"/>
-        <param name="urdf_url" value="$(arg urdf_url)"/>
-        <param name="controller_name" value="$(arg robot_name)_orca_controller"/>
-        <param name="robot_compensates_gravity" value="$(arg robot_compensates_gravity)"/>
     </node>
 
     <node name="rviz_task_controller" pkg="orca_ros" type="rviz_task_controller" output="screen">

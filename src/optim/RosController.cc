@@ -3,16 +3,21 @@
 using namespace orca_ros::optim;
 
 RosController::RosController(   const std::string& robot_name,
-                                std::shared_ptr<orca::optim::Controller> c
-                                ,bool robot_compensates_gravity)
+                                std::shared_ptr<orca::optim::Controller> c)
 : orca_ros::common::RosWrapperBase(robot_name, c->getName(), "", "")
 , ctrl_(c)
-, robot_compensates_gravity_(robot_compensates_gravity)
 {
     trq_msg_.joint_names = ctrl_->robot()->getJointNames();
     trq_msg_.header.frame_id = ctrl_->robot()->getBaseFrame();
     ndof_ = trq_msg_.joint_names.size();
     trq_msg_.joint_torque_command.resize(ndof_);
+
+    if(!ros::param::get("~robot_compensates_gravity",robot_compensates_gravity_))
+    {
+        ROS_ERROR_STREAM("" << ros::this_node::getName() << " Could not find robot_compensates_gravity in namespace "
+            << ros::this_node::getNamespace()
+            << "/" << ros::this_node::getName());
+    }
 
     std::string trq_prefix(getRobotNamespacePrefix()+"joint_torque_command");
     desired_torque_pub_ = getNodeHandle()->advertise<orca_ros::JointTorqueCommand>(trq_prefix,1);

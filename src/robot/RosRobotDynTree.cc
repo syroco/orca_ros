@@ -13,7 +13,7 @@ RosRobotDynTree::RosRobotDynTree( std::shared_ptr<orca::robot::RobotDynTree> r )
     robot_state_sub_ = getNodeHandle()->subscribe( "robot_state", 1, &RosRobotDynTree::currentStateSubscriberCb, this);
 
     // Block execution until the robot gets its first state.
-    waitForFirstState();
+    //waitForFirstState();
 
     ss_getBaseFrame_ = getNodeHandle()->advertiseService("getBaseFrame", &RosRobotDynTree::getBaseFrameService, this);
     ss_getUrdfUrl_ = getNodeHandle()->advertiseService("getUrdfUrl", &RosRobotDynTree::getUrdfUrlService, this);

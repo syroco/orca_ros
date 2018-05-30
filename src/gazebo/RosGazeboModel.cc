@@ -5,12 +5,10 @@ using namespace orca::gazebo;
 using namespace orca_ros::gazebo;
 
 RosGazeboModel::RosGazeboModel(std::shared_ptr<GazeboModel> gz_model
-                            , std::shared_ptr<orca::robot::RobotDynTree> robot_kinematics
-                            , bool robot_compensates_gravity)
+                            , std::shared_ptr<orca::robot::RobotDynTree> robot_kinematics)
 : RosWrapperBase(gz_model->getName())
 , gz_model_(gz_model)
 , robot_kinematics_(robot_kinematics)
-, robot_compensates_gravity_(robot_compensates_gravity)
 {
     const int ndof = gz_model_->getNDof();
     torque_command_.resize(ndof);
@@ -25,6 +23,32 @@ RosGazeboModel::RosGazeboModel(std::shared_ptr<GazeboModel> gz_model
     joint_states_.position.resize(ndof);
     joint_states_.velocity.resize(ndof);
     joint_states_.effort.resize(ndof);
+
+    if(!ros::param::get("~robot_compensates_gravity",robot_compensates_gravity_))
+    {
+        ROS_ERROR_STREAM("" << ros::this_node::getName() << " Could not find robot_compensates_gravity in namespace "
+            << ros::this_node::getNamespace()
+            << "/" << ros::this_node::getName());
+    }
+
+    std::map<std::string, double> init_joint_positions;
+    if(!ros::param::get("~init_joint_positions",init_joint_positions))
+    {
+        ROS_WARN_STREAM("" << ros::this_node::getName() << "Could not find init_joint_positions in namespace "
+            << ros::this_node::getNamespace()
+            << "/" << ros::this_node::getName());
+    }
+    else
+    {
+        std::vector<std::string> jn;
+        std::vector<double> jp;
+        for(auto e : init_joint_positions)
+        {
+            jn.push_back(e.first);
+            jp.push_back(e.second);
+        }
+        gz_model->setModelConfiguration(jn,jp);
+    }
 
     state_pub_ = getNodeHandle()->advertise<orca_ros::RobotState>("robot_state", 1, true);
     joint_states_pub_ = getNodeHandle()->advertise<sensor_msgs::JointState>("joint_states", 1, true);
