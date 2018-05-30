@@ -3,14 +3,15 @@
     <arg name="base_frame"  default="link_0"/>
     <arg name="urdf_url"  default="$(find orca)/examples/lwr.urdf"/>
     <arg name="robot_compensates_gravity" default="true"/>
-
     <arg name="task_name"  default="CartTask_EE"/>
-
-    <arg name="interactive_marker_frame_id"  default="my_super_tool"/>
-    <node pkg="tf2_ros" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0.32 0 0 0 1 link_7 my_super_tool" />
+    <arg name="interactive_marker_frame_id"  default="link_0"/>
 
     <!-- Synchronise the gazebo clock with ROS clock -->
     <param name="/use_sim_time" value="true"/>
+
+
+    <node pkg="tf2_ros" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0.32 0 0 0 1 link_7 my_super_tool" />
+
 
     <node name="gazebo" pkg="orca_ros" type="gazebo_node" output="screen">
         <param name="robot_name" value="$(arg robot_name)"/>
