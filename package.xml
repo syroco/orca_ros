@@ -4,8 +4,9 @@
   <version>1.0.0</version>
   <description>The orca_ros package</description>
 
-  <author email="info@fuzzylogicrobotics.com">Fuzzy Logic Robotics</author>
-  <maintainer email="info@fuzzylogicrobotics.com">Antoine Hoarau</maintainer>
+  <maintainer email="info@fuzzylogicrobotics.com">Fuzzy Logic Robotics</maintainer>
+  <author email="info@fuzzylogicrobotics.com">Antoine Hoarau</author>
+  <author email="info@fuzzylogicrobotics.com">Ryan Lober</author>
 
   <license>CeCILL-C</license>
 
@@ -20,4 +21,6 @@
   <depend>message_runtime</depend>
   <depend>interactive_markers</depend>
   <depend>visualization_msgs</depend>
+  <depend>tf</depend>
+  <depend>tf_conversions</depend>
 </package>
