@@ -47,48 +47,49 @@ RosGazeboModel::RosGazeboModel(std::shared_ptr<GazeboModel> gz_model
             jn.push_back(e.first);
             jp.push_back(e.second);
         }
-        gz_model->setModelConfiguration(jn,jp);
+        gz_model_->setModelConfiguration(jn,jp);
     }
 
     state_pub_ = getNodeHandle()->advertise<orca_ros::RobotState>("robot_state", 1, true);
     joint_states_pub_ = getNodeHandle()->advertise<sensor_msgs::JointState>("joint_states", 1, true);
+#if 0
     desired_torque_sub_ = getNodeHandle()->subscribe( "joint_torque_command", 1, &RosGazeboModel::desiredTorqueSubscriberCb, this);
-
-    gz_model->setCallback([&](uint32_t n_iter,double current_time,double dt)
+    gz_model_->setCallback([&](uint32_t n_iter,double current_time,double dt)
     {
-        robot_kinematics_->setRobotState(gz_model->getWorldToBaseTransform().matrix()
-                            ,gz_model->getJointPositions()
-                            ,gz_model->getBaseVelocity()
-                            ,gz_model->getJointVelocities()
-                            ,gz_model->getGravity()
-                        );
-
-        if(robot_compensates_gravity_)
-            gz_model_->setJointGravityTorques(robot_kinematics_->getJointGravityTorques());
-
-        state_.header.stamp = ros::Time(current_time);
-        tf::transformEigenToMsg(gz_model->getWorldToBaseTransform(), state_.world_to_base_transform);
-        tf::twistEigenToMsg(gz_model->getBaseVelocity(), state_.base_velocity);
-        tf::vectorEigenToMsg(gz_model->getGravity(), state_.gravity);
-
-        Eigen::VectorXd::Map(state_.joint_positions.data(),state_.joint_positions.size()) = gz_model->getJointPositions();
-        Eigen::VectorXd::Map(state_.joint_velocities.data(),state_.joint_velocities.size()) = gz_model->getJointVelocities();
-        Eigen::VectorXd::Map(state_.joint_external_torques.data(),state_.joint_external_torques.size()) = gz_model->getJointExternalTorques();
-        Eigen::VectorXd::Map(state_.joint_measured_torques.data(),state_.joint_measured_torques.size()) = gz_model->getJointMeasuredTorques();
-
-        joint_states_.header.stamp = state_.header.stamp;
-        joint_states_.position = state_.joint_positions;
-        joint_states_.velocity = state_.joint_velocities;
-        joint_states_.effort = state_.joint_measured_torques;
-
-        joint_states_pub_.publish(joint_states_);
-        state_pub_.publish(state_);
-
-        if(first_command_received_)
-        {
-            // wait for next command
-        }
+        publishRobotState();
     });
+#endif
+}
+
+void RosGazeboModel::publishRobotState()
+{
+    robot_kinematics_->setRobotState(gz_model_->getWorldToBaseTransform().matrix()
+                        ,gz_model_->getJointPositions()
+                        ,gz_model_->getBaseVelocity()
+                        ,gz_model_->getJointVelocities()
+                        ,gz_model_->getGravity()
+                    );
+
+    if(robot_compensates_gravity_)
+        gz_model_->setJointGravityTorques(robot_kinematics_->getJointGravityTorques());
+
+    state_.header.stamp = ros::Time::now();
+    tf::transformEigenToMsg(gz_model_->getWorldToBaseTransform(), state_.world_to_base_transform);
+    tf::twistEigenToMsg(gz_model_->getBaseVelocity(), state_.base_velocity);
+    tf::vectorEigenToMsg(gz_model_->getGravity(), state_.gravity);
+
+    Eigen::VectorXd::Map(state_.joint_positions.data(),state_.joint_positions.size()) = gz_model_->getJointPositions();
+    Eigen::VectorXd::Map(state_.joint_velocities.data(),state_.joint_velocities.size()) = gz_model_->getJointVelocities();
+    Eigen::VectorXd::Map(state_.joint_external_torques.data(),state_.joint_external_torques.size()) = gz_model_->getJointExternalTorques();
+    Eigen::VectorXd::Map(state_.joint_measured_torques.data(),state_.joint_measured_torques.size()) = gz_model_->getJointMeasuredTorques();
+
+    joint_states_.header.stamp = state_.header.stamp;
+    joint_states_.position = state_.joint_positions;
+    joint_states_.velocity = state_.joint_velocities;
+    joint_states_.effort = state_.joint_measured_torques;
+
+    joint_states_pub_.publish(joint_states_);
+    state_pub_.publish(state_);
 }
 
 void RosGazeboModel::desiredTorqueSubscriberCb(const orca_ros::JointTorqueCommand::ConstPtr& msg)

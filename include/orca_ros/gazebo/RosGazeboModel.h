@@ -16,7 +16,7 @@ public:
     RosGazeboModel(std::shared_ptr<orca::gazebo::GazeboModel> gz_model
         , std::shared_ptr<orca::robot::RobotDynTree> robot_kinematics);
     void desiredTorqueSubscriberCb(const orca_ros::JointTorqueCommand::ConstPtr& msg);
-
+    void publishRobotState();
 private:
     ros::Publisher state_pub_;
     ros::Publisher joint_states_pub_;

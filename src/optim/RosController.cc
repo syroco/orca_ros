@@ -21,9 +21,9 @@ RosController::RosController(   const std::string& robot_name,
 
     std::string trq_prefix(getRobotNamespacePrefix()+"joint_torque_command");
     desired_torque_pub_ = getNodeHandle()->advertise<orca_ros::JointTorqueCommand>(trq_prefix,1);
-
+#if 0
     ctrl_->setUpdateCallback( std::bind(&RosController::publishJointTorqueCommands, this) );
-
+#endif
 
     ss_getName_ = getNodeHandle()->advertiseService("getName", &RosController::getNameService, this);
     ss_print_ = getNodeHandle()->advertiseService("print", &RosController::printService, this);

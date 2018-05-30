@@ -97,15 +97,12 @@ int main(int argc, char *argv[])
 
     controller->removeGravityTorquesFromSolution(robot_compensates_gravity);
 
-    RosController controller_ros_wrapper(robot_name, controller);
-    RosRobotDynTree robot_ros_wrapper(robot);
-
     // Cartesian Task
     auto cart_task = std::make_shared<CartesianTask>("CartTask_EE");
     controller->addTask(cart_task);
 
     cart_task->setControlFrame("link_7"); // We want to control the link_7
-    cart_task->setRampDuration(0);
+    cart_task->setRampDuration(0); // Activate immediately
     // Set the pose desired for the link_7
     Eigen::Affine3d cart_pos_ref;
 
@@ -134,14 +131,67 @@ int main(int argc, char *argv[])
 
     controller->activateTasksAndConstraints();
 
-    RosCartesianTask cart_task_wrapper(robot_name, controller->getName(), cart_task);
 
     auto gzrobot = std::make_shared<GazeboModel>(gzserver.insertModelFromURDFFile(urdf_url));
     auto robot_kinematics = std::make_shared<orca::robot::RobotDynTree>();
     robot_kinematics->loadModelFromFile(urdf_url);
-    auto gzrobot_ros_wrapper = RosGazeboModel(gzrobot,robot_kinematics);
 
-    std::cout << "Controller running" << '\n';
+    RosGazeboModel gzrobot_ros_wrapper(gzrobot,robot_kinematics);
+    RosController controller_ros_wrapper(robot_name, controller); // TODO: take robot_kinematics
+    RosCartesianTask cart_task_ros_wrapper(robot_name, controller->getName(), cart_task); // TODO: take robot_kinematics
+
+    Eigen::VectorXd final_joint_torque_command(robot_kinematics->getNrOfDegreesOfFreedom());
+
+    gzrobot->setCallback([&](uint32_t n_iter,double current_time,double dt)
+    {
+        // Update the kinematics from the simulated robot
+        robot_kinematics->setRobotState(gzrobot->getWorldToBaseTransform().matrix()
+                                    ,gzrobot->getJointPositions()
+                                    ,gzrobot->getBaseVelocity()
+                                    ,gzrobot->getJointVelocities()
+                                    ,gzrobot->getGravity()
+                                );
+        // Publish state in ROS for remote proxies
+        gzrobot_ros_wrapper.publishRobotState();
+
+        // Set the Gravity compensation in gazebo
+        gzrobot->setJointGravityTorques(robot_kinematics->getJointGravityTorques());
+
+        // Step the controller
+        controller->update(current_time,dt);
+
+        // Method 1 : always send torques / add fallback in case of failure
+
+        // if(controller->solutionFound())
+        // {
+        //     final_joint_torque_command = controller->getJointTorqueCommand();
+        // }
+        // else
+        // {
+        //     // Fallback
+        //     if(robot_compensates_gravity) {
+        //         final_joint_torque_command.setZero();
+        //     } else {
+        //         final_joint_torque_command = robot_kinematics->getJointGravityTorques();
+        //     }
+        // }
+        // // Send to the simulated robot
+        // gzrobot->setJointTorqueCommand(final_joint_torque_command);
+
+        // Method 2 : Break when no solution found
+        if(controller->solutionFound())
+        {
+            // NOTE : breaks are automatically disabled when sending a command
+            gzrobot->setJointTorqueCommand( controller->getJointTorqueCommand() );
+        }
+        else
+        {
+            // No Solution found, breaking hard
+            gzrobot->setBrakes(true);
+        }
+    });
+
+
 
     // std::cout << "Controller shutdown initiated" << '\n';
     // // Shutdown components
@@ -158,13 +208,7 @@ int main(int argc, char *argv[])
     //     r.sleep();
     // }
     // ros::shutdown();
-
-    gzserver.run([&](uint32_t n_iter,double current_time,double dt)
-    {
-        // if(exit_)
-        //     gzserver.shutdown();
-    });
-
-    std::cout << "exit" << '\n';
+    std::cout << "Running Simulation + ORCA Controller" << '\n';
+    gzserver.run();
     return 0;
 }

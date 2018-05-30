@@ -9,9 +9,9 @@ RosRobotDynTree::RosRobotDynTree( std::shared_ptr<orca::robot::RobotDynTree> r )
 {
     jointPos_.setZero(robot_->getNrOfDegreesOfFreedom());
     jointVel_.setZero(robot_->getNrOfDegreesOfFreedom());
-
+#if 0
     robot_state_sub_ = getNodeHandle()->subscribe( "robot_state", 1, &RosRobotDynTree::currentStateSubscriberCb, this);
-
+#endif
     // Block execution until the robot gets its first state.
     //waitForFirstState();
 
