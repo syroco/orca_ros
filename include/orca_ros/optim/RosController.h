@@ -1,10 +1,10 @@
-// This file is a part of the orca_ros framework.
+// This file is a part of the ORCA_ROS Library.
 // Copyright 2017, ISIR / Universite Pierre et Marie Curie (UPMC)
 // Copyright 2018, Fuzzy Logic Robotics
-// Main contributor(s): Antoine Hoarau, Ryan Lober, Fuzzy Logic Robotics (info@fuzzylogicrobotics.com)
+// Main contributor(s): Antoine Hoarau, Ryan Lober, and
+// Fuzzy Logic Robotics <info@fuzzylogicrobotics.com>
 //
-// This software is a computer program whose purpose is to [describe
-// functionalities and technical features of your software].
+// This software provides ROS wrappers and nodes for the ORCA framework.
 //
 // This software is governed by the CeCILL-C license under French law and
 // abiding by the rules of distribution of free software.  You can  use,
@@ -31,6 +31,12 @@
 //
 // The fact that you are presently reading this means that you have had
 // knowledge of the CeCILL-C license and that you accept its terms.
+
+/** @file
+ @copyright 2018 Fuzzy Logic Robotics <info@fuzzylogicrobotics.com>
+ @author Antoine Hoarau
+ @author Ryan Lober
+*/
 
 #pragma once
 

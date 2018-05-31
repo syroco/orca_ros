@@ -1,10 +1,10 @@
-// This file is a part of the orca_ros framework.
+// This file is a part of the ORCA_ROS Library.
 // Copyright 2017, ISIR / Universite Pierre et Marie Curie (UPMC)
 // Copyright 2018, Fuzzy Logic Robotics
-// Main contributor(s): Antoine Hoarau, Ryan Lober, Fuzzy Logic Robotics (info@fuzzylogicrobotics.com)
+// Main contributor(s): Antoine Hoarau, Ryan Lober, and
+// Fuzzy Logic Robotics <info@fuzzylogicrobotics.com>
 //
-// This software is a computer program whose purpose is to [describe
-// functionalities and technical features of your software].
+// This software provides ROS wrappers and nodes for the ORCA framework.
 //
 // This software is governed by the CeCILL-C license under French law and
 // abiding by the rules of distribution of free software.  You can  use,
@@ -32,6 +32,13 @@
 // The fact that you are presently reading this means that you have had
 // knowledge of the CeCILL-C license and that you accept its terms.
 
+/** @file
+ @copyright 2018 Fuzzy Logic Robotics <info@fuzzylogicrobotics.com>
+ @author Antoine Hoarau
+ @author Ryan Lober
+*/
+
+
 #pragma once
 
 #include <orca/math/Utils.h>
@@ -57,7 +64,7 @@ namespace utils
 
         // Data is stored in row major order
         e = Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor>>(m.data.data(), rows, cols);
-        
+
         // e = Eigen::Map<Derived>(m.data.data(), rows, cols);
     }
 
@@ -66,27 +73,27 @@ namespace utils
         Eigen::Affine3d a(e);
         tf::poseEigenToMsg(a, m);
     }
-    
+
     inline void transformEigenToMsg(const Eigen::Matrix4d& t, geometry_msgs::Transform& m)
     {
         Eigen::Affine3d a(t);
         tf::transformEigenToMsg(a, m);
     }
-    
+
     inline void poseMsgToMatrix4dEigen(const geometry_msgs::Pose& m, Eigen::Matrix4d& e)
     {
         Eigen::Affine3d a;
         tf::poseMsgToEigen(m, a);
         e = a.matrix();
     }
-    
+
     inline void transformMsgToEigen(const geometry_msgs::Transform& t, Eigen::Matrix4d& e)
     {
         Eigen::Affine3d a;
         tf::transformMsgToEigen(t, a);
         e = a.matrix();
     }
-    
+
     inline void accelMsgToEigen(const geometry_msgs::Accel &m, Eigen::Matrix<double,6,1> &e)
     {
         e[0] = m.linear.x;
