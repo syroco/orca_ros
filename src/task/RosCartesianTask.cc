@@ -15,7 +15,7 @@ RosCartesianTask::RosCartesianTask( const std::string& robot_name,
     current_state_pub_ = getNodeHandle()->advertise<orca_ros::CartesianTaskState>("current_state", 1, true);
     desired_state_sub_ = getNodeHandle()->subscribe( "desired_state", 1, &RosCartesianTask::desiredStateSubscriberCb, this);
 
-    cart_task_->onUpdateEndCallback( std::bind(&RosCartesianTask::publishCurrentState, this) );
+    cart_task_->onComputeEndCallback( std::bind(&RosCartesianTask::publishCurrentState, this) );
 
 
     ss_setDesired_ = getNodeHandle()->advertiseService("setDesired", &RosCartesianTask::setDesiredService, this);
