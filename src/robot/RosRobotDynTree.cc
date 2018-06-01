@@ -3,17 +3,22 @@
 
 using namespace orca_ros::robot;
 
-RosRobotDynTree::RosRobotDynTree( std::shared_ptr<orca::robot::RobotDynTree> r )
+RosRobotDynTree::RosRobotDynTree( std::shared_ptr<orca::robot::RobotDynTree> r, bool attach_state_callback )
 : robot_(r)
 , RosWrapperBase(r->getName())
 {
     jointPos_.setZero(robot_->getNrOfDegreesOfFreedom());
     jointVel_.setZero(robot_->getNrOfDegreesOfFreedom());
-#if 0
-    robot_state_sub_ = getNodeHandle()->subscribe( "robot_state", 1, &RosRobotDynTree::currentStateSubscriberCb, this);
-#endif
-    // Block execution until the robot gets its first state.
-    //waitForFirstState();
+
+    if (attach_state_callback)
+    {
+        robot_state_sub_ = getNodeHandle()->subscribe( "robot_state", 1, &RosRobotDynTree::currentStateSubscriberCb, this);
+        // joint_states_pub_ = getNodeHandle()->advertise<sensor_msgs::JointState>("/joint_states", 1, true);
+
+        // Block execution until the robot gets its first state.
+        waitForFirstState();
+    }
+
 
     ss_getBaseFrame_ = getNodeHandle()->advertiseService("getBaseFrame", &RosRobotDynTree::getBaseFrameService, this);
     ss_getUrdfUrl_ = getNodeHandle()->advertiseService("getUrdfUrl", &RosRobotDynTree::getUrdfUrlService, this);
@@ -38,19 +43,27 @@ void RosRobotDynTree::waitForFirstState()
 
 void RosRobotDynTree::currentStateSubscriberCb(const orca_ros::RobotState::ConstPtr& msg)
 {
-    orca_ros::utils::transformMsgToEigen(msg->world_to_base_transform,world_H_base_);
-    tf::twistMsgToEigen(msg->base_velocity,baseVel_);
-    tf::vectorMsgToEigen(msg->gravity,gravity_);
+    // orca_ros::utils::transformMsgToEigen(msg->world_to_base_transform,world_H_base_);
+    // tf::twistMsgToEigen(msg->base_velocity,baseVel_);
+    // tf::vectorMsgToEigen(msg->gravity,gravity_);
 
     jointPos_ = Eigen::Map<const Eigen::VectorXd>(msg->joint_positions.data(),msg->joint_positions.size());
     jointVel_ = Eigen::Map<const Eigen::VectorXd>(msg->joint_velocities.data(),msg->joint_velocities.size());
 
-    robot_->setRobotState(world_H_base_, jointPos_, baseVel_, jointVel_, gravity_);
+    // robot_->setRobotState(world_H_base_, jointPos_, baseVel_, jointVel_, gravity_);
+    robot_->setRobotState(jointPos_, jointVel_);
 
     if (!first_robot_state_received_)
     {
         first_robot_state_received_ = true;
     }
+
+    // joint_states_.header.stamp = msg->header.stamp;
+    // joint_states_.position = msg->joint_positions;
+    // joint_states_.velocity = msg->joint_velocities;
+    // joint_states_.effort = msg->joint_measured_torques;
+    //
+    // joint_states_pub_.publish(joint_states_);
 }
 
 bool RosRobotDynTree::getBaseFrameService(orca_ros::GetString::Request &req, orca_ros::GetString::Response &res)

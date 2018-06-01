@@ -134,8 +134,15 @@ int main(int argc, char *argv[])
 
     controller->removeGravityTorquesFromSolution(robot_compensates_gravity);
 
-    RosController controller_ros_wrapper(robot_name, controller);
-    RosRobotDynTree robot_ros_wrapper(robot);
+    RosController controller_ros_wrapper(robot_name, controller, true);
+    RosRobotDynTree robot_ros_wrapper(robot, true);
+
+    auto joint_pos_task = controller->addTask<JointAccelerationTask>("JointPosTask");
+    joint_pos_task->pid()->setProportionalGain(Eigen::VectorXd::Constant(ndof, 100));
+    joint_pos_task->pid()->setDerivativeGain(Eigen::VectorXd::Constant(ndof, 1));
+    joint_pos_task->pid()->setWindupLimit(Eigen::VectorXd::Constant(ndof, 10));
+    joint_pos_task->pid()->setDerivativeGain(Eigen::VectorXd::Constant(ndof, 10));
+    joint_pos_task->setWeight(1.e-6);
 
     // Cartesian Task
     auto cart_task = std::make_shared<CartesianTask>("CartTask_EE");

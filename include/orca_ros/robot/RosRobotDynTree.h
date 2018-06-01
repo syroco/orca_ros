@@ -52,7 +52,7 @@ namespace robot
 class RosRobotDynTree : public orca_ros::common::RosWrapperBase
 {
 public:
-    RosRobotDynTree(std::shared_ptr<orca::robot::RobotDynTree> r);
+    RosRobotDynTree(std::shared_ptr<orca::robot::RobotDynTree> r, bool attach_state_callback=false);
 
     virtual ~RosRobotDynTree();
 
@@ -67,6 +67,9 @@ private:
 private:
     std::shared_ptr<orca::robot::RobotDynTree> robot_;
     ros::Subscriber robot_state_sub_;
+
+    ros::Publisher joint_states_pub_;
+    sensor_msgs::JointState joint_states_;
 
     Eigen::Matrix4d world_H_base_;
     Eigen::VectorXd jointPos_;
