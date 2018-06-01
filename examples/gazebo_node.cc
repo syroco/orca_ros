@@ -39,6 +39,7 @@
 */
 
 #include "orca_ros/orca_ros.h"
+#include <orca_ros/gazebo/RosGazeboModel.h>
 #include <signal.h>
 bool exit_ = false;
 void sigintHandler(int sig)

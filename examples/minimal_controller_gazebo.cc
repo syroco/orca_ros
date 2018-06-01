@@ -41,6 +41,7 @@
 #include <ros/ros.h>
 #include <orca/orca.h>
 #include <orca_ros/orca_ros.h>
+#include <orca_ros/gazebo/RosGazeboModel.h>
 
 using namespace orca::all;
 using namespace orca_ros::all;
