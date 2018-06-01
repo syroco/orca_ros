@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
         D.setConstant(10);
         joint_pos_task->pid()->setDerivativeGain(D);
     });
-    joint_pos_task->setWeight(0.1);
+    joint_pos_task->setWeight(1.e-5);
 
     // Cartesian Task
     auto cart_task = controller->addTask<CartesianTask>("CartTask_EE");
@@ -198,7 +198,7 @@ int main(int argc, char *argv[])
                                                 jnt_vel_cstr->setLimits(-jntVelMax,jntVelMax);
                                             });
 
-    controller->globalRegularization()->euclidianNorm().setWeight(1E-8);
+    controller->globalRegularization()->euclidianNorm().setWeight(1.e-8);
 
     RosGazeboModel gzrobot_ros_wrapper(gzrobot,robot_kinematics);
     RosController controller_ros_wrapper(robot_name, controller); // TODO: take robot_kinematics
