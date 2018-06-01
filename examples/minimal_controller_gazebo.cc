@@ -128,9 +128,30 @@ int main(int argc, char *argv[])
 
     controller->removeGravityTorquesFromSolution(robot_compensates_gravity);
 
+    auto joint_pos_task = controller->addTask<JointAccelerationTask>("JointPosTask");
+
+    joint_pos_task->onActivationCallback([&]()
+    {
+        Eigen::VectorXd P(ndof);
+        P.setConstant(100);
+        joint_pos_task->pid()->setProportionalGain(P);
+
+        Eigen::VectorXd I(ndof);
+        I.setConstant(1);
+        joint_pos_task->pid()->setDerivativeGain(I);
+
+        Eigen::VectorXd windupLimit(ndof);
+        windupLimit.setConstant(10);
+        joint_pos_task->pid()->setWindupLimit(windupLimit);
+
+        Eigen::VectorXd D(ndof);
+        D.setConstant(10);
+        joint_pos_task->pid()->setDerivativeGain(D);
+    });
+    joint_pos_task->setWeight(0.1);
+
     // Cartesian Task
-    auto cart_task = std::make_shared<CartesianTask>("CartTask_EE");
-    controller->addTask(cart_task);
+    auto cart_task = controller->addTask<CartesianTask>("CartTask_EE");
 
     cart_task->setControlFrame(robot_kinematics->getLinkNames().back()); // We want to control the link_7
     cart_task->setRampDuration(0); // Activate immediately
@@ -155,10 +176,10 @@ int main(int argc, char *argv[])
     // The desired values are set on the servo controller
     // Because cart_task->setDesired expects a cartesian acceleration
     // Which is computed automatically by the servo controller
-    
+
     // Joint torque limit is usually given by the robot manufacturer
-    auto jnt_trq_cstr = std::make_shared<JointTorqueLimitConstraint>("JointTorqueLimit");
-    controller->addConstraint(jnt_trq_cstr);
+    auto jnt_trq_cstr = controller->addConstraint<JointTorqueLimitConstraint>("JointTorqueLimit");
+
     jnt_trq_cstr->onActivationCallback([&](){
                                                 Eigen::VectorXd jntTrqMax(ndof);
                                                 jntTrqMax.setConstant(200.0);
@@ -166,12 +187,11 @@ int main(int argc, char *argv[])
                                             });
 
     // Joint position limits are automatically extracted from the URDF model. Note that you can set them if you want. by simply doing jnt_pos_cstr->setLimits(jntPosMin,jntPosMax).
-    auto jnt_pos_cstr = std::make_shared<JointPositionLimitConstraint>("JointPositionLimit");
-    controller->addConstraint(jnt_pos_cstr);
+    auto jnt_pos_cstr = controller->addConstraint<JointPositionLimitConstraint>("JointPositionLimit");
 
     // Joint velocity limits are usually given by the robot manufacturer
-    auto jnt_vel_cstr = std::make_shared<JointVelocityLimitConstraint>("JointVelocityLimit");
-    controller->addConstraint(jnt_vel_cstr);
+    auto jnt_vel_cstr = controller->addConstraint<JointVelocityLimitConstraint>("JointVelocityLimit");
+
     jnt_vel_cstr->onActivationCallback([&](){
                                                 Eigen::VectorXd jntVelMax(ndof);
                                                 jntVelMax.setConstant(2.0);
