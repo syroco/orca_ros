@@ -4,7 +4,7 @@
     <arg name="urdf_url"  default="$(find orca)/examples/resources/lwr.urdf"/>
     <arg name="robot_compensates_gravity" default="true"/>
     <arg name="task_name"  default="CartTask_EE"/>
-    <arg name="interactive_marker_frame_id"  default="link_0"/>
+    <arg name="interactive_marker_frame_id"  default="$(arg base_frame)"/>
 
     <!-- Synchronise the gazebo clock with ROS clock -->
     <param name="/use_sim_time" value="true"/>

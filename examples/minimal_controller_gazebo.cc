@@ -63,6 +63,7 @@ using namespace orca_ros::gazebo;
 
 int main(int argc, char *argv[])
 {
+    Logger::setLogLevel("debug");
     // Start the server with ROS enabled
     GazeboServer gzserver({"-s","libgazebo_ros_paths_plugin.so","-s","libgazebo_ros_api_plugin.so"});
 
@@ -131,7 +132,7 @@ int main(int argc, char *argv[])
     auto cart_task = std::make_shared<CartesianTask>("CartTask_EE");
     controller->addTask(cart_task);
 
-    cart_task->setControlFrame("link_7"); // We want to control the link_7
+    cart_task->setControlFrame(robot_kinematics->getLinkNames().back()); // We want to control the link_7
     cart_task->setRampDuration(0); // Activate immediately
     // Set the pose desired for the link_7
     Eigen::Affine3d cart_pos_ref;
@@ -154,13 +155,30 @@ int main(int argc, char *argv[])
     // The desired values are set on the servo controller
     // Because cart_task->setDesired expects a cartesian acceleration
     // Which is computed automatically by the servo controller
-    //cart_task->servoController()->setDesired(cart_pos_ref.matrix(),cart_vel_ref,cart_acc_ref);
+    
+    // Joint torque limit is usually given by the robot manufacturer
+    auto jnt_trq_cstr = std::make_shared<JointTorqueLimitConstraint>("JointTorqueLimit");
+    controller->addConstraint(jnt_trq_cstr);
+    jnt_trq_cstr->onActivationCallback([&](){
+                                                Eigen::VectorXd jntTrqMax(ndof);
+                                                jntTrqMax.setConstant(200.0);
+                                                jnt_trq_cstr->setLimits(-jntTrqMax,jntTrqMax);
+                                            });
 
+    // Joint position limits are automatically extracted from the URDF model. Note that you can set them if you want. by simply doing jnt_pos_cstr->setLimits(jntPosMin,jntPosMax).
+    auto jnt_pos_cstr = std::make_shared<JointPositionLimitConstraint>("JointPositionLimit");
+    controller->addConstraint(jnt_pos_cstr);
+
+    // Joint velocity limits are usually given by the robot manufacturer
+    auto jnt_vel_cstr = std::make_shared<JointVelocityLimitConstraint>("JointVelocityLimit");
+    controller->addConstraint(jnt_vel_cstr);
+    jnt_vel_cstr->onActivationCallback([&](){
+                                                Eigen::VectorXd jntVelMax(ndof);
+                                                jntVelMax.setConstant(2.0);
+                                                jnt_vel_cstr->setLimits(-jntVelMax,jntVelMax);
+                                            });
 
     controller->globalRegularization()->euclidianNorm().setWeight(1E-8);
-
-    controller->activateTasksAndConstraints();
-
 
     RosGazeboModel gzrobot_ros_wrapper(gzrobot,robot_kinematics);
     RosController controller_ros_wrapper(robot_name, controller); // TODO: take robot_kinematics
@@ -175,6 +193,10 @@ int main(int argc, char *argv[])
                                     ,gzrobot->getJointVelocities()
                                     ,gzrobot->getGravity()
                                 );
+        // Activate on the first iteration, when the robot is initialized
+        // All tasks need the robot to be initialized during the activation phase
+        if(n_iter == 1)
+            controller->activateTasksAndConstraints();
         // Publish state in ROS for remote proxies
         gzrobot_ros_wrapper.publishRobotState();
 
