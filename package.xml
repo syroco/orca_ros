@@ -16,11 +16,11 @@
   <depend>std_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>sensor_msgs</depend>
-  <depend>eigen_conversions</depend>
   <depend>message_generation</depend>
   <depend>message_runtime</depend>
   <depend>interactive_markers</depend>
   <depend>visualization_msgs</depend>
   <depend>tf</depend>
   <depend>tf_conversions</depend>
+  <depend>eigen_conversions</depend>
 </package>

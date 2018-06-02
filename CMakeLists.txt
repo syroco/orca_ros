@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(orca_ros)
 
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-
 find_package(orca REQUIRED)
 
 find_package(catkin REQUIRED COMPONENTS
@@ -10,13 +8,12 @@ find_package(catkin REQUIRED COMPONENTS
     std_msgs
     geometry_msgs
     sensor_msgs
-    eigen_conversions
     message_generation
-    orca
     interactive_markers
     visualization_msgs
     tf
     tf_conversions
+    eigen_conversions
 )
 find_package(gazebo REQUIRED)
 
@@ -77,17 +74,9 @@ generate_messages(
 )
 
 catkin_package(
-               INCLUDE_DIRS include ${EIGEN3_INCLUDE_DIRS}
-               LIBRARIES ${PROJECT_NAME}
-               CATKIN_DEPENDS
-               roscpp
-               std_msgs
-               geometry_msgs
-               eigen_conversions
-               message_runtime
-               interactive_markers
-               visualization_msgs
-            )
+    INCLUDE_DIRS include
+    LIBRARIES ${PROJECT_NAME}
+)
 
 
 include_directories(include
@@ -116,6 +105,7 @@ target_link_libraries(  ${PROJECT_NAME}
                         ${catkin_LIBRARIES}
                         orca::orca
                     )
+
 add_dependencies(${PROJECT_NAME} orca_ros_generate_messages_cpp)
 
 # Example nodes:
@@ -137,17 +127,26 @@ target_link_libraries(minimal_controller_gazebo ${PROJECT_NAME}_gazebo)
 add_executable(rviz_task_controller examples/rviz_task_controller.cc)
 target_link_libraries(rviz_task_controller ${PROJECT_NAME})
 
-# install(DIRECTORY include/${PROJECT_NAME}/
-#     DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-# )
-#
-# install(DIRECTORY launch
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
-#
-# install(TARGETS
-#         ${PROJECT_NAME}
-#         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
-#         )
+install(DIRECTORY include/${PROJECT_NAME}/
+    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+
+install(DIRECTORY launch/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+install(DIRECTORY config/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+install(TARGETS ${PROJECT_NAME}
+                minimal_controller
+                minimal_client
+                ${PROJECT_NAME}_gazebo
+                gazebo_node
+                minimal_controller_gazebo
+                rviz_task_controller
+    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)

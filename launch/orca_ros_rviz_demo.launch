@@ -13,7 +13,7 @@
 
     <node pkg="tf2_ros" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0.32 0 0 0 1 link_7 my_super_tool" />
 
-    <node name="gazebo" pkg="orca_ros" type="minimal_controller_gazebo" output="screen">
+    <node launch-prefix="gdb -ex run --args" name="gazebo" pkg="orca_ros" type="minimal_controller_gazebo" output="screen">
         <param name="robot_name" value="$(arg robot_name)"/>
         <param name="base_frame" value="$(arg base_frame)"/>
         <param name="urdf_url" value="$(arg urdf_url)"/>
