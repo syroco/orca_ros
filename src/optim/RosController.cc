@@ -13,11 +13,10 @@ RosController::RosController(   const std::string& robot_name,
     ndof_ = trq_msg_.joint_names.size();
     trq_msg_.joint_torque_command.resize(ndof_);
 
-    if(!ros::param::get("~robot_compensates_gravity",robot_compensates_gravity_))
+    if(!getNodeHandle()->getParam("robot_compensates_gravity",robot_compensates_gravity_))
     {
         ROS_ERROR_STREAM("" << ros::this_node::getName() << " Could not find robot_compensates_gravity in namespace "
-            << ros::this_node::getNamespace()
-            << "/" << ros::this_node::getName());
+            << getNamespacePrefix() + "robot_compensates_gravity");
     }
 
     std::string trq_prefix(getRobotNamespacePrefix()+"joint_torque_command");
