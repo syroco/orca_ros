@@ -264,6 +264,7 @@ int main(int argc, char** argv)
 
     server->applyChanges();
 
+    std::cout << "Interactive marker server running" << '\n';
     ros::spin();
 }
 // %Tag(fullSource)%

@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
     }
 
     auto gzrobot = std::make_shared<GazeboModel>(gzserver.insertModelFromURDFFile(urdf_url));
-    auto robot_kinematics = std::make_shared<orca::robot::RobotDynTree>();
+    auto robot_kinematics = std::make_shared<orca::robot::RobotDynTree>(robot_name);
     robot_kinematics->loadModelFromFile(urdf_url);
     robot_kinematics->setBaseFrame(base_frame);
     const int ndof = robot_kinematics->getNrOfDegreesOfFreedom();

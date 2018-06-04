@@ -1,11 +1,10 @@
 <launch>
     <arg name="robot_name" default="lwr"/>
     <arg name="base_frame"  default="link_0"/>
+    <arg name="controller_name"  default="orca_ctrl"/>
     <arg name="urdf_url"  default="$(find orca)/examples/resources/lwr.urdf"/>
     <arg name="robot_compensates_gravity" default="true"/>
-    <arg name="task_name"  default="CartTask_EE"/>
     <arg name="rviz"  default="true"/>
-    <arg name="interactive_marker_frame_id"  default="$(arg base_frame)"/>
 
     <!-- Synchronise the gazebo clock with ROS clock -->
     <param name="/use_sim_time" value="true"/>
@@ -17,7 +16,7 @@
         <param name="robot_name" value="$(arg robot_name)"/>
         <param name="base_frame" value="$(arg base_frame)"/>
         <param name="urdf_url" value="$(arg urdf_url)"/>
-        <param name="controller_name" value="$(arg robot_name)_orca_controller"/>
+        <param name="controller_name" value="$(arg controller_name)"/>
         <param name="robot_compensates_gravity" value="$(arg robot_compensates_gravity)"/>
         <rosparam param="init_joint_positions">
             joint_0:  1.0
@@ -26,11 +25,21 @@
         </rosparam>
     </node>
 
+    <rosparam ns="/orca/$(arg robot_name)/$(arg controller_name)" subst_value="true">
+      robot_compensates_gravity: $(arg robot_compensates_gravity)
+    </rosparam>
+
+    <rosparam ns="/orca/$(arg robot_name)/$(arg controller_name)/CartTask_EE" subst_value="true">
+      base_frame: $(arg base_frame)
+    </rosparam>
+
     <node name="rviz_task_controller" pkg="orca_ros" type="rviz_task_controller" output="screen">
-        <param name="robot_name" value="$(arg robot_name)"/>
-        <param name="controller_name" value="$(arg robot_name)_orca_controller"/>
-        <param name="task_name" value="$(arg task_name)"/>
-        <param name="interactive_marker_frame_id" value="$(arg interactive_marker_frame_id)"/>
+        <rosparam subst_value="true">
+            robot_name: $(arg robot_name)
+            controller_name: $(arg controller_name)
+            task_name: CartTask_EE
+            interactive_marker_frame_id: $(arg base_frame)
+        </rosparam>
     </node>
 
     <arg name="rviz_config" default="$(find orca_ros)/config/simple_lwr_model.rviz"/>
