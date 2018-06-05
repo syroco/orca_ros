@@ -127,6 +127,9 @@ target_link_libraries(minimal_controller_gazebo ${PROJECT_NAME}_gazebo)
 add_executable(rviz_task_controller examples/rviz_task_controller.cc)
 target_link_libraries(rviz_task_controller ${PROJECT_NAME})
 
+add_executable(min_jerk_traj examples/min_jerk_traj.cc)
+target_link_libraries(min_jerk_traj ${PROJECT_NAME})
+
 install(DIRECTORY include/${PROJECT_NAME}/
     DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )

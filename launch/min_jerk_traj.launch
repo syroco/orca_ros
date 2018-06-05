@@ -1,0 +1,13 @@
+<launch>
+    <arg name="robot_name" default="lwr"/>
+    <arg name="task_name"  default="CartTask_EE"/>
+    <arg name="controller_name"  default="orca_ctrl"/>
+
+
+    <node name="min_jerk_traj" pkg="orca_ros" type="min_jerk_traj" output="screen">
+        <param name="robot_name" value="$(arg robot_name)"/>
+        <param name="controller_name" value="$(arg controller_name)"/>
+        <param name="task_name" value="$(arg task_name)"/>
+    </node>
+
+</launch>
