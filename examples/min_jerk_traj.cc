@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
     cart_pos_ref.linear() = starting_task_pose.linear();
 
 
-    MinJerkPositionTrajectory traj(5.0);
+    MinJerkPositionTrajectory traj(3.0);
     Eigen::Vector3d start_position, end_position;
 
 
@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
 
 
     double t=0.0;
-    while(ros::ok() && !traj.isTrajectoryFinished())
+    while(ros::ok())
     {
 
         Eigen::Vector3d p, v, a;
@@ -162,10 +162,16 @@ int main(int argc, char *argv[])
         cart_acc_ref.head(3) = a;
         cart_task->setDesiredPose(cart_pos_ref.matrix());
 
-        std::cout << p.transpose() << '\n';
         // cart_task->servoController()->setDesired(cart_pos_ref.matrix(),cart_vel_ref,cart_acc_ref);
 
-
+        if (traj.isTrajectoryFinished())
+        {
+            auto sp = start_position;
+            start_position = end_position;
+            end_position = sp;
+            traj.resetTrajectory(start_position, end_position);
+            std::cout << "Reversing trajectory." << '\n';
+        }
         ros::spinOnce();
 
         loop_rate.sleep();
