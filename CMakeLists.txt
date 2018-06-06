@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(orca_ros)
 
-find_package(orca REQUIRED)
-
 find_package(catkin REQUIRED COMPONENTS
     roscpp
     std_msgs
@@ -14,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
     tf
     tf_conversions
     eigen_conversions
+    orca
 )
 find_package(gazebo REQUIRED)
 
@@ -76,6 +75,7 @@ generate_messages(
 catkin_package(
     INCLUDE_DIRS include
     LIBRARIES ${PROJECT_NAME}
+    CATKIN_DEPENDS orca
 )
 
 
@@ -103,7 +103,6 @@ add_library(${PROJECT_NAME} ${source_files})
 
 target_link_libraries(  ${PROJECT_NAME}
                         ${catkin_LIBRARIES}
-                        orca::orca
                     )
 
 add_dependencies(${PROJECT_NAME} orca_ros_generate_messages_cpp)
