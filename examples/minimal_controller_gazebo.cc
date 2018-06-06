@@ -199,7 +199,7 @@ int main(int argc, char *argv[])
                                                 jnt_vel_cstr->setLimits(-jntVelMax,jntVelMax);
                                             });
 
-    controller->globalRegularization()->euclidianNorm().setWeight(1.e-8);
+    controller->globalRegularization()->setWeight(1.e-4);
 
     RosGazeboModel gzrobot_ros_wrapper(gzrobot,robot_kinematics);
     RosController controller_ros_wrapper(robot_name, controller); // TODO: take robot_kinematics
