@@ -41,7 +41,7 @@
 
 #pragma once
 
-#include <orca/robot/RobotDynTree.h>
+#include <orca/robot/RobotModel.h>
 #include "orca_ros/common/RosWrapperBase.h"
 
 namespace orca_ros
@@ -49,13 +49,13 @@ namespace orca_ros
 namespace robot
 {
 
-class RosRobotDynTreeProxy : public orca_ros::common::RosWrapperBase
-                           , public orca::robot::RobotDynTree
+class RosRobotModelProxy : public orca_ros::common::RosWrapperBase
+                           , public orca::robot::RobotModel
 {
 public:
-    RosRobotDynTreeProxy(const std::string& robot_name);
+    RosRobotModelProxy(const std::string& robot_name);
 
-    virtual ~RosRobotDynTreeProxy();
+    virtual ~RosRobotModelProxy();
 
     std::string getBaseFrame();
     std::string getUrdfUrl();

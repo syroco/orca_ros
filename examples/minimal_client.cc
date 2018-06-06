@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     }
 
     orca_ros::optim::RosControllerProxy controller_proxy(robot_name,controller_name);
-    orca_ros::robot::RosRobotDynTreeProxy robot_proxy(robot_name);
+    orca_ros::robot::RosRobotModelProxy robot_proxy(robot_name);
 
     std::string task_name("CartTask_EE");
     auto cart_task_proxy = orca_ros::task::RosCartesianTaskProxy(robot_name,controller_name,task_name);

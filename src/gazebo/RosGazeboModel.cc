@@ -5,7 +5,7 @@ using namespace orca::gazebo;
 using namespace orca_ros::gazebo;
 
 RosGazeboModel::RosGazeboModel(std::shared_ptr<GazeboModel> gz_model
-                            , std::shared_ptr<orca::robot::RobotDynTree> robot_kinematics)
+                            , std::shared_ptr<orca::robot::RobotModel> robot_kinematics)
 : RosWrapperBase(gz_model->getName())
 , gz_model_(gz_model)
 , robot_kinematics_(robot_kinematics)
@@ -54,7 +54,7 @@ RosGazeboModel::RosGazeboModel(std::shared_ptr<GazeboModel> gz_model
     joint_states_pub_ = getNodeHandle()->advertise<sensor_msgs::JointState>("joint_states", 1, true);
 #if 0
     desired_torque_sub_ = getNodeHandle()->subscribe( "joint_torque_command", 1, &RosGazeboModel::desiredTorqueSubscriberCb, this);
-    gz_model_->setCallback([&](uint32_t n_iter,double current_time,double dt)
+    gz_model_->executeAfterWorldUpdate([&](uint32_t n_iter,double current_time,double dt)
     {
         publishRobotState();
     });

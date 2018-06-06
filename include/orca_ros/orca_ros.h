@@ -55,8 +55,8 @@
 #include "orca_ros/optim/RosController.h"
 #include "orca_ros/optim/RosControllerProxy.h"
 
-#include "orca_ros/robot/RosRobotDynTree.h"
-#include "orca_ros/robot/RosRobotDynTreeProxy.h"
+#include "orca_ros/robot/RosRobotModel.h"
+#include "orca_ros/robot/RosRobotModelProxy.h"
 
 namespace orca_ros
 {

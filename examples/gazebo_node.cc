@@ -87,14 +87,10 @@ int main(int argc, char** argv)
     }
 
     auto gzrobot = std::make_shared<GazeboModel>(gzserver.insertModelFromURDFFile(urdf_url));
-    auto robot_kinematics = std::make_shared<orca::robot::RobotDynTree>();
+    auto robot_kinematics = std::make_shared<orca::robot::RobotModel>();
     robot_kinematics->loadModelFromFile(urdf_url);
     auto gzrobot_ros_wrapper = RosGazeboModel(gzrobot,robot_kinematics);
 
-    gzserver.run([&](uint32_t n_iter,double current_time,double dt)
-    {
-        // if(exit_)
-        //     gzserver.shutdown();
-    });
+    gzserver.run();
     return 0;
 }

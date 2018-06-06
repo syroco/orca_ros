@@ -41,7 +41,7 @@
 
 #pragma once
 
-#include <orca/robot/RobotDynTree.h>
+#include <orca/robot/RobotModel.h>
 #include "orca_ros/common/RosWrapperBase.h"
 
 namespace orca_ros
@@ -49,12 +49,12 @@ namespace orca_ros
 namespace robot
 {
 
-class RosRobotDynTree : public orca_ros::common::RosWrapperBase
+class RosRobotModel : public orca_ros::common::RosWrapperBase
 {
 public:
-    RosRobotDynTree(std::shared_ptr<orca::robot::RobotDynTree> r, bool attach_state_callback=false);
+    RosRobotModel(std::shared_ptr<orca::robot::RobotModel> r, bool attach_state_callback=false);
 
-    virtual ~RosRobotDynTree();
+    virtual ~RosRobotModel();
 
 private:
     void currentStateSubscriberCb(const orca_ros::RobotState::ConstPtr& msg);
@@ -65,7 +65,7 @@ private:
     void waitForFirstState();
 
 private:
-    std::shared_ptr<orca::robot::RobotDynTree> robot_;
+    std::shared_ptr<orca::robot::RobotModel> robot_;
     ros::Subscriber robot_state_sub_;
 
     ros::Publisher joint_states_pub_;

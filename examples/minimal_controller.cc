@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    auto robot = std::make_shared<RobotDynTree>(robot_name);
+    auto robot = std::make_shared<RobotModel>(robot_name);
     robot->loadModelFromFile(urdf_url);
     robot->setBaseFrame(base_frame); // All the transformations will be expressed wrt this base frame
 
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
     controller->removeGravityTorquesFromSolution(robot_compensates_gravity);
 
     RosController controller_ros_wrapper(robot_name, controller, true);
-    RosRobotDynTree robot_ros_wrapper(robot, true);
+    RosRobotModel robot_ros_wrapper(robot, true);
 
     auto joint_pos_task = controller->addTask<JointAccelerationTask>("JointPosTask");
     joint_pos_task->pid()->setProportionalGain(Eigen::VectorXd::Constant(ndof, 100));

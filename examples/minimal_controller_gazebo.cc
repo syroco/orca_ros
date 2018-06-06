@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
     }
 
     auto gzrobot = std::make_shared<GazeboModel>(gzserver.insertModelFromURDFFile(urdf_url));
-    auto robot_kinematics = std::make_shared<orca::robot::RobotDynTree>(robot_name);
+    auto robot_kinematics = std::make_shared<orca::robot::RobotModel>(robot_name);
     robot_kinematics->loadModelFromFile(urdf_url);
     robot_kinematics->setBaseFrame(base_frame);
     const int ndof = robot_kinematics->getNrOfDegreesOfFreedom();
@@ -205,7 +205,7 @@ int main(int argc, char *argv[])
     RosController controller_ros_wrapper(robot_name, controller); // TODO: take robot_kinematics
     RosCartesianTask cart_task_ros_wrapper(robot_name, controller->getName(), cart_task); // TODO: take robot_kinematics
 
-    gzrobot->setCallback([&](uint32_t n_iter,double current_time,double dt)
+    gzrobot->executeAfterWorldUpdate([&](uint32_t n_iter,double current_time,double dt)
     {
         // Update the kinematics from the simulated robot
         robot_kinematics->setRobotState(gzrobot->getWorldToBaseTransform().matrix()
