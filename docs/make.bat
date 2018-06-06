@@ -8,8 +8,8 @@ if "%SPHINXBUILD%" == "" (
 	set SPHINXBUILD=sphinx-build
 )
 set SOURCEDIR=source
-set BUILDDIR=build
-set SPHINXPROJ=ORCA
+set BUILDDIR=_build
+set SPHINXPROJ=ORCA_ROS
 
 if "%1" == "" goto help
 
