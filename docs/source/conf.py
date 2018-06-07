@@ -22,13 +22,7 @@
 
 
 import subprocess
-#
-# on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-#
-# if on_rtd:
-#     subprocess.call('cd ..; doxygen', shell=True)
-subprocess.call('cd ..; doxygen Doxyfile_RTD.in', shell=True)
-
+subprocess.call('cd ..; mkdir -p _build/html/api/; doxygen Doxyfile_RTD.in; mv _build/html/api/html/index.html _build/html/api/html/api_index.html', shell=True)
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -145,6 +139,7 @@ html_theme_options = {
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'ORCA_ROSdoc'
 
+html_extra_path = ['../_build/html/api/html/']
 
 # -- Options for LaTeX output ---------------------------------------------
 
