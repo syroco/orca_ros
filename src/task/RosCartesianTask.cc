@@ -34,8 +34,17 @@ bool RosCartesianTask::setDesiredService(orca_ros::SetMatrix::Request &req, orca
 {
     orca::math::Vector6d v;
     orca_ros::utils::floatMultiArrayToEigen(req.data, v);
-    cart_task_->setDesired(v);
-    return true;
+    orca::common::MutexTryLock trylock(cart_task_->mutex);
+    if(trylock.isSuccessful())
+    {
+        cart_task_->setDesired(v);
+        return true;
+    }
+    else
+    {
+        std::cerr << "Mutex locked" << '\n';
+        return false;
+    }
 }
 
 bool RosCartesianTask::setBaseFrameService(orca_ros::SetString::Request &req, orca_ros::SetString::Response & res)
@@ -89,5 +98,13 @@ void RosCartesianTask::desiredStateSubscriberCb(const orca_ros::CartesianTaskSta
     tf::twistMsgToEigen(msg->desired_velocity, des_velocity);
     orca_ros::utils::accelMsgToEigen(msg->desired_acceleration, des_acceleration);
 
-    cart_servo_->setDesired( des_pose, des_velocity, des_acceleration );
+    orca::common::MutexTryLock trylock(cart_task_->mutex);
+    if(trylock.isSuccessful())
+    {
+        cart_servo_->setDesired( des_pose, des_velocity, des_acceleration );
+    }
+    else
+    {
+        std::cerr << "Mutex locked at " << ros::Time::now() <<'\n';
+    }
 }
