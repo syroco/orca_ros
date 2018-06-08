@@ -125,6 +125,7 @@ int main(int argc, char *argv[])
         ,robot_kinematics
         ,ResolutionStrategy::OneLevelWeighted // MultiLevelWeighted, Generalized
         ,QPSolver::qpOASES
+        // ,QPSolver::eigQuadProg
     );
 
     controller->removeGravityTorquesFromSolution(robot_compensates_gravity);
@@ -256,6 +257,7 @@ int main(int argc, char *argv[])
         }
         else
         {
+            ROS_ERROR("No solution found !");
             // No Solution found, breaking hard
             gzrobot->setBrakes(true);
         }
