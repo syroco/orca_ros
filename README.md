@@ -39,7 +39,7 @@ On the `task_proxy_node` side of things we need 3 pieces of information: the rob
 ## Run the example:
 
 ```
-rosrun orca_ros minimal_controller _robot_na:="lwr" _base_frame:="link_0" _urdf_url:="$(rospack find orca)/examples/lwr.urdf"
+rosrun orca_ros minimal_controller _robot_name:="lwr" _base_frame:="link_0" _urdf_url:="$(rospack find orca)/examples/lwr.urdf"
 ```
 
 ```
