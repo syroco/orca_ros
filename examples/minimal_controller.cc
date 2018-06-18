@@ -60,7 +60,7 @@ using namespace orca_ros::all;
 
 int main(int argc, char *argv[])
 {
-    ros::init(argc, argv, "orca_cart_demo0");//, ros::init_options::NoSigintHandler);
+    ros::init(argc, argv, "minimal_controller");//, ros::init_options::NoSigintHandler);
     // signal(SIGINT, sigintHandler);
 
     std::string robot_name("");
@@ -93,19 +93,17 @@ int main(int argc, char *argv[])
     bool robot_compensates_gravity = false;
     if(!ros::param::get("~robot_compensates_gravity",robot_compensates_gravity))
     {
-        ROS_ERROR_STREAM("" << ros::this_node::getName() << "Could not find robot_compensates_gravity in namespace "
+        ROS_WARN_STREAM("" << ros::this_node::getName() << " Could not find robot_compensates_gravity in namespace "
             << ros::this_node::getNamespace()
-            << "/" << ros::this_node::getName());
-        return 0;
+            << "/" << ros::this_node::getName() << ". Setting to [false] by default.");
     }
 
-    std::string controller_name("");
+    std::string controller_name("orca_ctrl");
     if(!ros::param::get("~controller_name",controller_name))
     {
-        ROS_ERROR_STREAM("" << ros::this_node::getName() << "Could not find controller_name in namespace "
+        ROS_WARN_STREAM("" << ros::this_node::getName() << "Could not find controller_name in namespace "
             << ros::this_node::getNamespace()
-            << "/" << ros::this_node::getName());
-        return 0;
+            << "/" << ros::this_node::getName() << ". Setting to [orca_ctrl] by default.");
     }
 
     auto robot = std::make_shared<RobotModel>(robot_name);

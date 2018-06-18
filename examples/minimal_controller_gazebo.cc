@@ -98,19 +98,17 @@ int main(int argc, char *argv[])
     bool robot_compensates_gravity = false;
     if(!ros::param::get("~robot_compensates_gravity",robot_compensates_gravity))
     {
-        ROS_ERROR_STREAM("" << ros::this_node::getName() << " Could not find robot_compensates_gravity in namespace "
+        ROS_WARN_STREAM("" << ros::this_node::getName() << " Could not find robot_compensates_gravity in namespace "
             << ros::this_node::getNamespace()
-            << "/" << ros::this_node::getName());
-        return 0;
+            << "/" << ros::this_node::getName() << ". Setting to [false] by default.");
     }
 
-    std::string controller_name("");
+    std::string controller_name("orca_ctrl");
     if(!ros::param::get("~controller_name",controller_name))
     {
-        ROS_ERROR_STREAM("" << ros::this_node::getName() << " Could not find controller_name in namespace "
+        ROS_WARN_STREAM("" << ros::this_node::getName() << "Could not find controller_name in namespace "
             << ros::this_node::getNamespace()
-            << "/" << ros::this_node::getName());
-        return 0;
+            << "/" << ros::this_node::getName() << ". Setting to [orca_ctrl] by default.");
     }
 
     auto gzrobot = std::make_shared<GazeboModel>(gzserver.insertModelFromURDFFile(urdf_url));
