@@ -38,10 +38,8 @@ On the `task_proxy_node` side of things we need 3 pieces of information: the rob
 
 ## Run the example:
 
-```
-rosrun orca_ros minimal_controller _robot_name:="lwr" _base_frame:="link_0" _urdf_url:="$(rospack find orca)/examples/lwr.urdf"
-```
+Requires Gazebo and RViz
 
 ```
-rosrun orca_ros minimal_client _robot_name:="lwr" _controller_name:="lwr_orca_controller"
+roslaunch orca_ros orca_ros_rviz_demo.launch
 ```
