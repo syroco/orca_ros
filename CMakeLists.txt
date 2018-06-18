@@ -148,6 +148,7 @@ install(TARGETS ${PROJECT_NAME}
                 gazebo_node
                 minimal_controller_gazebo
                 rviz_task_controller
+                min_jerk_traj
     ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
