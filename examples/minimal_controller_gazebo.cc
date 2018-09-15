@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
          controller_name
         ,robot_kinematics
         ,ResolutionStrategy::OneLevelWeighted // MultiLevelWeighted, Generalized
-        ,QPSolver::qpOASES
+        ,QPSolverImplType::qpOASES
         // ,QPSolver::eigQuadProg
     );
 
@@ -132,47 +132,26 @@ int main(int argc, char *argv[])
 
     joint_pos_task->onActivationCallback([&]()
     {
-        Eigen::VectorXd P(ndof);
-        P.setConstant(100);
-        joint_pos_task->pid()->setProportionalGain(P);
-
-        Eigen::VectorXd I(ndof);
-        I.setConstant(1);
-        joint_pos_task->pid()->setDerivativeGain(I);
-
-        Eigen::VectorXd windupLimit(ndof);
-        windupLimit.setConstant(10);
-        joint_pos_task->pid()->setWindupLimit(windupLimit);
-
-        Eigen::VectorXd D(ndof);
-        D.setConstant(10);
-        joint_pos_task->pid()->setDerivativeGain(D);
+        joint_pos_task->pid()->setProportionalGain(Eigen::VectorXd::Constant(ndof,100));
+        joint_pos_task->pid()->setDerivativeGain(Eigen::VectorXd::Constant(ndof,1));
+        joint_pos_task->pid()->setWindupLimit(Eigen::VectorXd::Constant(ndof,10));
+        joint_pos_task->pid()->setDerivativeGain(Eigen::VectorXd::Constant(ndof,10));
     });
-    joint_pos_task->setWeight(1.e-5);
+    joint_pos_task->setWeight(1.e-4);
 
-    // Cartesian Task
-    auto cart_task = controller->addTask<CartesianTask>("CartTask_EE");
-
-    cart_task->setControlFrame(robot_kinematics->getLinkNames().back()); // We want to control the link_7
-    cart_task->setRampDuration(0); // Activate immediately
-    // Set the pose desired for the link_7
-    Eigen::Affine3d cart_pos_ref;
-
-    // Set the desired cartesian velocity to zero
-    Vector6d cart_vel_ref;
-    cart_vel_ref.setZero();
-
-    // Set the desired cartesian velocity to zero
-    Vector6d cart_acc_ref;
-    cart_acc_ref.setZero();
-
-    // Now set the servoing PID
+    auto cart_acc_pid = std::make_shared<CartesianAccelerationPID>("servo_controller");
     Vector6d P;
     P << 100, 100, 100, 10, 10, 10;
-    cart_task->servoController()->pid()->setProportionalGain(P);
+    cart_acc_pid->pid()->setProportionalGain(P);
     Vector6d D;
     D << 10, 10, 10, 1, 1, 1;
-    cart_task->servoController()->pid()->setDerivativeGain(D);
+    cart_acc_pid->pid()->setDerivativeGain(D);
+    // Let's control the last link in the chain
+    cart_acc_pid->setControlFrame(robot_kinematics->getLinkNames().back());
+    
+    auto cart_task = controller->addTask<CartesianTask>("CartTask_EE");
+    cart_task->setServoController(cart_acc_pid);
+    
     // The desired values are set on the servo controller
     // Because cart_task->setDesired expects a cartesian acceleration
     // Which is computed automatically by the servo controller
@@ -181,9 +160,7 @@ int main(int argc, char *argv[])
     auto jnt_trq_cstr = controller->addConstraint<JointTorqueLimitConstraint>("JointTorqueLimit");
 
     jnt_trq_cstr->onActivationCallback([&](){
-                                                Eigen::VectorXd jntTrqMax(ndof);
-                                                jntTrqMax.setConstant(200.0);
-                                                jnt_trq_cstr->setLimits(-jntTrqMax,jntTrqMax);
+                                                jnt_trq_cstr->setLimits(Eigen::VectorXd::Constant(ndof,-200),Eigen::VectorXd::Constant(ndof,200));
                                             });
 
     // Joint position limits are automatically extracted from the URDF model. Note that you can set them if you want. by simply doing jnt_pos_cstr->setLimits(jntPosMin,jntPosMax).
@@ -198,7 +175,7 @@ int main(int argc, char *argv[])
                                                 jnt_vel_cstr->setLimits(-jntVelMax,jntVelMax);
                                             });
 
-    controller->globalRegularization()->setWeight(1.e-4);
+    controller->globalRegularization()->setWeight(1.e-6);
 
     RosGazeboModel gzrobot_ros_wrapper(gzrobot,robot_kinematics);
     RosController controller_ros_wrapper(robot_name, controller); // TODO: take robot_kinematics

@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
          controller_name
         ,robot
         ,ResolutionStrategy::OneLevelWeighted // MultiLevelWeighted, Generalized
-        ,QPSolver::qpOASES
+        ,QPSolverImplType::qpOASES
     );
 
     controller->removeGravityTorquesFromSolution(robot_compensates_gravity);
@@ -142,34 +142,17 @@ int main(int argc, char *argv[])
     joint_pos_task->pid()->setDerivativeGain(Eigen::VectorXd::Constant(ndof, 10));
     joint_pos_task->setWeight(1.e-6);
 
-    // Cartesian Task
-    auto cart_task = std::make_shared<CartesianTask>("CartTask_EE");
-    controller->addTask(cart_task);
-
-    cart_task->setControlFrame("link_7"); // We want to control the link_7
-    cart_task->setRampDuration(0);
-    // Set the pose desired for the link_7
-    Eigen::Affine3d cart_pos_ref;
-
-    // Set the desired cartesian velocity to zero
-    Vector6d cart_vel_ref;
-    cart_vel_ref.setZero();
-
-    // Set the desired cartesian velocity to zero
-    Vector6d cart_acc_ref;
-    cart_acc_ref.setZero();
-
-    // Now set the servoing PID
+    auto cart_acc_pid = std::make_shared<CartesianAccelerationPID>("servo_controller");
     Vector6d P;
     P << 100, 100, 100, 10, 10, 10;
-    cart_task->servoController()->pid()->setProportionalGain(P);
+    cart_acc_pid->pid()->setProportionalGain(P);
     Vector6d D;
     D << 10, 10, 10, 1, 1, 1;
-    cart_task->servoController()->pid()->setDerivativeGain(D);
-    // The desired values are set on the servo controller
-    // Because cart_task->setDesired expects a cartesian acceleration
-    // Which is computed automatically by the servo controller
-    //cart_task->servoController()->setDesired(cart_pos_ref.matrix(),cart_vel_ref,cart_acc_ref);
+    cart_acc_pid->pid()->setDerivativeGain(D);
+    cart_acc_pid->setControlFrame("link_7");
+
+    auto cart_task = controller->addTask<CartesianTask>("CartTask_EE");
+    cart_task->setServoController(cart_acc_pid);
 
     RosCartesianTask cart_task_wrapper(robot_name, controller->getName(), cart_task);
 

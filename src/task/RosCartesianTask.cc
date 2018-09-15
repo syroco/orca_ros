@@ -8,7 +8,7 @@ RosCartesianTask::RosCartesianTask( const std::string& robot_name,
 : cart_task_(cart_task)
 , RosGenericTask(robot_name, controller_name, cart_task)
 {
-    cart_servo_ = cart_task_->servoController();
+    cart_servo_ = std::dynamic_pointer_cast<orca::common::CartesianAccelerationPID>(cart_task_->servoController());
 
     cart_servo_wrapper_ = std::make_shared<orca_ros::common::RosCartesianAccelerationPID>(robot_name, controller_name, cart_task->getName(), cart_servo_);
 
@@ -42,7 +42,6 @@ bool RosCartesianTask::setDesiredService(orca_ros::SetMatrix::Request &req, orca
     }
     else
     {
-        std::cerr << "Mutex locked" << '\n';
         return false;
     }
 }
@@ -102,9 +101,5 @@ void RosCartesianTask::desiredStateSubscriberCb(const orca_ros::CartesianTaskSta
     if(trylock.isSuccessful())
     {
         cart_servo_->setDesired( des_pose, des_velocity, des_acceleration );
-    }
-    else
-    {
-        std::cerr << "Mutex locked at " << ros::Time::now() <<'\n';
     }
 }
