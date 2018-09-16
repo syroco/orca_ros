@@ -57,6 +57,18 @@ using namespace orca_ros::gazebo;
 //     exit_ = true;
 // }
 //
+template<class T>
+bool getParam(const std::string& param_name, T& param_data)
+{
+    if(!ros::param::get(param_name,param_data))
+    {
+        ROS_ERROR_STREAM("" << ros::this_node::getName() << " Could not find '" << param_name << "' in namespace "
+            << ros::this_node::getNamespace()
+            << "/" << ros::this_node::getName());
+        return false;
+    }
+    return true;
+}
 
 // To start this example :
 // rosrun orca_ros minimal_controller _robot_name:="lwr" _base_frame:="link_0" _urdf_url:="$(rospack find orca)/examples/lwr.urdf"
@@ -69,52 +81,30 @@ int main(int argc, char *argv[])
     GazeboServer gzserver({"-s","libgazebo_ros_paths_plugin.so","-s","libgazebo_ros_api_plugin.so"});
 
     std::string robot_name("");
-    if(!ros::param::get("~robot_name",robot_name))
-    {
-        ROS_ERROR_STREAM("" << ros::this_node::getName() << " Could not find robot_name in namespace "
-            << ros::this_node::getNamespace()
-            << "/" << ros::this_node::getName());
+    if(!getParam("~robot_name",robot_name))
         return 0;
-    }
 
     std::string base_frame("");
-    if(!ros::param::get("~base_frame",base_frame))
-    {
-        ROS_ERROR_STREAM("" << ros::this_node::getName() << " Could not find base_frame in namespace "
-            << ros::this_node::getNamespace()
-            << "/" << ros::this_node::getName());
+    if(!getParam("~base_frame",base_frame))
         return 0;
-    }
 
     std::string urdf_url("");
-    if(!ros::param::get("~urdf_url",urdf_url))
-    {
-        ROS_ERROR_STREAM("" << ros::this_node::getName() << " Could not find urdf_url in namespace "
-            << ros::this_node::getNamespace()
-            << "/" << ros::this_node::getName());
+    if(!getParam("~urdf_url",urdf_url))
         return 0;
-    }
 
     bool robot_compensates_gravity = false;
-    if(!ros::param::get("~robot_compensates_gravity",robot_compensates_gravity))
-    {
-        ROS_WARN_STREAM("" << ros::this_node::getName() << " Could not find robot_compensates_gravity in namespace "
-            << ros::this_node::getNamespace()
-            << "/" << ros::this_node::getName() << ". Setting to [false] by default.");
-    }
+    getParam("~robot_compensates_gravity",robot_compensates_gravity);
 
     std::string controller_name("orca_ctrl");
-    if(!ros::param::get("~controller_name",controller_name))
-    {
-        ROS_WARN_STREAM("" << ros::this_node::getName() << "Could not find controller_name in namespace "
-            << ros::this_node::getNamespace()
-            << "/" << ros::this_node::getName() << ". Setting to [orca_ctrl] by default.");
-    }
+    getParam("~controller_name",controller_name);
 
+    // Insert the model to gazebo (Warning we need the meshes in the GAZEBO_MODEL_PATH)
     auto gzrobot = std::make_shared<GazeboModel>(gzserver.insertModelFromURDFFile(urdf_url));
+    // Get the kinematics
     auto robot_kinematics = std::make_shared<orca::robot::RobotModel>(robot_name);
     robot_kinematics->loadModelFromFile(urdf_url);
     robot_kinematics->setBaseFrame(base_frame);
+    robot_kinematics->print();
     const int ndof = robot_kinematics->getNrOfDegreesOfFreedom();
 
     // Instanciate and ORCA Controller
@@ -125,9 +115,10 @@ int main(int argc, char *argv[])
         ,QPSolverImplType::qpOASES
         // ,QPSolver::eigQuadProg
     );
-
+    // Set controller parameters
     controller->removeGravityTorquesFromSolution(robot_compensates_gravity);
 
+    // Joint postural task
     auto joint_pos_task = controller->addTask<JointAccelerationTask>("JointPosTask");
     joint_pos_task->pid()->setProportionalGain(Eigen::VectorXd::Constant(ndof,100));
     joint_pos_task->pid()->setDerivativeGain(Eigen::VectorXd::Constant(ndof,1));
@@ -135,6 +126,7 @@ int main(int argc, char *argv[])
     joint_pos_task->pid()->setDerivativeGain(Eigen::VectorXd::Constant(ndof,10));
     joint_pos_task->setWeight(1.e-4);
 
+    // Cartesian acceleration task
     auto cart_acc_pid = std::make_shared<CartesianAccelerationPID>("servo_controller");
     cart_acc_pid->pid()->setProportionalGain({ 100, 100, 100, 10, 10, 10 });
     cart_acc_pid->pid()->setDerivativeGain({ 10, 10, 10, 1, 1, 1 });
@@ -160,13 +152,15 @@ int main(int argc, char *argv[])
     auto jnt_vel_cstr = controller->addConstraint<JointVelocityLimitConstraint>("JointVelocityLimit");
     jnt_vel_cstr->setLimits(Eigen::VectorXd::Constant(ndof,-2.0),Eigen::VectorXd::Constant(ndof,2.0));
 
-
+    // Change the weight of the global reg
     controller->globalRegularization()->setWeight(1.e-6);
 
+    // Enable some ros wrappers
     RosGazeboModel gzrobot_ros_wrapper(gzrobot,robot_kinematics);
     RosController controller_ros_wrapper(robot_name, controller); // TODO: take robot_kinematics
     RosCartesianTask cart_task_ros_wrapper(robot_name, controller->getName(), cart_task); // TODO: take robot_kinematics
 
+    // The gazebo Loop
     gzrobot->executeAfterWorldUpdate([&](uint32_t n_iter,double current_time,double dt)
     {
         // Update the kinematics from the simulated robot
@@ -224,23 +218,6 @@ int main(int argc, char *argv[])
         }
     });
 
-
-
-    // std::cout << "Controller shutdown initiated" << '\n';
-    // // Shutdown components
-    // controller->deactivateTasksAndConstraints();
-    // while (!controller->tasksAndConstraintsDeactivated())
-    // {
-    //     auto t_dt = ros::Time().now() - t_now;
-    //
-    //     controller->update(t_now.toSec(),t_dt.toSec());
-    //
-    //     t_now = ros::Time::now();
-    //
-    //     ros::spinOnce();
-    //     r.sleep();
-    // }
-    // ros::shutdown();
     std::cout << "Running Simulation + ORCA Controller" << '\n';
     gzserver.run();
     return 0;
